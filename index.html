@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Đang Cập Nhật · Dịch Vụ TikTok Pro</title>
+    <title>Dịch Vụ TikTok Pro Duy Hoang</title>
     <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -15,18 +15,25 @@
             --teal-dim: #00b89c;
             --teal-glow: rgba(0,229,195,0.12);
             --teal-border: rgba(0,229,195,0.22);
+            --green: #34d399;
+            --red: #f87171;
             --yellow: #fbbf24;
+            --sky: #7dd3fc;
+            --orange: #fb923c;
             --text-primary: #e8f4f8;
             --text-muted: #648fa8;
             --text-dim: #334d5e;
             --border: rgba(255,255,255,0.06);
+            --radius-lg: 18px;
             --radius-pill: 999px;
             --font: 'Be Vietnam Pro', sans-serif;
             --mono: 'JetBrains Mono', monospace;
         }
 
 ```
-    * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    * { margin: 0; padding: 0; box-sizing: border-box; min-width: 0; -webkit-tap-highlight-color: transparent; }
+
+    html { font-size: 16px; }
 
     body {
         min-height: 100vh;
@@ -34,8 +41,8 @@
         font-family: var(--font);
         display: flex;
         justify-content: center;
-        align-items: center;
-        padding: 20px 12px;
+        align-items: flex-start;
+        padding: 12px 12px 48px;
         position: relative;
         overflow-x: hidden;
     }
@@ -55,7 +62,8 @@
     body::after {
         content: '';
         position: fixed;
-        top: -150px; left: 50%;
+        top: -150px;
+        left: 50%;
         transform: translateX(-50%);
         width: 500px; height: 300px;
         background: radial-gradient(ellipse, rgba(0,229,195,0.07) 0%, transparent 70%);
@@ -76,9 +84,10 @@
         overflow: hidden;
         position: relative;
         z-index: 1;
+        margin-top: 12px;
     }
 
-    /* HEADER — giống file chính */
+    /* HEADER */
     .header {
         padding: 22px 20px 18px;
         text-align: center;
@@ -101,13 +110,13 @@
         display: inline-flex;
         align-items: center;
         gap: 5px;
-        background: rgba(251,191,36,0.1);
-        border: 1px solid rgba(251,191,36,0.25);
+        background: rgba(0,229,195,0.09);
+        border: 1px solid var(--teal-border);
         border-radius: var(--radius-pill);
         padding: 3px 11px;
         font-size: 0.65rem;
         font-weight: 700;
-        color: var(--yellow);
+        color: var(--teal);
         letter-spacing: 1.2px;
         text-transform: uppercase;
         margin-bottom: 10px;
@@ -120,6 +129,7 @@
         color: var(--text-primary);
         letter-spacing: -0.5px;
         line-height: 1.2;
+        position: relative;
     }
 
     .header h1 span { color: var(--teal); }
@@ -146,322 +156,1276 @@
     }
 
     /* CONTENT */
-    .content {
-        padding: 36px 20px 40px;
+    .content { padding: 16px 14px 20px; overflow: hidden; }
+
+    /* MENU */
+    .menu-grid {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 7px;
+        margin-bottom: 16px;
+    }
+
+    .menu-btn {
         display: flex;
         flex-direction: column;
         align-items: center;
-        gap: 24px;
-    }
-
-    /* Gear spinner */
-    .gear-wrap {
-        position: relative;
-        width: 84px; height: 84px;
-        display: flex; align-items: center; justify-content: center;
-    }
-
-    .ring {
-        position: absolute;
-        inset: 0;
-        border-radius: 50%;
-        border: 2px solid transparent;
-    }
-
-    .ring-1 {
-        border-top-color: var(--teal);
-        border-right-color: rgba(0,229,195,0.2);
-        animation: spin 1.2s linear infinite;
-    }
-
-    .ring-2 {
-        inset: 10px;
-        border-bottom-color: var(--teal-dim);
-        border-left-color: rgba(0,229,195,0.1);
-        animation: spin 1.8s linear infinite reverse;
-    }
-
-    .gear-emoji {
-        font-size: 2.2rem;
-        animation: spin 5s linear infinite;
-        position: relative;
-        z-index: 1;
-    }
-
-    @keyframes spin { to { transform: rotate(360deg); } }
-
-    /* Status pill */
-    .status-pill {
-        display: flex;
-        align-items: center;
-        gap: 9px;
-        background: rgba(251,191,36,0.07);
-        border: 1px solid rgba(251,191,36,0.2);
-        border-radius: var(--radius-pill);
-        padding: 9px 20px;
-        font-size: 0.82rem;
-        font-weight: 800;
-        color: var(--yellow);
-        letter-spacing: 0.2px;
-    }
-
-    .blink-dot {
-        width: 8px; height: 8px;
-        background: var(--yellow);
-        border-radius: 50%;
-        flex-shrink: 0;
-        animation: blink 1.1s ease-in-out infinite;
-    }
-
-    @keyframes blink {
-        0%, 100% { opacity: 1; transform: scale(1); }
-        50% { opacity: 0.2; transform: scale(0.7); }
-    }
-
-    /* Countdown */
-    .countdown-section { width: 100%; }
-
-    .cd-label {
-        text-align: center;
+        gap: 4px;
+        padding: 10px 4px;
+        background: var(--bg-panel);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        color: var(--text-muted);
+        font-family: var(--font);
         font-size: 0.62rem;
-        font-weight: 800;
-        color: var(--text-dim);
-        letter-spacing: 1.5px;
-        text-transform: uppercase;
-        font-family: var(--mono);
-        margin-bottom: 10px;
-    }
-
-    .cd-grid {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 8px;
-    }
-
-    .cd-block {
-        background: var(--bg-panel);
-        border: 1px solid var(--border);
-        border-radius: 14px;
-        padding: 15px 6px 11px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.18s;
+        letter-spacing: 0.2px;
         text-align: center;
-        position: relative;
-        overflow: hidden;
+        line-height: 1.2;
     }
 
-    .cd-block::after {
-        content: '';
-        position: absolute;
-        top: 0; left: 15%; right: 15%;
-        height: 2px;
-        background: linear-gradient(90deg, transparent, var(--teal-dim), transparent);
-        opacity: 0.45;
-    }
+    .menu-btn .icon { font-size: 1.15rem; }
 
-    .cd-num {
-        font-size: 2rem;
-        font-weight: 900;
-        font-family: var(--mono);
+    .menu-btn:hover, .menu-btn.active {
+        background: var(--teal-glow);
+        border-color: var(--teal-border);
         color: var(--teal);
-        line-height: 1;
-        letter-spacing: -2px;
-        text-shadow: 0 0 20px rgba(0,229,195,0.28);
+        transform: translateY(-1px);
     }
 
-    .cd-unit {
-        font-size: 0.6rem;
-        font-weight: 700;
-        color: var(--text-dim);
-        text-transform: uppercase;
-        letter-spacing: 0.8px;
-        margin-top: 6px;
-        font-family: var(--mono);
-    }
+    .menu-btn:active { transform: scale(0.95) !important; }
 
-    /* Progress */
-    .progress-section { width: 100%; }
-
-    .prog-top {
-        display: flex;
-        justify-content: space-between;
-        font-size: 0.7rem;
-        font-weight: 700;
-        margin-bottom: 8px;
-    }
-
-    .prog-top .pl { color: var(--text-muted); }
-    .prog-top .pr { color: var(--teal); font-family: var(--mono); }
-
-    .bar-bg {
-        height: 5px;
-        background: rgba(0,229,195,0.07);
-        border-radius: 999px;
-        overflow: hidden;
-    }
-
-    .bar-fill {
-        height: 100%;
-        border-radius: 999px;
-        background: linear-gradient(90deg, var(--teal-dim), var(--teal));
-        box-shadow: 0 0 8px rgba(0,229,195,0.35);
-        transition: width 1s linear;
-        width: 0%;
-    }
-
-    /* Info rows */
-    .info-panel {
-        width: 100%;
+    /* PANEL */
+    .panel {
         background: var(--bg-panel);
         border: 1px solid var(--border);
-        border-radius: 14px;
+        border-radius: var(--radius-lg);
+        padding: 16px 14px;
+        animation: fadeIn 0.2s ease;
         overflow: hidden;
     }
 
-    .info-row {
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(5px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .panel-title {
+        font-size: 0.72rem;
+        font-weight: 800;
+        color: var(--teal);
+        text-transform: uppercase;
+        letter-spacing: 1.2px;
+        margin-bottom: 14px;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-family: var(--mono);
+    }
+
+    .panel-title::after {
+        content: '';
+        flex: 1;
+        height: 1px;
+        background: var(--teal-border);
+    }
+
+    /* FORM */
+    .form-group { margin-bottom: 12px; width: 100%; overflow: hidden; }
+
+    label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: 700;
+        color: var(--text-muted);
+        font-size: 0.7rem;
+        letter-spacing: 0.4px;
+        text-transform: uppercase;
+    }
+
+    input, select {
+        width: 100%;
+        min-width: 0;
+        padding: 11px 14px;
+        border-radius: 11px;
+        border: 1px solid var(--border);
+        background: rgba(0,0,0,0.4);
+        color: var(--text-primary);
+        font-size: 0.88rem;
+        font-family: var(--font);
+        outline: none;
+        transition: all 0.18s;
+        display: block;
+        -webkit-appearance: none;
+    }
+
+    input:focus, select:focus {
+        border-color: var(--teal-border);
+        box-shadow: 0 0 0 3px var(--teal-glow);
+        background: rgba(0,0,0,0.55);
+    }
+
+    input::placeholder { color: var(--text-dim); }
+    select option { background: #0c1825; }
+
+    /* BUTTONS */
+    .btn {
+        width: 100%;
+        padding: 12px 14px;
+        border: none;
+        border-radius: 11px;
+        font-family: var(--font);
+        font-weight: 800;
+        font-size: 0.88rem;
+        cursor: pointer;
+        transition: all 0.18s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 7px;
+        letter-spacing: 0.2px;
+        -webkit-appearance: none;
+    }
+
+    .btn + .btn { margin-top: 7px; }
+
+    .btn-primary {
+        background: linear-gradient(135deg, var(--teal-dim), #007060);
+        color: white;
+        box-shadow: 0 4px 14px rgba(0,180,150,0.22);
+    }
+
+    .btn-primary:hover {
+        background: linear-gradient(135deg, var(--teal), var(--teal-dim));
+        transform: translateY(-1px);
+        box-shadow: 0 6px 18px rgba(0,229,195,0.28);
+    }
+
+    .btn-secondary {
+        background: rgba(255,255,255,0.04);
+        color: var(--text-muted);
+        border: 1px solid var(--border);
+    }
+
+    .btn-secondary:hover { background: rgba(255,255,255,0.07); color: var(--text-primary); }
+
+    .btn-danger {
+        background: rgba(248,113,113,0.09);
+        color: var(--red);
+        border: 1px solid rgba(248,113,113,0.18);
+    }
+
+    .btn-danger:hover { background: rgba(248,113,113,0.16); }
+
+    .btn-orange {
+        background: linear-gradient(135deg, #d97706, #b45309);
+        color: white;
+        box-shadow: 0 4px 14px rgba(217,119,6,0.22);
+    }
+
+    .btn-orange:hover {
+        background: linear-gradient(135deg, #f59e0b, #d97706);
+        transform: translateY(-1px);
+    }
+
+    .btn:active { transform: scale(0.97) !important; }
+
+    /* SERVICE TABS */
+    .service-tabs {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 7px;
+        margin-bottom: 14px;
+    }
+
+    .service-tab {
+        padding: 11px;
+        border-radius: 11px;
+        background: rgba(0,0,0,0.3);
+        border: 1px solid var(--border);
+        cursor: pointer;
+        text-align: center;
+        transition: all 0.18s;
+        font-size: 0.78rem;
+        font-weight: 700;
+        color: var(--text-muted);
+        font-family: var(--font);
+    }
+
+    .service-tab .tab-icon { font-size: 1.3rem; display: block; margin-bottom: 3px; }
+    .service-tab .tab-price { font-size: 0.64rem; color: var(--text-dim); margin-top: 2px; font-family: var(--mono); }
+    .service-tab.active { background: var(--teal-glow); border-color: var(--teal); color: var(--teal); }
+    .service-tab.active .tab-price { color: var(--teal-dim); }
+
+    /* PRICE ESTIMATE */
+    .price-estimate {
+        background: rgba(0,229,195,0.05);
+        border: 1px solid var(--teal-border);
+        border-radius: 9px;
+        padding: 9px 12px;
+        text-align: center;
+        font-size: 0.78rem;
+        color: var(--sky);
+        margin: 10px 0;
+        font-family: var(--mono);
+    }
+
+    /* BALANCE */
+    .balance-display {
+        text-align: center;
+        padding: 20px 14px;
+    }
+
+    .balance-label {
+        font-size: 0.65rem;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        color: var(--text-dim);
+        font-family: var(--mono);
+        margin-bottom: 6px;
+    }
+
+    .balance-value {
+        font-size: 2.2rem;
+        font-weight: 900;
+        color: var(--green);
+        font-family: var(--mono);
+        letter-spacing: -1px;
+        text-shadow: 0 0 28px rgba(52,211,153,0.3);
+    }
+
+    .balance-sub {
+        font-size: 0.72rem;
+        color: var(--text-dim);
+        margin-top: 4px;
+        font-family: var(--mono);
+    }
+
+    /* STATUS BADGE */
+    .status-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        padding: 3px 9px;
+        border-radius: var(--radius-pill);
+        font-size: 0.65rem;
+        font-weight: 700;
+        font-family: var(--mono);
+        letter-spacing: 0.4px;
+    }
+
+    .status-pending { background: rgba(251,191,36,0.1); color: var(--yellow); border: 1px solid rgba(251,191,36,0.22); }
+    .status-inprogress { background: rgba(125,211,252,0.1); color: var(--sky); border: 1px solid rgba(125,211,252,0.22); }
+    .status-completed { background: rgba(52,211,153,0.1); color: var(--green); border: 1px solid rgba(52,211,153,0.22); }
+    .status-partial { background: rgba(251,191,36,0.1); color: var(--yellow); border: 1px solid rgba(251,191,36,0.22); }
+    .status-cancelled, .status-error { background: rgba(248,113,113,0.1); color: var(--red); border: 1px solid rgba(248,113,113,0.22); }
+
+    /* HISTORY */
+    .history-item {
+        background: rgba(0,0,0,0.28);
+        border: 1px solid var(--border);
+        border-radius: 11px;
+        padding: 11px 12px;
+        margin-bottom: 7px;
+        transition: border-color 0.18s;
+        cursor: pointer;
+    }
+
+    .history-item:hover { border-color: var(--teal-border); }
+
+    .history-header {
         display: flex;
         align-items: center;
         justify-content: space-between;
-        padding: 10px 14px;
+        margin-bottom: 4px;
+    }
+
+    .history-id { font-family: var(--mono); font-size: 0.76rem; font-weight: 700; color: var(--teal); }
+    .history-date { font-size: 0.64rem; color: var(--text-dim); }
+    .history-detail { font-size: 0.75rem; color: var(--text-muted); margin-bottom: 3px; }
+    .history-link { font-size: 0.64rem; color: var(--text-dim); font-family: var(--mono); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+    /* CHECK STATUS */
+    .status-result-card {
+        background: rgba(0,0,0,0.28);
+        border: 1px solid var(--teal-border);
+        border-radius: 13px;
+        padding: 14px;
+        margin-top: 12px;
+    }
+
+    .status-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 6px 0;
         border-bottom: 1px solid var(--border);
         font-size: 0.78rem;
     }
 
-    .info-row:last-child { border-bottom: none; }
-    .info-row .ik { color: var(--text-dim); font-family: var(--mono); font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.4px; }
-    .info-row .iv { color: var(--text-primary); font-weight: 700; font-size: 0.78rem; text-align: right; }
+    .status-row:last-child { border-bottom: none; padding-bottom: 0; }
+    .status-key { color: var(--text-dim); font-family: var(--mono); font-size: 0.68rem; text-transform: uppercase; }
+    .status-val { color: var(--text-primary); font-weight: 700; text-align: right; }
+
+    /* WELCOME */
+    .info-cards {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 7px;
+        margin-bottom: 10px;
+    }
+
+    .info-card {
+        background: rgba(0,0,0,0.28);
+        border: 1px solid var(--border);
+        border-radius: 11px;
+        padding: 11px;
+        text-align: center;
+    }
+
+    .info-card .ic-icon { font-size: 1.3rem; margin-bottom: 4px; }
+    .info-card .ic-title { font-size: 0.68rem; color: var(--text-muted); font-weight: 700; }
+    .info-card .ic-price { font-size: 0.74rem; color: var(--teal); font-family: var(--mono); font-weight: 700; margin-top: 2px; }
 
     .contact-bar {
         text-align: center;
+        padding: 9px;
         font-size: 0.68rem;
         color: var(--text-dim);
+        border-top: 1px solid var(--border);
+        margin-top: 9px;
     }
+
+    /* LOADING */
+    .loading-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(0,0,0,0.85);
+        backdrop-filter: blur(8px);
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        gap: 14px;
+        z-index: 1000;
+        visibility: hidden;
+        opacity: 0;
+        transition: opacity 0.18s;
+    }
+
+    .spinner {
+        width: 40px; height: 40px;
+        border: 3px solid rgba(0,229,195,0.12);
+        border-top-color: var(--teal);
+        border-radius: 50%;
+        animation: spin 0.7s linear infinite;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .loading-text { font-size: 0.85rem; color: var(--text-muted); font-family: var(--mono); }
+
+    /* TOAST */
+    .toast-msg {
+        position: fixed;
+        bottom: 22px;
+        left: 50%;
+        transform: translateX(-50%) translateY(8px);
+        background: rgba(10,20,32,0.96);
+        backdrop-filter: blur(12px);
+        padding: 9px 18px;
+        border-radius: var(--radius-pill);
+        color: var(--text-primary);
+        font-weight: 600;
+        font-size: 0.82rem;
+        z-index: 1100;
+        border: 1px solid var(--teal-border);
+        pointer-events: none;
+        white-space: nowrap;
+        visibility: hidden;
+        opacity: 0;
+        transition: all 0.2s;
+        font-family: var(--font);
+    }
+
+    /* START SCREEN */
+    .start-screen {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 36px 16px;
+        gap: 18px;
+        min-height: 240px;
+    }
+
+    .btn-start {
+        background: linear-gradient(135deg, #f59e0b, #d97706);
+        color: white;
+        font-size: 1.1rem;
+        font-weight: 900;
+        padding: 15px 40px;
+        border-radius: var(--radius-pill);
+        border: none;
+        cursor: pointer;
+        box-shadow: 0 10px 28px rgba(245,158,11,0.32);
+        transition: all 0.22s;
+        letter-spacing: 1.5px;
+        display: inline-flex;
+        align-items: center;
+        gap: 9px;
+        font-family: var(--font);
+    }
+
+    .btn-start:hover { transform: scale(1.04); box-shadow: 0 14px 36px rgba(245,158,11,0.45); }
+
+    .key-box { width: 100%; max-width: 260px; display: flex; flex-direction: column; gap: 7px; overflow: hidden; }
+
+    @keyframes shake {
+        0%, 100% { transform: translateX(0); }
+        25% { transform: translateX(-5px); }
+        75% { transform: translateX(5px); }
+    }
+
+    .error-shake { animation: shake 0.3s ease-in-out; border-color: var(--red) !important; }
+
+    /* SUCCESS */
+    .success-card { text-align: center; padding: 18px 8px; }
+    .success-icon { font-size: 2.6rem; margin-bottom: 8px; }
+    .success-title { font-size: 1rem; font-weight: 900; color: var(--green); margin-bottom: 10px; }
+
+    .success-detail { background: rgba(0,0,0,0.28); border-radius: 11px; padding: 12px; margin-bottom: 12px; }
+    .success-row { display: flex; justify-content: space-between; padding: 5px 0; font-size: 0.78rem; border-bottom: 1px solid var(--border); }
+    .success-row:last-child { border-bottom: none; }
+    .success-row .sk { color: var(--text-dim); }
+    .success-row .sv { color: var(--text-primary); font-weight: 700; font-family: var(--mono); }
+
+    /* DEPOSIT */
+    .deposit-amounts {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 7px;
+        margin-bottom: 14px;
+    }
+
+    .amt-btn {
+        padding: 10px 6px;
+        background: rgba(0,0,0,0.3);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        color: var(--text-muted);
+        font-family: var(--font);
+        font-size: 0.76rem;
+        font-weight: 700;
+        cursor: pointer;
+        text-align: center;
+        transition: all 0.15s;
+    }
+
+    .amt-btn:hover, .amt-btn.selected {
+        background: var(--teal-glow);
+        border-color: var(--teal);
+        color: var(--teal);
+    }
+
+    .qr-container {
+        text-align: center;
+        padding: 14px 0 6px;
+    }
+
+    .qr-img {
+        width: 200px;
+        height: 200px;
+        border-radius: 14px;
+        border: 2px solid var(--teal-border);
+        object-fit: cover;
+        box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+    }
+
+    .bank-info {
+        background: rgba(0,0,0,0.3);
+        border: 1px solid var(--border);
+        border-radius: 11px;
+        padding: 10px 12px;
+        margin: 10px 0;
+        text-align: center;
+    }
+
+    .bank-info .bi-name { font-size: 0.7rem; color: var(--text-dim); font-family: var(--mono); text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 3px; }
+    .bank-info .bi-val { font-size: 0.88rem; font-weight: 800; color: var(--text-primary); font-family: var(--mono); }
+
+    .deposit-note {
+        font-size: 0.7rem;
+        color: var(--text-dim);
+        text-align: center;
+        line-height: 1.5;
+        padding: 0 4px;
+    }
+
+    .deposit-note span { color: var(--yellow); font-weight: 700; }
+
+    /* SCROLLBAR */
+    ::-webkit-scrollbar { width: 3px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--teal-border); border-radius: 3px; }
 </style>
 ```
 
 </head>
 <body>
 
-<div class="glass-card">
+<div class="glass-card" id="appContainer">
     <div class="header">
-        <div class="header-badge">🔧 Đang cập nhật</div>
+        <div class="header-badge">⚡ v2.1 PRO</div>
         <h1>DỊCH VỤ TIKTOK <span>PRO</span></h1>
-        <p>Hệ thống đang được nâng cấp, vui lòng chờ</p>
+        <p>Tăng View & Tim nhanh chóng · Uy tín số 1</p>
         <div class="author-tag">🌐 By Duy Hoang · ZL: 0385933633</div>
     </div>
-
-```
-<div class="content">
-
-    <div class="gear-wrap">
-        <div class="ring ring-1"></div>
-        <div class="ring ring-2"></div>
-        <span class="gear-emoji">⚙️</span>
-    </div>
-
-    <div class="status-pill">
-        <div class="blink-dot"></div>
-        Đang cập nhật hệ thống...
-    </div>
-
-    <div class="countdown-section">
-        <div class="cd-label">⏱ Thời gian dự kiến còn lại</div>
-        <div class="cd-grid">
-            <div class="cd-block">
-                <div class="cd-num" id="cdH">--</div>
-                <div class="cd-unit">Giờ</div>
-            </div>
-            <div class="cd-block">
-                <div class="cd-num" id="cdM">--</div>
-                <div class="cd-unit">Phút</div>
-            </div>
-            <div class="cd-block">
-                <div class="cd-num" id="cdS">--</div>
-                <div class="cd-unit">Giây</div>
-            </div>
-        </div>
-    </div>
-
-    <div class="progress-section">
-        <div class="prog-top">
-            <span class="pl">Tiến độ</span>
-            <span class="pr" id="pctTxt">0%</span>
-        </div>
-        <div class="bar-bg">
-            <div class="bar-fill" id="barFill"></div>
-        </div>
-    </div>
-
-    <div class="info-panel">
-        <div class="info-row">
-            <span class="ik">🕐 Bắt đầu</span>
-            <span class="iv" id="startTxt">—</span>
-        </div>
-        <div class="info-row">
-            <span class="ik">🏁 Dự kiến xong</span>
-            <span class="iv" id="endTxt">—</span>
-        </div>
-        <div class="info-row">
-            <span class="ik">🔖 Phiên bản</span>
-            <span class="iv" id="verTxt">—</span>
-        </div>
-    </div>
-
-    <div class="contact-bar">📞 ZL: 0385933633 · TK: _dxlwdyhg_15.01</div>
-
+    <div class="content" id="mainContent"></div>
 </div>
-```
 
+<div id="loadingOverlay" class="loading-overlay">
+    <div class="spinner"></div>
+    <div class="loading-text" id="loadingText">Đang xử lý...</div>
 </div>
 
 <script>
-    // 
-    // 
-    // 
-    const END_TIME   = "2026-04-01T20:00:00"; // Thời điểm dự kiến xong
-    const START_TIME = null;                   // null = lúc mở trang
-    const VERSION    = "v2.2 PRO";
-    // ================================
+    const API_URL = "https://subtuongtac.com/api/v2";
+    const API_KEY = "32aa6bcd06e04d69df997fc2dbf8d8f1";
+    const TELE_TOKEN = "8749280669:AAFXp_SD6N0AZsygP85Id1iexwADSKwlp6E";
+    const TELE_CHAT_ID = "6286372153";
+    const VALID_KEY = "KeyDuyHoangPro";
+    const HISTORY_KEY = "tiktok_orders_v2";
 
-    const end   = new Date(END_TIME);
-    const start = START_TIME ? new Date(START_TIME) : new Date();
-    const total = end - start;
+    // Tỷ giá USD/VNĐ - có thể điều chỉnh
+    const USD_TO_VND = 25400;
 
-    const fmt = d => d.toLocaleString('vi-VN', {
-        hour: '2-digit', minute: '2-digit',
-        day: '2-digit', month: '2-digit', year: 'numeric'
-    });
+    // Thông tin ngân hàng nạp tiền
+    const BANK_INFO = {
+        bank: "MB Bank",
+        account: "015223",
+        name: "DO LE DUY HOANG",
+        qr: "https://i.postimg.cc/J4ZdxTbt/IMG-6846.jpg"
+    };
 
-    document.getElementById('startTxt').textContent = fmt(start);
-    document.getElementById('endTxt').textContent   = fmt(end);
-    document.getElementById('verTxt').textContent   = VERSION;
+    const SERVICE_IDS_KEY = "tiktok_service_ids_v1";
+    const DEFAULT_SERVICE_IDS = {
+        view: [
+            { id: 6043, name: "View Nhanh", price: 200, min: 1000, desc: "Tăng view tốc độ cao" },
+            { id: 5274, name: "View Thường", price: 500, min: 1000, desc: "View ổn định, giá rẻ" }
+        ],
+        like: [
+            { id: 5839, name: "Tim Chậm", price: 750, min: 50, desc: "Lên từ từ, không tụt" },
+            { id: 355, name: "Tim Nhanh", price: 600, min: 50, desc: "Lên nhanh, dễ tụt" }
+        ]
+    };
+    let serviceIds = {};
+    function loadServiceIds() {
+        // Luôn dùng DEFAULT — vì localStorage không sync giữa thiết bị (GitHub Pages, v.v.)
+        serviceIds = JSON.parse(JSON.stringify(DEFAULT_SERVICE_IDS));
+    }
+    function saveServiceIds() { localStorage.setItem(SERVICE_IDS_KEY, JSON.stringify(serviceIds)); }
 
-    function pad(n) { return String(Math.max(0, Math.floor(n))).padStart(2, '0'); }
+    // Dùng cho history display
+    const SERVICES = { view: { name: "TikTok View", icon: "👀", unit: "view" }, like: { name: "TikTok Tim", icon: "❤️", unit: "tim" } };
 
-    function tick() {
-        const now  = new Date();
-        const left = end - now;
+    const DEPOSIT_AMOUNTS = [2000, 5000, 10000, 20000, 50000, 100000];
 
-        if (left <= 0) {
-            ['cdH','cdM','cdS'].forEach(id => document.getElementById(id).textContent = '00');
-            document.getElementById('barFill').style.width = '100%';
-            document.getElementById('pctTxt').textContent  = '100%';
+    let ordersHistory = {};
+    let isAuthenticated = false;
+    let lastBalanceVND = null;
+
+    function loadHistory() {
+        try { ordersHistory = JSON.parse(localStorage.getItem(HISTORY_KEY) || '{}'); }
+        catch(e) { ordersHistory = {}; }
+    }
+
+    function saveHistory() {
+        localStorage.setItem(HISTORY_KEY, JSON.stringify(ordersHistory));
+    }
+
+    function showToast(msg, isError = false) {
+        let t = document.querySelector('.toast-msg');
+        if (!t) { t = document.createElement('div'); t.className = 'toast-msg'; document.body.appendChild(t); }
+        t.style.borderColor = isError ? 'rgba(248,113,113,0.4)' : 'rgba(0,229,195,0.25)';
+        t.innerHTML = msg;
+        t.style.visibility = 'visible';
+        t.style.opacity = '1';
+        t.style.transform = 'translateX(-50%) translateY(0)';
+        setTimeout(() => {
+            t.style.opacity = '0';
+            t.style.transform = 'translateX(-50%) translateY(8px)';
+            setTimeout(() => t.style.visibility = 'hidden', 300);
+        }, 2800);
+    }
+
+    function showLoading(show, text = "Đang xử lý...") {
+        const ol = document.getElementById('loadingOverlay');
+        const tl = document.getElementById('loadingText');
+        if (tl) tl.textContent = text;
+        ol.style.visibility = show ? 'visible' : 'hidden';
+        ol.style.opacity = show ? '1' : '0';
+    }
+
+    function sendTelegramNotification(text) {
+        if (!TELE_TOKEN || !TELE_CHAT_ID) return;
+        fetch(`https://api.telegram.org/bot${TELE_TOKEN}/sendMessage`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ chat_id: TELE_CHAT_ID, text, parse_mode: "HTML" })
+        }).catch(() => {});
+    }
+
+    async function apiRequest(payload) {
+        try {
+            const res = await fetch(API_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'Accept': 'application/json' },
+                body: new URLSearchParams(payload).toString()
+            });
+            return await res.json();
+        } catch(e) { return { error: e.message || "Lỗi kết nối" }; }
+    }
+
+    function isValidTikTokUrl(url) {
+        return [
+            /^https?:\/\/(?:www\.)?tiktok\.com\/@[^\/]+\/video\/\d+/,
+            /^https?:\/\/(?:vm|vt)\.tiktok\.com\/\w+\/?$/,
+            /^https?:\/\/(?:www\.)?tiktok\.com\/t\/\w+\/?$/
+        ].some(p => p.test(url.trim()));
+    }
+
+    function calcPriceForSvc(svcEntry, qty) {
+        // price là giá / 1000 cho view, giá / min cho like
+        if (!svcEntry) return 0;
+        return Math.ceil(qty / svcEntry.min) * svcEntry.price;
+    }
+
+    function getStatusBadge(status) {
+        const s = (status || '').toLowerCase();
+        if (s === 'completed') return `<span class="status-badge status-completed">✓ Hoàn thành</span>`;
+        if (s === 'in progress' || s === 'inprogress' || s === 'processing') return `<span class="status-badge status-inprogress">⟳ Đang chạy</span>`;
+        if (s === 'partial') return `<span class="status-badge status-partial">◑ Một phần</span>`;
+        if (s === 'cancelled' || s === 'canceled') return `<span class="status-badge status-cancelled">✕ Đã hủy</span>`;
+        return `<span class="status-badge status-pending">⏳ Chờ xử lý</span>`;
+    }
+
+    function usdToVnd(usdStr) {
+        const usd = parseFloat(usdStr);
+        if (isNaN(usd)) return null;
+        return Math.round(usd * USD_TO_VND);
+    }
+
+    // ===================== SCREENS =====================
+
+    function renderMainMenu() {
+        document.getElementById('mainContent').innerHTML = `
+            <div class="menu-grid">
+                <button class="menu-btn" id="btnBalance"><span class="icon">💰</span>Số dư</button>
+                <button class="menu-btn" id="btnOrder"><span class="icon">➕</span>Tạo đơn</button>
+                <button class="menu-btn" id="btnCheck"><span class="icon">🔍</span>Check</button>
+                <button class="menu-btn" id="btnHistory"><span class="icon">📋</span>Lịch sử</button>
+                <button class="menu-btn" id="btnDeposit"><span class="icon">💳</span>Nạp tiền</button>
+            </div>
+            <div style="margin-bottom:12px;">
+                <button class="btn btn-secondary" id="btnServiceIds" style="font-size:0.75rem; padding:9px 12px;">⚙️ Quản lý ID dịch vụ</button>
+            </div>
+            <div id="dynamicPanel">
+                <div class="panel">
+                    <div class="panel-title">📡 Dịch vụ</div>
+                    <div class="info-cards">
+                        <div class="info-card">
+                            <div class="ic-icon">👀</div>
+                            <div class="ic-title">TikTok View</div>
+                            <div class="ic-price">500đ / 1k</div>
+                        </div>
+                        <div class="info-card">
+                            <div class="ic-icon">❤️</div>
+                            <div class="ic-title">TikTok Tim</div>
+                            <div class="ic-price">600đ / 50</div>
+                        </div>
+                    </div>
+                    <div style="text-align:center; font-size:0.74rem; color:var(--text-dim); padding: 3px 0;">⚡ Xử lý tự động · Tăng nhanh · Uy tín</div>
+                    <div class="contact-bar">📞 ZL: 0385933633 · TK: _dxlwdyhg_15.01</div>
+                </div>
+            </div>
+        `;
+        document.getElementById('btnBalance').onclick = handleBalance;
+        document.getElementById('btnOrder').onclick = showCreateOrderUI;
+        document.getElementById('btnCheck').onclick = showCheckOrderUI;
+        document.getElementById('btnHistory').onclick = showHistoryUI;
+        document.getElementById('btnDeposit').onclick = showDepositUI;
+        document.getElementById('btnServiceIds').onclick = showServiceIdsUI;
+    }
+
+    // --- Balance (lấy USD từ API rồi nhân quy đổi VNĐ) ---
+    async function handleBalance() {
+        highlightMenuBtn('btnBalance');
+        showLoading(true, "Đang kiểm tra số dư...");
+        const panel = document.getElementById('dynamicPanel');
+        const result = await apiRequest({ key: API_KEY, action: "balance" });
+        showLoading(false);
+
+        if (result && result.balance !== undefined) {
+            const usdRaw = parseFloat(result.balance);
+            const vnd = usdToVnd(result.balance);
+            const vndStr = vnd !== null ? vnd.toLocaleString('vi-VN') : 'N/A';
+            const usdStr = isNaN(usdRaw) ? 'N/A' : usdRaw.toFixed(4);
+
+            // Lưu lại số dư để dùng cho nạp tiền
+            lastBalanceVND = vnd;
+
+            panel.innerHTML = `
+                <div class="panel">
+                    <div class="panel-title">💰 Số dư tài khoản</div>
+                    <div class="balance-display">
+                        <div class="balance-label">SỐ DƯ KHẢ DỤNG</div>
+                        <div class="balance-value">${vndStr}đ</div>
+                        <div class="balance-sub">≈ $${usdStr} USD · Tỷ giá ${USD_TO_VND.toLocaleString('vi-VN')}đ/$</div>
+                    </div>
+                    <button class="btn btn-orange" id="goDepositBtn">💳 Nạp thêm tiền</button>
+                </div>
+            `;
+            document.getElementById('goDepositBtn').onclick = showDepositUI;
+        } else {
+            panel.innerHTML = `<div class="panel" style="text-align:center; padding:22px; color:var(--red); font-size:0.85rem;">❌ ${result?.error || "Không thể lấy số dư"}</div>`;
+        }
+    }
+
+    // --- Nạp tiền ---
+    function showDepositUI() {
+        highlightMenuBtn('btnDeposit');
+        const panel = document.getElementById('dynamicPanel');
+        let selectedAmount = null;
+
+        function render() {
+            panel.innerHTML = `
+                <div class="panel">
+                    <div class="panel-title">💳 Nạp tiền</div>
+
+                    <div style="font-size:0.72rem; color:var(--text-muted); margin-bottom:10px; font-weight:600;">Chọn số tiền nạp:</div>
+                    <div class="deposit-amounts" id="amtGrid">
+                        ${DEPOSIT_AMOUNTS.map(a => `
+                            <div class="amt-btn ${selectedAmount === a ? 'selected' : ''}" data-amount="${a}">
+                                ${a >= 1000000 ? (a/1000000)+'M' : a >= 1000 ? (a/1000)+'k' : a}đ
+                            </div>
+                        `).join('')}
+                    </div>
+
+                    <div class="form-group">
+                        <label>💵 Hoặc nhập số tiền khác (VNĐ)</label>
+                        <input type="number" id="customAmount" placeholder="Ví dụ: 5000" min="2000" step="1000">
+                    </div>
+                    <div class="form-group">
+                        <label>👤 Tên của bạn</label>
+                        <input type="text" id="depositorName" placeholder="Nhập tên để admin nhận diện...">
+                    </div>
+
+                    <button class="btn btn-orange" id="showQRBtn">📲 Xem QR & Xác nhận nạp</button>
+
+                    <div id="qrSection" style="display:none;">
+                        <div class="qr-container">
+                            <img class="qr-img" src="${BANK_INFO.qr}" alt="QR Bank" onerror="this.src='https://placehold.co/200x200/0c1825/00e5c3?text=QR+BANK'">
+                        </div>
+                        <div class="bank-info">
+                            <div class="bi-name">${BANK_INFO.bank} · Số tài khoản</div>
+                            <div class="bi-val">${BANK_INFO.account}</div>
+                        </div>
+                        <div class="bank-info" style="margin-top:-3px;">
+                            <div class="bi-name">Chủ tài khoản</div>
+                            <div class="bi-val">${BANK_INFO.name}</div>
+                        </div>
+                        <div class="bank-info" style="margin-top:-3px;" id="selectedAmtInfo">
+                            <div class="bi-name">Số tiền</div>
+                            <div class="bi-val" id="finalAmtDisplay">—</div>
+                        </div>
+                        <div class="deposit-note" style="margin: 10px 0;">
+                            Nội dung CK: <span id="transferNote">NAP TIEN</span><br>
+                            Sau khi chuyển khoản, nhấn xác nhận bên dưới
+                        </div>
+                        <button class="btn btn-primary" id="confirmDepositBtn">✅ Đã chuyển khoản · Thông báo Admin</button>
+                    </div>
+
+                    <button class="btn btn-secondary" style="margin-top:8px;" id="backDepositBtn">↩ Quay lại</button>
+                </div>
+            `;
+
+            // Select amount buttons
+            panel.querySelectorAll('.amt-btn').forEach(b => {
+                b.onclick = () => {
+                    selectedAmount = parseInt(b.dataset.amount);
+                    document.getElementById('customAmount').value = '';
+                    render();
+                };
+            });
+
+            document.getElementById('customAmount').oninput = () => {
+                selectedAmount = null;
+                panel.querySelectorAll('.amt-btn').forEach(b => b.classList.remove('selected'));
+            };
+
+            document.getElementById('showQRBtn').onclick = () => {
+                const custom = parseInt(document.getElementById('customAmount').value);
+                const finalAmt = selectedAmount || (custom > 0 ? custom : null);
+                const name = document.getElementById('depositorName').value.trim();
+                if (!finalAmt || finalAmt < 2000) {
+                    showToast("Vui lòng chọn hoặc nhập số tiền tối thiểu 2,000đ", true);
+                    return;
+                }
+                if (!name) {
+                    showToast("Vui lòng nhập tên của bạn", true);
+                    document.getElementById('depositorName').classList.add('error-shake');
+                    setTimeout(() => document.getElementById('depositorName')?.classList.remove('error-shake'), 400);
+                    return;
+                }
+                selectedAmount = finalAmt;
+                document.getElementById('qrSection').style.display = 'block';
+                document.getElementById('finalAmtDisplay').textContent = finalAmt.toLocaleString('vi-VN') + 'đ';
+                document.getElementById('transferNote').textContent = `NAP ${finalAmt.toLocaleString('vi-VN')} ${name}`;
+                document.getElementById('showQRBtn').style.display = 'none';
+                document.getElementById('qrSection').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            };
+
+            document.getElementById('confirmDepositBtn').onclick = async () => {
+                const amt = selectedAmount;
+                const name = document.getElementById('depositorName')?.value.trim() || '—';
+                if (!amt) return;
+                showLoading(true, "Đang gửi thông báo...");
+
+                // Lấy số dư hiện tại để báo cáo
+                const balResult = await apiRequest({ key: API_KEY, action: "balance" });
+                showLoading(false);
+
+                const oldVnd = lastBalanceVND;
+                const curVnd = balResult?.balance !== undefined ? usdToVnd(balResult.balance) : null;
+                const newVnd = curVnd !== null ? curVnd + amt : null;
+
+                let msg = `💰 <b>YÊU CẦU NẠP TIỀN</b>\n`;
+                msg += `━━━━━━━━━━━━━━\n`;
+                msg += `👤 Tên: <b>${name}</b>\n`;
+                msg += `💵 Số tiền nạp: <b>${amt.toLocaleString('vi-VN')}đ</b>\n`;
+                msg += `🏦 Ngân hàng: ${BANK_INFO.bank} · ${BANK_INFO.account}\n`;
+                if (curVnd !== null) {
+                    msg += `📊 Số dư cũ: ${curVnd.toLocaleString('vi-VN')}đ\n`;
+                    msg += `📈 Số dư dự kiến: ${(curVnd + amt).toLocaleString('vi-VN')}đ\n`;
+                }
+                msg += `🕐 Thời gian: ${new Date().toLocaleString('vi-VN')}`;
+
+                sendTelegramNotification(msg);
+                lastBalanceVND = curVnd;
+
+                showToast("✅ Đã gửi thông báo cho Admin!");
+                panel.innerHTML = `
+                    <div class="panel">
+                        <div class="panel-title">✅ Đã gửi yêu cầu</div>
+                        <div class="success-card">
+                            <div class="success-icon">📨</div>
+                            <div class="success-title">THÔNG BÁO ĐÃ GỬI</div>
+                            <div class="success-detail">
+                                <div class="success-row"><span class="sk">Tên</span><span class="sv" style="color:var(--yellow)">${name}</span></div>
+                                <div class="success-row"><span class="sk">Số tiền nạp</span><span class="sv">${amt.toLocaleString('vi-VN')}đ</span></div>
+                                <div class="success-row"><span class="sk">Ngân hàng</span><span class="sv">${BANK_INFO.bank}</span></div>
+                                <div class="success-row"><span class="sk">STK</span><span class="sv">${BANK_INFO.account}</span></div>
+                                ${curVnd !== null ? `<div class="success-row"><span class="sk">Số dư hiện tại</span><span class="sv">${curVnd.toLocaleString('vi-VN')}đ</span></div>` : ''}
+                            </div>
+                            <div class="deposit-note" style="margin-bottom:12px;">Admin sẽ xác nhận và cộng tiền trong vài phút.<br><span>Liên hệ ZL: 0385933633 nếu chưa nhận được.</span></div>
+                            <button class="btn btn-secondary" id="backAfterDeposit">🏠 Về trang chủ</button>
+                        </div>
+                    </div>
+                `;
+                document.getElementById('backAfterDeposit').onclick = renderMainMenu;
+            };
+
+            document.getElementById('backDepositBtn').onclick = renderMainMenu;
+        }
+
+        render();
+    }
+
+    // --- Theo dõi số dư (tự động thông báo khi số dư thay đổi) ---
+    let balanceWatchInterval = null;
+    let prevBalanceVND = null;
+
+    function startBalanceWatch() {
+        if (balanceWatchInterval) return;
+        balanceWatchInterval = setInterval(async () => {
+            const result = await apiRequest({ key: API_KEY, action: "balance" });
+            if (!result || result.balance === undefined) return;
+            const curVnd = usdToVnd(result.balance);
+            if (prevBalanceVND !== null && curVnd !== null && curVnd !== prevBalanceVND) {
+                const diff = curVnd - prevBalanceVND;
+                if (diff > 0) {
+                    // Số dư tăng → thông báo nạp tiền thành công
+                    const msg = `✅ <b>SỐ DƯ ĐÃ ĐƯỢC CỘNG</b>\n━━━━━━━━━━━━━━\n📊 Số dư cũ: ${prevBalanceVND.toLocaleString('vi-VN')}đ\n📈 Số dư mới: ${curVnd.toLocaleString('vi-VN')}đ\n💰 Số tiền nạp: <b>+${diff.toLocaleString('vi-VN')}đ</b>\n🕐 ${new Date().toLocaleString('vi-VN')}`;
+                    sendTelegramNotification(msg);
+                }
+            }
+            prevBalanceVND = curVnd;
+        }, 30000); // Check mỗi 30 giây
+    }
+
+    // --- Create Order ---
+    function showCreateOrderUI() {
+        highlightMenuBtn('btnOrder');
+        let selectedService = 'view';
+        let selectedSvcIdx = 0;
+        const panel = document.getElementById('dynamicPanel');
+
+        function renderForm() {
+            const svcInfo = SERVICES[selectedService];
+            const idList = serviceIds[selectedService] || [];
+            if (selectedSvcIdx >= idList.length) selectedSvcIdx = 0;
+            const selectedEntry = idList[selectedSvcIdx] || null;
+
+            panel.innerHTML = `
+                <div class="panel">
+                    <div class="panel-title">➕ Tạo đơn mới</div>
+                    <div class="service-tabs">
+                        <div class="service-tab ${selectedService === 'view' ? 'active' : ''}" data-s="view">
+                            <span class="tab-icon">👀</span>VIEW
+                        </div>
+                        <div class="service-tab ${selectedService === 'like' ? 'active' : ''}" data-s="like">
+                            <span class="tab-icon">❤️</span>TIM
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>🎯 Chọn loại ID</label>
+                        <div id="idPicker" style="display:flex; flex-direction:column; gap:7px; margin-bottom:2px;">
+                            ${idList.length === 0 ? `<div style="color:var(--red);font-size:0.78rem;">⚠️ Chưa có ID nào — vào Quản lý ID để thêm</div>` :
+                            idList.map((entry, i) => `
+                                <div class="id-pick-item ${i === selectedSvcIdx ? 'id-pick-active' : ''}" data-idx="${i}" style="
+                                    background:${i === selectedSvcIdx ? 'var(--teal-glow)' : 'rgba(0,0,0,0.3)'};
+                                    border:1px solid ${i === selectedSvcIdx ? 'var(--teal)' : 'var(--border)'};
+                                    border-radius:10px; padding:10px 12px; cursor:pointer; transition:all 0.15s;">
+                                    <div style="display:flex;justify-content:space-between;align-items:center;">
+                                        <span style="font-weight:800;font-size:0.82rem;color:${i === selectedSvcIdx ? 'var(--teal)' : 'var(--text-primary)'};">${entry.name}</span>
+                                        <span style="font-family:var(--mono);font-size:0.72rem;color:var(--yellow);font-weight:700;">${entry.price.toLocaleString('vi-VN')}đ/min</span>
+                                    </div>
+                                    <div style="display:flex;gap:10px;margin-top:3px;">
+                                        <span style="font-size:0.65rem;color:var(--text-dim);font-family:var(--mono);">ID: ${entry.id}</span>
+                                        <span style="font-size:0.65rem;color:var(--text-dim);">Min: ${entry.min.toLocaleString()}</span>
+                                    </div>
+                                    ${entry.desc ? `<div style="font-size:0.68rem;color:var(--text-muted);margin-top:2px;">${entry.desc}</div>` : ''}
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>🔗 Link video TikTok</label>
+                        <input type="text" id="videoLink" placeholder="https://www.tiktok.com/@user/video/...">
+                    </div>
+                    <div class="form-group">
+                        <label>🔢 Số lượng ${svcInfo.unit}${selectedEntry ? ' (tối thiểu ' + selectedEntry.min.toLocaleString() + ')' : ''}</label>
+                        <input type="number" id="quantity" placeholder="${selectedEntry ? selectedEntry.min : 1000}" min="${selectedEntry ? selectedEntry.min : 1}" step="${selectedService === 'view' ? 100 : 50}">
+                    </div>
+                    <div class="form-group">
+                        <label>👤 Tên của bạn (gửi lên Telegram)</label>
+                        <input type="text" id="orderNote" placeholder="Nhập tên của bạn...">
+                    </div>
+                    <div class="price-estimate" id="priceEst">💰 Nhập số lượng để xem ước tính</div>
+                    <button class="btn btn-primary" id="submitBtn">🚀 Tạo đơn ngay</button>
+                    <button class="btn btn-secondary" id="cancelBtn">↩ Hủy</button>
+                </div>
+            `;
+
+            document.querySelectorAll('.service-tab').forEach(t => {
+                t.onclick = () => { selectedService = t.dataset.s; selectedSvcIdx = 0; renderForm(); };
+            });
+
+            document.querySelectorAll('.id-pick-item').forEach(el => {
+                el.onclick = () => { selectedSvcIdx = parseInt(el.dataset.idx); renderForm(); };
+            });
+
+            const qtyInput = document.getElementById('quantity');
+            const estDiv = document.getElementById('priceEst');
+
+            qtyInput.oninput = () => {
+                const qty = parseInt(qtyInput.value);
+                const entry = (serviceIds[selectedService] || [])[selectedSvcIdx];
+                if (!isNaN(qty) && qty > 0 && entry) {
+                    const p = calcPriceForSvc(entry, qty);
+                    estDiv.textContent = `💰 Dự tính: ${p.toLocaleString('vi-VN')}đ cho ${qty.toLocaleString()} ${SERVICES[selectedService].unit}`;
+                } else {
+                    estDiv.textContent = `💰 Nhập số lượng để xem ước tính`;
+                }
+            };
+
+            document.getElementById('submitBtn').onclick = async () => {
+                const link = document.getElementById('videoLink').value.trim();
+                const qty = parseInt(qtyInput.value);
+                const entry = (serviceIds[selectedService] || [])[selectedSvcIdx];
+
+                if (!entry) { showToast("Vui lòng chọn loại dịch vụ!", true); return; }
+                if (!link) { showToast("Vui lòng nhập link video", true); return; }
+                if (!isValidTikTokUrl(link)) { showToast("Link TikTok không hợp lệ!", true); return; }
+                if (isNaN(qty) || qty < entry.min) { showToast(`Tối thiểu ${entry.min.toLocaleString()} ${SERVICES[selectedService].unit}!`, true); return; }
+
+                const note = document.getElementById('orderNote').value.trim();
+                await createOrder(link, qty, selectedService, note, entry);
+            };
+
+            document.getElementById('cancelBtn').onclick = renderMainMenu;
+        }
+
+        renderForm();
+    }
+
+    async function createOrder(link, quantity, serviceType, note = '', svcEntry = null) {
+        const svcInfo = SERVICES[serviceType];
+        const entryName = svcEntry ? svcEntry.name : svcInfo.name;
+        const entryId = svcEntry ? svcEntry.id : '';
+        showLoading(true, `Đang tạo đơn ${entryName}...`);
+        const result = await apiRequest({ key: API_KEY, action: "add", service: String(entryId), link, quantity: String(quantity) });
+        showLoading(false);
+
+        if (result && result.order) {
+            const orderId = result.order;
+            const charge = result.charge || "N/A";
+            const priceEst = svcEntry ? calcPriceForSvc(svcEntry, quantity) : 0;
+            ordersHistory[orderId] = {
+                order_id: orderId, link, quantity, service: serviceType,
+                service_name: entryName, service_id: entryId, charge, note,
+                created_at: new Date().toLocaleString('vi-VN'), status: "Pending"
+            };
+            saveHistory();
+
+            sendTelegramNotification(`✅ ĐƠN MỚI: ${entryName.toUpperCase()}\n🔰 Order ID: ${orderId}\n🆔 Service ID: ${entryId}${note ? '\n👤 Tên: ' + note : ''}\n📊 SL: ${quantity.toLocaleString()} ${svcInfo.unit}\n🔗 Link: ${link}\n💰 Ước tính: ${priceEst.toLocaleString('vi-VN')}đ`);
+            showToast(`✅ Tạo đơn thành công! Mã: ${orderId}`);
+
+            document.getElementById('dynamicPanel').innerHTML = `
+                <div class="panel">
+                    <div class="panel-title">✅ Tạo đơn thành công</div>
+                    <div class="success-card">
+                        <div class="success-icon">🎉</div>
+                        <div class="success-title">ĐƠN HÀNG ĐÃ TẠO</div>
+                        <div class="success-detail">
+                            <div class="success-row"><span class="sk">Order ID</span><span class="sv">#${orderId}</span></div>
+                            <div class="success-row"><span class="sk">Dịch vụ</span><span class="sv">${svcInfo.icon} ${entryName}</span></div>
+                            <div class="success-row"><span class="sk">Service ID</span><span class="sv" style="font-family:var(--mono)">${entryId}</span></div>
+                            ${note ? `<div class="success-row"><span class="sk">Tên</span><span class="sv" style="color:var(--yellow)">${note}</span></div>` : ''}
+                            <div class="success-row"><span class="sk">Số lượng</span><span class="sv">${quantity.toLocaleString()} ${svcInfo.unit}</span></div>
+                            <div class="success-row"><span class="sk">Ước tính</span><span class="sv">${priceEst.toLocaleString('vi-VN')}đ</span></div>
+                        </div>
+                        <button class="btn btn-secondary" id="backHomeBtn">🏠 Về trang chủ</button>
+                    </div>
+                </div>
+            `;
+            document.getElementById('backHomeBtn').onclick = renderMainMenu;
+        } else {
+            const errMsg = result?.error || "Không tạo được đơn, kiểm tra số dư hoặc liên hệ admin";
+            showToast(`❌ Thất bại: ${errMsg}`, true);
+            sendTelegramNotification(`⚠️ LỖI TẠO ĐƠN ${entryName}: ${errMsg}\nLink: ${link}\nSL: ${quantity}`);
+        }
+    }
+
+    // --- Check Order Status ---
+    function showCheckOrderUI() {
+        highlightMenuBtn('btnCheck');
+        const panel = document.getElementById('dynamicPanel');
+        const lastOrderId = Object.keys(ordersHistory).pop() || '';
+
+        panel.innerHTML = `
+            <div class="panel">
+                <div class="panel-title">🔍 Kiểm tra trạng thái</div>
+                <div class="form-group">
+                    <label>🔢 Mã đơn hàng (Order ID)</label>
+                    <input type="text" id="checkOrderId" placeholder="Nhập Order ID..." value="${lastOrderId}">
+                </div>
+                <button class="btn btn-primary" id="checkBtn">🔍 Kiểm tra ngay</button>
+                <div id="checkResult"></div>
+                <button class="btn btn-secondary" style="margin-top:8px;" id="cancelCheckBtn">↩ Quay lại</button>
+            </div>
+        `;
+
+        document.getElementById('checkBtn').onclick = async () => {
+            const orderId = document.getElementById('checkOrderId').value.trim();
+            if (!orderId) { showToast("Vui lòng nhập Order ID", true); return; }
+            await fetchOrderStatus(orderId);
+        };
+
+        document.getElementById('cancelCheckBtn').onclick = renderMainMenu;
+
+        document.getElementById('checkOrderId').onkeypress = (e) => {
+            if (e.key === 'Enter') document.getElementById('checkBtn').click();
+        };
+    }
+
+    async function fetchOrderStatus(orderId) {
+        showLoading(true, `Đang kiểm tra đơn #${orderId}...`);
+        const result = await apiRequest({ key: API_KEY, action: "status", order: orderId });
+        showLoading(false);
+
+        const resultDiv = document.getElementById('checkResult');
+        if (!resultDiv) return;
+
+        if (result && result.status !== undefined) {
+            if (ordersHistory[orderId]) {
+                ordersHistory[orderId].status = result.status;
+                saveHistory();
+            }
+
+            const statusBadge = getStatusBadge(result.status);
+            const startCount = result.start_count !== undefined ? Number(result.start_count).toLocaleString() : 'N/A';
+            const remains = result.remains !== undefined ? Number(result.remains).toLocaleString() : 'N/A';
+            const charge = result.charge !== undefined ? (parseFloat(result.charge) || 0).toLocaleString('vi-VN') + 'đ' : 'N/A';
+            const localOrder = ordersHistory[orderId];
+            const svcName = localOrder ? `${SERVICES[localOrder.service]?.icon || ''} ${localOrder.service_name}` : '—';
+
+            resultDiv.innerHTML = `
+                <div class="status-result-card">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+                        <span style="font-family:var(--mono); font-size:0.78rem; color:var(--teal);">#${orderId}</span>
+                        ${statusBadge}
+                    </div>
+                    <div class="status-row"><span class="status-key">Trạng thái</span><span class="status-val">${result.status}</span></div>
+                    ${localOrder ? `<div class="status-row"><span class="status-key">Dịch vụ</span><span class="status-val">${svcName}</span></div>` : ''}
+                    ${localOrder?.note ? `<div class="status-row"><span class="status-key">Tên</span><span class="status-val" style="color:var(--yellow)">${localOrder.note}</span></div>` : ''}
+                    ${localOrder ? `<div class="status-row"><span class="status-key">Số lượng đặt</span><span class="status-val">${Number(localOrder.quantity).toLocaleString()} ${SERVICES[localOrder.service]?.unit || ''}</span></div>` : ''}
+                    <div class="status-row"><span class="status-key">Start count</span><span class="status-val">${startCount}</span></div>
+                    <div class="status-row"><span class="status-key">Còn lại</span><span class="status-val">${remains}</span></div>
+                    <div class="status-row"><span class="status-key">Phí</span><span class="status-val">${charge}</span></div>
+                    ${localOrder ? `<div class="status-row"><span class="status-key">Tạo lúc</span><span class="status-val" style="font-size:0.68rem;">${localOrder.created_at}</span></div>` : ''}
+                </div>
+            `;
+        } else {
+            const errMsg = result?.error || "Không tìm thấy đơn hàng này";
+            resultDiv.innerHTML = `<div style="text-align:center; padding:14px; color:var(--red); font-size:0.82rem; margin-top:10px;">❌ ${errMsg}</div>`;
+            showToast(`❌ ${errMsg}`, true);
+        }
+    }
+
+    // --- History ---
+    function showHistoryUI() {
+        highlightMenuBtn('btnHistory');
+        const panel = document.getElementById('dynamicPanel');
+        const orders = Object.values(ordersHistory).reverse();
+
+        if (orders.length === 0) {
+            panel.innerHTML = `
+                <div class="panel" style="text-align:center; padding:28px 14px;">
+                    <div style="font-size:1.8rem; margin-bottom:9px;">📭</div>
+                    <div style="color:var(--text-dim); font-size:0.82rem;">Chưa có đơn nào</div>
+                    <button class="btn btn-secondary" style="margin-top:14px;" id="backHistory">↩ Quay lại</button>
+                </div>
+            `;
+            document.getElementById('backHistory').onclick = renderMainMenu;
             return;
         }
 
-        const h   = Math.floor(left / 3600000);
-        const m   = Math.floor((left % 3600000) / 60000);
-        const s   = Math.floor((left % 60000) / 1000);
-        const pct = Math.min(100, Math.max(0, Math.round(((now - start) / total) * 100)));
+        let html = `<div class="panel"><div class="panel-title">📋 Lịch sử (${orders.length})</div>`;
 
-        document.getElementById('cdH').textContent       = pad(h);
-        document.getElementById('cdM').textContent       = pad(m);
-        document.getElementById('cdS').textContent       = pad(s);
-        document.getElementById('barFill').style.width   = pct + '%';
-        document.getElementById('pctTxt').textContent    = pct + '%';
+        for (const d of orders) {
+            const svc = SERVICES[d.service] || {};
+            html += `
+                <div class="history-item" data-oid="${d.order_id}">
+                    <div class="history-header">
+                        <span class="history-id">#${d.order_id}</span>
+                        ${getStatusBadge(d.status)}
+                    </div>
+                    <div class="history-detail">${svc.icon || ''} ${d.service_name || d.service} · ${Number(d.quantity).toLocaleString()} ${svc.unit || ''}</div>
+                    ${d.note ? `<div style="font-size:0.7rem; color:var(--yellow); margin-bottom:2px; font-weight:600;">👤 ${d.note}</div>` : ''}
+                    <div class="history-date" style="margin-bottom:3px;">${d.created_at || ''}</div>
+                    <div class="history-link">${d.link || ''}</div>
+                </div>
+            `;
+        }
 
-        setTimeout(tick, 1000);
+        html += `
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:7px; margin-top:4px;">
+                <button class="btn btn-danger" id="clearHistoryBtn">🗑️ Xóa lịch sử</button>
+                <button class="btn btn-secondary" id="backHistoryBtn">↩ Quay lại</button>
+            </div>
+        </div>`;
+
+        panel.innerHTML = html;
+
+        panel.querySelectorAll('.history-item').forEach(item => {
+            item.onclick = () => {
+                const oid = item.dataset.oid;
+                showCheckOrderUI();
+                setTimeout(() => {
+                    const inp = document.getElementById('checkOrderId');
+                    if (inp) {
+                        inp.value = oid;
+                        document.getElementById('checkBtn')?.click();
+                    }
+                }, 100);
+            };
+        });
+
+        document.getElementById('clearHistoryBtn').onclick = () => {
+            if (confirm("Xóa toàn bộ lịch sử đơn hàng?")) {
+                ordersHistory = {};
+                saveHistory();
+                showHistoryUI();
+                showToast("Đã xóa lịch sử");
+            }
+        };
+        document.getElementById('backHistoryBtn').onclick = renderMainMenu;
     }
 
-    tick();
+    function highlightMenuBtn(activeId) {
+        document.querySelectorAll('.menu-btn').forEach(b => b.classList.remove('active'));
+        document.getElementById(activeId)?.classList.add('active');
+    }
+
+    // --- Start Screen ---
+    function showStartScreen() {
+        document.getElementById('mainContent').innerHTML = `
+            <div class="start-screen">
+                <button class="btn-start" id="startBtn">▶ START</button>
+                <div id="keySection" style="display:none;" class="key-box">
+                    <input type="password" id="secretKey" placeholder="🔐 Nhập mã kích hoạt" style="text-align:center;">
+                    <button class="btn btn-primary" id="submitKeyBtn">Xác nhận</button>
+                </div>
+            </div>
+        `;
+
+        document.getElementById('startBtn').onclick = () => {
+            showLoading(true, "Đang khởi động...");
+            setTimeout(() => {
+                showLoading(false);
+                document.getElementById('startBtn').style.display = 'none';
+                document.getElementById('keySection').style.display = 'flex';
+                document.getElementById('secretKey').focus();
+                showToast("🔐 Nhập mã kích hoạt để tiếp tục");
+            }, 1200);
+        };
+
+        const verify = () => {
+            const key = document.getElementById('secretKey').value.trim();
+            if (key === VALID_KEY) {
+                showLoading(true, "Xác thực thành công...");
+                setTimeout(() => {
+                    showLoading(false);
+                    isAuthenticated = true;
+                    renderMainMenu();
+                    startBalanceWatch();
+                    showToast("✅ Đăng nhập thành công!");
+                }, 700);
+            } else {
+                const inp = document.getElementById('secretKey');
+                inp.classList.add('error-shake');
+                showToast("❌ Mã kích hoạt không đúng!", true);
+                setTimeout(() => inp.classList.remove('error-shake'), 400);
+                inp.value = '';
+                inp.focus();
+            }
+        };
+
+        document.getElementById('submitKeyBtn').onclick = verify;
+        document.getElementById('secretKey').onkeypress = e => { if (e.key === 'Enter') verify(); };
+    }
+
+    // --- Init ---
+    loadHistory();
+    loadServiceIds();
+    showStartScreen();
 </script>
 
 </body>
+</html>
