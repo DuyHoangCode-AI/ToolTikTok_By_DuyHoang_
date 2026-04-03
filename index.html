@@ -1,631 +1,453 @@
 <!DOCTYPE html>
-
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>Dịch Vụ TikTok Pro Duy Hoang</title>
-    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg: #070e18;
-            --card: #0c1825;
-            --panel: #091420;
+            --bg-dark: #070e18;
+            --bg-card: #0c1825;
+            --bg-panel: #091420;
             --teal: #00e5c3;
             --teal-dim: #00b89c;
             --teal-glow: rgba(0,229,195,0.12);
             --teal-border: rgba(0,229,195,0.22);
             --yellow: #fbbf24;
-            --orange: #fb923c;
-            --red: #f87171;
-            --green: #34d399;
-            --text: #e8f4f8;
-            --muted: #648fa8;
-            --dim: #334d5e;
+            --text-primary: #e8f4f8;
+            --text-muted: #648fa8;
+            --text-dim: #334d5e;
             --border: rgba(255,255,255,0.06);
+            --radius-pill: 999px;
             --font: 'Be Vietnam Pro', sans-serif;
             --mono: 'JetBrains Mono', monospace;
         }
 
-```
-    * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-
-    body {
-        min-height: 100vh;
-        background: var(--bg);
-        font-family: var(--font);
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        padding: 20px 16px 40px;
-        position: relative;
-        overflow: hidden;
-    }
-
-    /* Grid bg */
-    body::before {
-        content: '';
-        position: fixed;
-        inset: 0;
-        background-image:
-            linear-gradient(rgba(0,229,195,0.03) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(0,229,195,0.03) 1px, transparent 1px);
-        background-size: 36px 36px;
-        pointer-events: none;
-    }
-
-    /* Glow top */
-    .glow-top {
-        position: fixed;
-        top: -120px; left: 50%;
-        transform: translateX(-50%);
-        width: 600px; height: 300px;
-        background: radial-gradient(ellipse, rgba(0,229,195,0.1) 0%, transparent 65%);
-        pointer-events: none;
-    }
-
-    /* Glow bottom */
-    .glow-bottom {
-        position: fixed;
-        bottom: -100px; left: 50%;
-        transform: translateX(-50%);
-        width: 400px; height: 200px;
-        background: radial-gradient(ellipse, rgba(251,191,36,0.07) 0%, transparent 65%);
-        pointer-events: none;
-    }
-
-    /* Floating particles */
-    .particles { position: fixed; inset: 0; pointer-events: none; overflow: hidden; }
-    .particle {
-        position: absolute;
-        width: 2px; height: 2px;
-        background: var(--teal);
-        border-radius: 50%;
-        opacity: 0;
-        animation: float-up var(--dur) ease-in infinite;
-        animation-delay: var(--delay);
-        left: var(--x);
-        bottom: -10px;
-    }
-    @keyframes float-up {
-        0% { opacity: 0; transform: translateY(0) scale(1); }
-        20% { opacity: 0.6; }
-        100% { opacity: 0; transform: translateY(-100vh) scale(0.3); }
-    }
-
-    .card {
-        max-width: 420px;
-        width: 100%;
-        position: relative;
-        z-index: 1;
-    }
-
-    /* Main box */
-    .main-box {
-        background: var(--card);
-        border: 1px solid var(--teal-border);
-        border-radius: 24px;
-        overflow: hidden;
-        box-shadow:
-            0 0 0 1px rgba(0,229,195,0.04),
-            0 32px 64px rgba(0,0,0,0.6),
-            inset 0 1px 0 rgba(255,255,255,0.05);
-    }
-
-    /* Top banner */
-    .banner {
-        background: linear-gradient(135deg, #0a2235 0%, #061520 100%);
-        border-bottom: 1px solid var(--teal-border);
-        padding: 32px 24px 28px;
-        text-align: center;
-        position: relative;
-        overflow: hidden;
-    }
-
-    .banner::before {
-        content: '';
-        position: absolute;
-        top: -40px; left: 50%;
-        transform: translateX(-50%);
-        width: 250px; height: 120px;
-        background: radial-gradient(ellipse, rgba(0,229,195,0.2) 0%, transparent 70%);
-    }
-
-    /* Spinning gear icon */
-    .gear-wrap {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        width: 72px; height: 72px;
-        background: rgba(0,229,195,0.08);
-        border: 1px solid var(--teal-border);
-        border-radius: 20px;
-        margin-bottom: 18px;
-        position: relative;
-    }
-
-    .gear-icon {
-        font-size: 2.2rem;
-        animation: gear-spin 4s linear infinite;
-        display: block;
-    }
-
-    .gear-pulse {
-        position: absolute;
-        inset: -6px;
-        border: 2px solid rgba(0,229,195,0.15);
-        border-radius: 24px;
-        animation: pulse-ring 2s ease-out infinite;
-    }
-
-    @keyframes gear-spin { to { transform: rotate(360deg); } }
-    @keyframes pulse-ring {
-        0% { transform: scale(1); opacity: 0.5; }
-        100% { transform: scale(1.15); opacity: 0; }
-    }
-
-    .badge {
-        display: inline-flex;
-        align-items: center;
-        gap: 5px;
-        background: rgba(251,191,36,0.1);
-        border: 1px solid rgba(251,191,36,0.25);
-        border-radius: 999px;
-        padding: 3px 12px;
-        font-size: 0.64rem;
-        font-weight: 800;
-        color: var(--yellow);
-        letter-spacing: 1.2px;
-        text-transform: uppercase;
-        font-family: var(--mono);
-        margin-bottom: 14px;
-    }
-
-    .title {
-        font-size: 1.4rem;
-        font-weight: 900;
-        color: var(--text);
-        line-height: 1.2;
-        letter-spacing: -0.3px;
-        margin-bottom: 8px;
-    }
-
-    .title span { color: var(--teal); }
-
-    .subtitle {
-        font-size: 0.8rem;
-        color: var(--muted);
-        font-weight: 500;
-        line-height: 1.5;
-    }
-
-    /* Body */
-    .body { padding: 22px 20px 24px; }
-
-    /* Countdown */
-    .countdown-label {
-        text-align: center;
-        font-size: 0.65rem;
-        font-weight: 800;
-        color: var(--dim);
-        letter-spacing: 1.5px;
-        text-transform: uppercase;
-        font-family: var(--mono);
-        margin-bottom: 12px;
-    }
-
-    .countdown-grid {
-        display: grid;
-        grid-template-columns: repeat(4, 1fr);
-        gap: 8px;
-        margin-bottom: 20px;
-    }
-
-    .cd-block {
-        background: var(--panel);
-        border: 1px solid var(--border);
-        border-radius: 14px;
-        padding: 14px 8px 10px;
-        text-align: center;
-        position: relative;
-        overflow: hidden;
-    }
-
-    .cd-block::before {
-        content: '';
-        position: absolute;
-        top: 0; left: 0; right: 0;
-        height: 2px;
-        background: linear-gradient(90deg, transparent, var(--teal-dim), transparent);
-        opacity: 0.6;
-    }
-
-    .cd-num {
-        font-size: 1.8rem;
-        font-weight: 900;
-        font-family: var(--mono);
-        color: var(--teal);
-        line-height: 1;
-        text-shadow: 0 0 20px rgba(0,229,195,0.35);
-        letter-spacing: -1px;
-    }
-
-    .cd-num.zero { color: var(--green); }
-
-    .cd-unit {
-        font-size: 0.58rem;
-        font-weight: 700;
-        color: var(--dim);
-        text-transform: uppercase;
-        letter-spacing: 0.8px;
-        margin-top: 5px;
-        font-family: var(--mono);
-    }
-
-    /* Progress bar */
-    .progress-wrap {
-        margin-bottom: 18px;
-    }
-
-    .progress-info {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 7px;
-        font-size: 0.72rem;
-        font-weight: 700;
-    }
-
-    .progress-info .pi-label { color: var(--muted); }
-    .progress-info .pi-pct { color: var(--teal); font-family: var(--mono); }
-
-    .progress-bar-bg {
-        height: 6px;
-        background: rgba(0,229,195,0.08);
-        border-radius: 999px;
-        overflow: hidden;
-    }
-
-    .progress-bar-fill {
-        height: 100%;
-        border-radius: 999px;
-        background: linear-gradient(90deg, var(--teal-dim), var(--teal));
-        box-shadow: 0 0 10px rgba(0,229,195,0.4);
-        transition: width 1s linear;
-    }
-
-    /* Info card */
-    .info-card {
-        background: var(--panel);
-        border: 1px solid var(--border);
-        border-radius: 14px;
-        padding: 14px 16px;
-        margin-bottom: 12px;
-    }
-
-    .info-row {
-        display: flex;
-        align-items: flex-start;
-        gap: 10px;
-        padding: 7px 0;
-        border-bottom: 1px solid var(--border);
-        font-size: 0.8rem;
-    }
-
-    .info-row:last-child { border-bottom: none; padding-bottom: 0; }
-
-    .info-icon { font-size: 1rem; flex-shrink: 0; margin-top: 1px; }
-    .info-label { color: var(--dim); font-size: 0.68rem; font-family: var(--mono); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 2px; }
-    .info-val { color: var(--text); font-weight: 700; line-height: 1.4; }
-
-    /* Update notes */
-    .notes-title {
-        font-size: 0.68rem;
-        font-weight: 800;
-        color: var(--teal);
-        text-transform: uppercase;
-        letter-spacing: 1px;
-        font-family: var(--mono);
-        margin-bottom: 10px;
-        display: flex;
-        align-items: center;
-        gap: 6px;
-    }
-
-    .notes-title::after { content: ''; flex: 1; height: 1px; background: var(--teal-border); }
-
-    .note-item {
-        display: flex;
-        align-items: flex-start;
-        gap: 8px;
-        padding: 7px 0;
-        font-size: 0.8rem;
-        color: var(--muted);
-        border-bottom: 1px solid var(--border);
-    }
-
-    .note-item:last-child { border-bottom: none; }
-    .note-dot { color: var(--teal); font-weight: 900; flex-shrink: 0; margin-top: 1px; }
-
-    /* Status indicator */
-    .status-bar {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 8px;
-        padding: 11px;
-        background: rgba(251,191,36,0.06);
-        border: 1px solid rgba(251,191,36,0.18);
-        border-radius: 12px;
-        margin-bottom: 12px;
-        font-size: 0.8rem;
-        color: var(--yellow);
-        font-weight: 700;
-    }
-
-    .status-dot {
-        width: 8px; height: 8px;
-        background: var(--yellow);
-        border-radius: 50%;
-        animation: blink 1.2s ease-in-out infinite;
-        flex-shrink: 0;
-    }
-
-    @keyframes blink {
-        0%, 100% { opacity: 1; transform: scale(1); }
-        50% { opacity: 0.3; transform: scale(0.8); }
-    }
-
-    /* Contact */
-    .contact {
-        text-align: center;
-        padding: 10px 0 0;
-        font-size: 0.72rem;
-        color: var(--dim);
-        border-top: 1px solid var(--border);
-        margin-top: 4px;
-    }
-
-    .contact a { color: var(--teal); text-decoration: none; font-weight: 700; }
-
-    /* Done state */
-    .done-overlay {
-        display: none;
-        position: fixed;
-        inset: 0;
-        z-index: 100;
-        background: rgba(7,14,24,0.97);
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        gap: 16px;
-        text-align: center;
-        padding: 24px;
-    }
-
-    .done-icon { font-size: 4rem; animation: pop-in 0.5s cubic-bezier(0.34,1.56,0.64,1); }
-    @keyframes pop-in { from { transform: scale(0); } to { transform: scale(1); } }
-    .done-title { font-size: 1.6rem; font-weight: 900; color: var(--green); }
-    .done-sub { color: var(--muted); font-size: 0.85rem; max-width: 280px; line-height: 1.6; }
-    .done-btn {
-        margin-top: 8px;
-        background: linear-gradient(135deg, var(--teal-dim), #007060);
-        color: white;
-        border: none;
-        border-radius: 12px;
-        padding: 13px 36px;
-        font-size: 0.9rem;
-        font-weight: 800;
-        font-family: var(--font);
-        cursor: pointer;
-    }
-</style>
-```
-
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        html { font-size: 16px; }
+        body {
+            min-height: 100vh;
+            background: var(--bg-dark);
+            font-family: var(--font);
+            -webkit-font-smoothing: antialiased;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px 12px;
+            position: relative;
+            overflow-x: hidden;
+        }
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background-image:
+                linear-gradient(rgba(0,229,195,0.035) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0,229,195,0.035) 1px, transparent 1px);
+            background-size: 36px 36px;
+            pointer-events: none;
+            z-index: 0;
+        }
+        body::after {
+            content: '';
+            position: fixed;
+            top: -150px; left: 50%;
+            transform: translateX(-50%);
+            width: 500px; height: 300px;
+            background: radial-gradient(ellipse, rgba(0,229,195,0.07) 0%, transparent 70%);
+            pointer-events: none;
+            z-index: 0;
+        }
+        .glass-card {
+            max-width: 520px;
+            width: 100%;
+            background: var(--bg-card);
+            border-radius: 28px;
+            border: 1px solid var(--teal-border);
+            box-shadow: 0 24px 48px rgba(0,0,0,0.55), inset 0 1px 0 rgba(255,255,255,0.05);
+            overflow: hidden;
+            position: relative;
+            z-index: 1;
+        }
+        .header {
+            padding: 22px 20px 18px;
+            text-align: center;
+            background: linear-gradient(160deg, #092030 0%, #050f1a 100%);
+            border-bottom: 1px solid var(--teal-border);
+            position: relative;
+        }
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -30px; left: 50%;
+            transform: translateX(-50%);
+            width: 180px; height: 90px;
+            background: radial-gradient(ellipse, rgba(0,229,195,0.18) 0%, transparent 70%);
+        }
+        .header-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            background: rgba(251,191,36,0.1);
+            border: 1px solid rgba(251,191,36,0.25);
+            border-radius: var(--radius-pill);
+            padding: 3px 11px;
+            font-size: 0.65rem;
+            font-weight: 700;
+            color: var(--yellow);
+            letter-spacing: 1.2px;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+            font-family: var(--mono);
+        }
+        .header h1 {
+            font-size: 1.5rem;
+            font-weight: 900;
+            color: var(--text-primary);
+            letter-spacing: -0.5px;
+        }
+        .header h1 span { color: var(--teal); }
+        .header p {
+            color: var(--text-muted);
+            font-size: 0.78rem;
+            margin-top: 5px;
+            font-weight: 500;
+        }
+        .author-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            margin-top: 10px;
+            background: rgba(0,0,0,0.35);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-pill);
+            padding: 4px 12px;
+            font-size: 0.68rem;
+            color: var(--text-muted);
+            font-family: var(--mono);
+        }
+        .content {
+            padding: 32px 20px 36px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 22px;
+        }
+        .gear-wrap {
+            position: relative;
+            width: 80px; height: 80px;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .ring {
+            position: absolute;
+            border-radius: 50%;
+            border: 2px solid transparent;
+        }
+        .ring-1 {
+            inset: 0;
+            border-top-color: var(--teal);
+            border-right-color: rgba(0,229,195,0.15);
+            animation: spin 1.3s linear infinite;
+        }
+        .ring-2 {
+            inset: 11px;
+            border-bottom-color: var(--teal-dim);
+            border-left-color: rgba(0,229,195,0.08);
+            animation: spin 1.9s linear infinite reverse;
+        }
+        .gear-emoji {
+            font-size: 2rem;
+            animation: spin 5s linear infinite;
+            position: relative; z-index: 1;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .status-pill {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            background: rgba(251,191,36,0.07);
+            border: 1px solid rgba(251,191,36,0.2);
+            border-radius: var(--radius-pill);
+            padding: 9px 20px;
+            font-size: 0.82rem;
+            font-weight: 800;
+            color: var(--yellow);
+        }
+        .blink-dot {
+            width: 8px; height: 8px;
+            background: var(--yellow);
+            border-radius: 50%;
+            animation: blink 1.1s ease-in-out infinite;
+        }
+        @keyframes blink {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.2; transform: scale(0.7); }
+        }
+        .countdown-section, .progress-section, .update-log { width: 100%; }
+        .cd-label {
+            text-align: center;
+            font-size: 0.62rem;
+            font-weight: 800;
+            color: var(--text-dim);
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            font-family: var(--mono);
+            margin-bottom: 10px;
+        }
+        .cd-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+        }
+        .cd-block {
+            background: var(--bg-panel);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 15px 6px 11px;
+            text-align: center;
+            position: relative;
+        }
+        .cd-block::after {
+            content: '';
+            position: absolute;
+            top: 0; left: 15%; right: 15%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--teal-dim), transparent);
+            opacity: 0.4;
+        }
+        .cd-num {
+            font-size: 2rem;
+            font-weight: 900;
+            font-family: var(--mono);
+            color: var(--teal);
+            line-height: 1;
+            letter-spacing: -2px;
+            text-shadow: 0 0 20px rgba(0,229,195,0.28);
+        }
+        .cd-unit {
+            font-size: 0.6rem;
+            font-weight: 700;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            margin-top: 6px;
+            font-family: var(--mono);
+        }
+        .prog-top {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.72rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+        .prog-top .pl { color: var(--text-muted); }
+        .prog-top .pr { color: var(--teal); font-family: var(--mono); }
+        .bar-bg {
+            height: 5px;
+            background: rgba(0,229,195,0.07);
+            border-radius: 999px;
+            overflow: hidden;
+        }
+        .bar-fill {
+            height: 100%;
+            border-radius: 999px;
+            background: linear-gradient(90deg, var(--teal-dim), var(--teal));
+            box-shadow: 0 0 8px rgba(0,229,195,0.35);
+            transition: width 1s linear;
+            width: 0%;
+        }
+        .info-panel {
+            width: 100%;
+            background: var(--bg-panel);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            overflow: hidden;
+        }
+        .info-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 14px;
+            border-bottom: 1px solid var(--border);
+        }
+        .info-row:last-child { border-bottom: none; }
+        .info-row .ik {
+            color: var(--text-dim);
+            font-family: var(--mono);
+            font-size: 0.68rem;
+            text-transform: uppercase;
+        }
+        .info-row .iv {
+            color: var(--text-primary);
+            font-weight: 700;
+            font-size: 0.78rem;
+            text-align: right;
+        }
+        /* Phần update log mới */
+        .update-log {
+            background: rgba(0,0,0,0.3);
+            border-radius: 18px;
+            padding: 16px 14px;
+            border-left: 3px solid var(--teal);
+            margin-top: 8px;
+        }
+        .update-log-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.75rem;
+            font-weight: 800;
+            color: var(--teal);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 12px;
+        }
+        .update-log-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .update-log-list li {
+            font-size: 0.75rem;
+            color: var(--text-primary);
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            line-height: 1.35;
+        }
+        .log-icon {
+            font-size: 0.9rem;
+            flex-shrink: 0;
+            margin-top: 1px;
+        }
+        .log-text strong {
+            color: var(--teal);
+            font-weight: 700;
+        }
+        .log-text small {
+            color: var(--text-dim);
+            font-size: 0.7rem;
+            font-family: var(--mono);
+            display: inline-block;
+            margin-left: 6px;
+        }
+        .contact-bar {
+            text-align: center;
+            font-size: 0.68rem;
+            color: var(--text-dim);
+            font-family: var(--font);
+            padding-top: 10px;
+            border-top: 1px dashed var(--border);
+        }
+    </style>
 </head>
 <body>
 
-<div class="glow-top"></div>
-<div class="glow-bottom"></div>
-
-<div class="particles" id="particles"></div>
-
-<div class="card">
-    <div class="main-box">
-        <div class="banner">
-            <div class="gear-wrap">
-                <span class="gear-icon">⚙️</span>
-                <div class="gear-pulse"></div>
-            </div>
-            <div class="badge">🔧 Đang cập nhật hệ thống</div>
-            <div class="title">HỆ THỐNG <span>TẠM DỪNG</span></div>
-            <p class="subtitle">Dịch Vụ TikTok Pro đang được nâng cấp.<br>Vui lòng chờ trong giây lát.</p>
-        </div>
-
-```
-    <div class="body">
-        <div class="status-bar">
-            <div class="status-dot"></div>
-            <span id="statusText">Đang tiến hành cập nhật...</span>
-        </div>
-
-        <div class="countdown-label">⏱ Thời gian dự kiến hoàn thành</div>
-
-        <div class="countdown-grid">
-            <div class="cd-block">
-                <div class="cd-num" id="cdDays">00</div>
-                <div class="cd-unit">Ngày</div>
-            </div>
-            <div class="cd-block">
-                <div class="cd-num" id="cdHours">00</div>
-                <div class="cd-unit">Giờ</div>
-            </div>
-            <div class="cd-block">
-                <div class="cd-num" id="cdMins">00</div>
-                <div class="cd-unit">Phút</div>
-            </div>
-            <div class="cd-block">
-                <div class="cd-num" id="cdSecs">00</div>
-                <div class="cd-unit">Giây</div>
-            </div>
-        </div>
-
-        <div class="progress-wrap">
-            <div class="progress-info">
-                <span class="pi-label">Tiến độ cập nhật</span>
-                <span class="pi-pct" id="progressPct">0%</span>
-            </div>
-            <div class="progress-bar-bg">
-                <div class="progress-bar-fill" id="progressFill" style="width:0%"></div>
-            </div>
-        </div>
-
-        <div class="info-card">
-            <div class="info-row">
-                <span class="info-icon">📅</span>
-                <div>
-                    <div class="info-label">Bắt đầu</div>
-                    <div class="info-val" id="startTimeDisplay">—</div>
-                </div>
-            </div>
-            <div class="info-row">
-                <span class="info-icon">🏁</span>
-                <div>
-                    <div class="info-label">Dự kiến xong</div>
-                    <div class="info-val" id="endTimeDisplay">—</div>
-                </div>
-            </div>
-            <div class="info-row">
-                <span class="info-icon">🔖</span>
-                <div>
-                    <div class="info-label">Phiên bản</div>
-                    <div class="info-val" id="versionDisplay">v2.2 PRO</div>
-                </div>
-            </div>
-        </div>
-
-        <div class="notes-title">📋 Nội dung cập nhật</div>
-        <div id="updateNotes">
-            <div class="note-item"><span class="note-dot">›</span><span>Cải thiện tốc độ xử lý đơn hàng</span></div>
-            <div class="note-item"><span class="note-dot">›</span><span>Bổ sung thêm ID dịch vụ mới</span></div>
-            <div class="note-item"><span class="note-dot">›</span><span>Sửa lỗi hiển thị số dư</span></div>
-            <div class="note-item"><span class="note-dot">›</span><span>Tối ưu giao diện trên điện thoại</span></div>
-        </div>
-
-        <div class="contact" style="margin-top:14px;">
-            Liên hệ: <a href="https://zalo.me/0385933633">Zalo 0385933633</a> · TK: _dxlwdyhg_15.01
-        </div>
+<div class="glass-card">
+    <div class="header">
+        <div class="header-badge">🔧 Đang cập nhật</div>
+        <h1>DỊCH VỤ TIKTOK <span>PRO</span></h1>
+        <p>Hệ thống đang được nâng cấp, vui lòng chờ</p>
+        <div class="author-tag">🌐 By Duy Hoang · ZL: 0385933633</div>
     </div>
-</div>
-```
 
-</div>
+    <div class="content">
+        <div class="gear-wrap">
+            <div class="ring ring-1"></div>
+            <div class="ring ring-2"></div>
+            <span class="gear-emoji">⚙️</span>
+        </div>
 
-<!-- Done overlay -->
+        <div class="status-pill">
+            <div class="blink-dot"></div>
+            Đang cập nhật hệ thống...
+        </div>
 
-<div class="done-overlay" id="doneOverlay">
-    <div class="done-icon">✅</div>
-    <div class="done-title">Cập nhật hoàn tất!</div>
-    <div class="done-sub">Hệ thống đã sẵn sàng. Cảm ơn bạn đã chờ đợi.</div>
-    <button class="done-btn" onclick="window.location.href='index.html'">🚀 Vào hệ thống ngay</button>
+        <div class="countdown-section">
+            <div class="cd-label">⏱ Thời gian dự kiến còn lại</div>
+            <div class="cd-grid">
+                <div class="cd-block"><div class="cd-num" id="cdH">--</div><div class="cd-unit">Giờ</div></div>
+                <div class="cd-block"><div class="cd-num" id="cdM">--</div><div class="cd-unit">Phút</div></div>
+                <div class="cd-block"><div class="cd-num" id="cdS">--</div><div class="cd-unit">Giây</div></div>
+            </div>
+        </div>
+
+        <div class="progress-section">
+            <div class="prog-top"><span class="pl">Tiến độ</span><span class="pr" id="pctTxt">0%</span></div>
+            <div class="bar-bg"><div class="bar-fill" id="barFill"></div></div>
+        </div>
+
+        <div class="info-panel">
+            <div class="info-row"><span class="ik">🕐 Bắt đầu</span><span class="iv" id="startTxt">—</span></div>
+            <div class="info-row"><span class="ik">🏁 Dự kiến xong</span><span class="iv" id="endTxt">—</span></div>
+            <div class="info-row"><span class="ik">🔖 Phiên bản</span><span class="iv" id="verTxt">—</span></div>
+        </div>
+
+        <!-- KHU VỰC NỘI DUNG UPDATE CHI TIẾT (đã thêm) -->
+        <div class="update-log">
+            <div class="update-log-title">
+                <span>📌</span> Nội dung cập nhật lần này
+            </div>
+            <ul class="update-log-list">
+                <li><span class="log-icon">🚀</span><div class="log-text"><strong>Tăng tốc xử lý</strong> – API đồng bộ view/like nhanh hơn 60% <small>cải tiến cache</small></div></li>
+                <li><span class="log-icon">🛡️</span><div class="log-text"><strong>Bảo mật nâng cao</strong> – Xác thực 2 lớp & mã hóa dữ liệu người dùng <small>chuẩn AES-256</small></div></li>
+                <li><span class="log-icon">📊</span><div class="log-text"><strong>Dashboard thông minh</strong> – Thống kê realtime, lọc chiến dịch theo giờ & hashtag</div></li>
+                <li><span class="log-icon">📱</span><div class="log-text"><strong>Giao diện tối ưu mobile</strong> – Trải nghiệm mượt mà, thao tác 1 chạm</div></li>
+                <li><span class="log-icon">🧩</span><div class="log-text"><strong>Thêm gói dịch vụ</strong> – Tương tác bài viết + xu hướng âm thanh <small>giá ưu đãi</small></div></li>
+                <li><span class="log-icon">🔁</span><div class="log-text"><strong>Hệ thống queue thông minh</strong> – Không trễ đơn, tự động ưu tiên VIP</div></li>
+                <li><span class="log-icon">💬</span><div class="log-text"><strong>Thêm hỗ trợ 24/7</strong> – Phản hồi nhanh dưới 30s</div></li>
+            </ul>
+        </div>
+
+        <div class="contact-bar">📞 ZL: 0385933633 · TK: _dxlwdyhg_15.01</div>
+    </div>
 </div>
 
 <script>
-    // =============================================
-    // ⚙️  CẤU HÌNH — chỉ cần sửa phần này
-    // =============================================
+    // ================================
+    // ✏️ CẤU HÌNH THỜI GIAN & PHIÊN BẢN
+    // ================================
+    const END_TIME   = "2026-04-03T20:00:00"; // Thời điểm dự kiến xong
+    const START_TIME = "2026-04-02T00:00:00";                   // null = lúc mở trang
+    const VERSION    = "v2.8 PRO";
 
-    const CONFIG = {
-        // Thời điểm bắt đầu update (để trống = lúc mở trang)
-        startTime: "2026-04-03T12:36:27",
+    const end   = new Date(END_TIME);
+    const start = START_TIME ? new Date(START_TIME) : new Date();
+    const total = end - start;
 
-        // Thời điểm dự kiến kết thúc — format: "YYYY-MM-DDTHH:MM:SS"
-        // Ví dụ: "2025-12-25T18:00:00" = 25/12/2025 lúc 18:00
-        endTime: "2026-04-03T21:00:00",
+    const fmt = d => d.toLocaleString('vi-VN', {
+        hour: '2-digit', minute: '2-digit',
+        day: '2-digit', month: '2-digit', year: 'numeric'
+    });
 
-        // Phiên bản mới
-        version: "v2.7 PRO",
+    document.getElementById('startTxt').textContent = fmt(start);
+    document.getElementById('endTxt').textContent   = fmt(end);
+    document.getElementById('verTxt').textContent   = VERSION;
 
-        // Nội dung update (mảng string)
-        notes: [
-            "Cải thiện tốc độ xử lý đơn hàng",
-            "Bổ sung thêm ID dịch vụ mới",
-            "Sửa lỗi hiển thị số dư",
-            "Thêm tính năng mới",
-            "Hỗ trợ cho ngày dùng nhanh nhất",
-            "Tối ưu tốc độ xử lý đơn"
-        ],
-
-        // Link về trang chính khi done
-        mainUrl: "index.html"
-    };
-
-    // =============================================
-
-    const now = new Date();
-    const start = CONFIG.startTime ? new Date(CONFIG.startTime) : now;
-    const end = new Date(CONFIG.endTime);
-    const totalDuration = end - start;
-
-    // Hiển thị thời gian bắt đầu / kết thúc
-    const fmt = d => d.toLocaleString('vi-VN', { hour: '2-digit', minute: '2-digit', day: '2-digit', month: '2-digit', year: 'numeric' });
-    document.getElementById('startTimeDisplay').textContent = fmt(start);
-    document.getElementById('endTimeDisplay').textContent = fmt(end);
-    document.getElementById('versionDisplay').textContent = CONFIG.version;
-
-    // Render notes
-    document.getElementById('updateNotes').innerHTML = CONFIG.notes.map(n =>
-        `<div class="note-item"><span class="note-dot">›</span><span>${n}</span></div>`
-    ).join('');
-
-    // Particles
-    const pContainer = document.getElementById('particles');
-    for (let i = 0; i < 18; i++) {
-        const p = document.createElement('div');
-        p.className = 'particle';
-        p.style.cssText = `--x:${Math.random()*100}%;--dur:${6+Math.random()*8}s;--delay:${Math.random()*8}s`;
-        pContainer.appendChild(p);
-    }
-
-    function pad(n) { return String(Math.floor(n)).padStart(2, '0'); }
+    function pad(n) { return String(Math.max(0, Math.floor(n))).padStart(2, '0'); }
 
     function tick() {
-        const now = new Date();
-        const remaining = end - now;
+        const now  = new Date();
+        const left = end - now;
 
-        if (remaining <= 0) {
-            // Done!
-            document.getElementById('cdDays').textContent = '00';
-            document.getElementById('cdHours').textContent = '00';
-            document.getElementById('cdMins').textContent = '00';
-            document.getElementById('cdSecs').textContent = '00';
-            ['cdDays','cdHours','cdMins','cdSecs'].forEach(id => {
-                document.getElementById(id).classList.add('zero');
-            });
-            document.getElementById('progressFill').style.width = '100%';
-            document.getElementById('progressPct').textContent = '100%';
-            document.getElementById('statusText').textContent = 'Cập nhật hoàn tất! 🎉';
-            document.getElementById('doneOverlay').style.display = 'flex';
-            document.querySelector('.done-btn').onclick = () => window.location.href = CONFIG.mainUrl;
+        if (left <= 0) {
+            ['cdH','cdM','cdS'].forEach(id => document.getElementById(id).textContent = '00');
+            document.getElementById('barFill').style.width = '100%';
+            document.getElementById('pctTxt').textContent  = '100%';
             return;
         }
 
-        const days = Math.floor(remaining / 86400000);
-        const hours = Math.floor((remaining % 86400000) / 3600000);
-        const mins = Math.floor((remaining % 3600000) / 60000);
-        const secs = Math.floor((remaining % 60000) / 1000);
+        const h   = Math.floor(left / 3600000);
+        const m   = Math.floor((left % 3600000) / 60000);
+        const s   = Math.floor((left % 60000) / 1000);
+        const pct = Math.min(100, Math.max(0, Math.round(((now - start) / total) * 100)));
 
-        document.getElementById('cdDays').textContent = pad(days);
-        document.getElementById('cdHours').textContent = pad(hours);
-        document.getElementById('cdMins').textContent = pad(mins);
-        document.getElementById('cdSecs').textContent = pad(secs);
-
-        // Progress: phần đã qua / tổng
-        const elapsed = now - start;
-        const pct = Math.min(100, Math.max(0, Math.round((elapsed / totalDuration) * 100)));
-        document.getElementById('progressFill').style.width = pct + '%';
-        document.getElementById('progressPct').textContent = pct + '%';
+        document.getElementById('cdH').textContent     = pad(h);
+        document.getElementById('cdM').textContent     = pad(m);
+        document.getElementById('cdS').textContent     = pad(s);
+        document.getElementById('barFill').style.width = pct + '%';
+        document.getElementById('pctTxt').textContent  = pct + '%';
 
         setTimeout(tick, 1000);
     }
