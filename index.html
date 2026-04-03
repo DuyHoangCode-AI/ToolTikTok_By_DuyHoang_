@@ -46,9 +46,7 @@
             content: '';
             position: fixed;
             inset: 0;
-            background-image:
-                linear-gradient(rgba(45,212,191,0.03) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(45,212,191,0.03) 1px, transparent 1px);
+            background-image: linear-gradient(rgba(45,212,191,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(45,212,191,0.03) 1px, transparent 1px);
             background-size: 36px 36px;
             pointer-events: none;
             z-index: 0;
@@ -169,7 +167,7 @@
         .menu-drawer {
             position: fixed;
             top: 0; right: 0;
-            width: 260px;
+            width: 280px;
             height: 100%;
             background: rgba(15,23,42,0.98);
             backdrop-filter: blur(12px);
@@ -433,7 +431,6 @@
         .status-completed { background: rgba(74,222,128,0.12); color: var(--green); border: 1px solid rgba(74,222,128,0.3); }
         .status-partial { background: rgba(250,204,21,0.12); color: var(--yellow); border: 1px solid rgba(250,204,21,0.3); }
         .status-cancelled, .status-error { background: rgba(248,113,113,0.12); color: var(--red); border: 1px solid rgba(248,113,113,0.3); }
-        .status-support { background: rgba(167,139,250,0.12); color: var(--purple); border: 1px solid rgba(167,139,250,0.3); }
         .history-item {
             background: rgba(0,0,0,0.3);
             border: 1px solid var(--border);
@@ -944,6 +941,27 @@
         .support-status-new { background: rgba(248,113,113,0.12); color: var(--red); border: 1px solid rgba(248,113,113,0.3); }
         .support-status-processing { background: rgba(56,189,248,0.12); color: var(--sky); border: 1px solid rgba(56,189,248,0.3); }
         .support-status-done { background: rgba(74,222,128,0.12); color: var(--green); border: 1px solid rgba(74,222,128,0.3); }
+        .status-update-btn {
+            padding: 6px 12px;
+            border-radius: 8px;
+            border: none;
+            font-size: 0.68rem;
+            font-weight: 700;
+            cursor: pointer;
+            font-family: var(--font);
+            transition: all 0.15s;
+        }
+        .status-update-btn.processing {
+            background: rgba(56,189,248,0.15);
+            color: var(--sky);
+            border: 1px solid rgba(56,189,248,0.3);
+        }
+        .status-update-btn.done {
+            background: rgba(74,222,128,0.15);
+            color: var(--green);
+            border: 1px solid rgba(74,222,128,0.3);
+        }
+        .status-update-btn:hover { opacity: 0.8; transform: scale(0.98); }
     </style>
 </head>
 <body>
@@ -972,7 +990,7 @@
 </div>
 
 <script>
-    // ======================= CẤU HÌNH KEY PHỤ =======================
+    // ======================= CẤU HÌNH =======================
     const SUB_KEYS = [
         { key: "VIP001", max_views: 50000,  max_likes: 2000,  max_logins: 10, label: "VIP 50K View" },
         { key: "VIP002", max_views: 100000, max_likes: 5000,  max_logins: 15, label: "VIP 100K View" },
@@ -986,8 +1004,6 @@
         { key: "TEST100", max_views: 2000,   max_likes: 100,  max_logins: 2,  label: "Test 2K" },
     ];
     const ADMIN_KEY = "DuyHoangPro";
-
-    // ======================= CÁC HẰNG SỐ KHÁC =======================
     const API_URL = "https://subtuongtac.com/api/v2";
     const API_KEY = "32aa6bcd06e04d69df997fc2dbf8d8f1";
     const TELE_TOKEN = "8749280669:AAFXp_SD6N0AZsygP85Id1iexwADSKwlp6E";
@@ -995,7 +1011,6 @@
     const HISTORY_KEY = "tiktok_orders_v2";
     const SUBKEY_USAGE_KEY = "subkey_usage_v1";
     const DEPOSIT_REQUESTS_KEY = "deposit_requests_v1";
-    const SUPPORT_REQUESTS_KEY = "support_requests_v1";
     const USD_TO_VND = 25400;
     const BANK_INFO = {
         bank: "MB Bank",
@@ -1032,9 +1047,9 @@
     let isAdmin = false;
     let subKeyUsage = {};
     let depositRequests = [];
-    let supportRequests = [];
     let lastBalanceVND = null;
     let telegramOrders = [];
+    let supportRequestsCache = []; // Cache các yêu cầu hỗ trợ từ Telegram
 
     // ======================= HÀM TIỆN ÍCH =======================
     function loadHistory() {
@@ -1053,10 +1068,6 @@
         try { depositRequests = JSON.parse(localStorage.getItem(DEPOSIT_REQUESTS_KEY) || '[]'); } catch(e) { depositRequests = []; }
     }
     function saveDepositRequests() { localStorage.setItem(DEPOSIT_REQUESTS_KEY, JSON.stringify(depositRequests)); }
-    function loadSupportRequests() {
-        try { supportRequests = JSON.parse(localStorage.getItem(SUPPORT_REQUESTS_KEY) || '[]'); } catch(e) { supportRequests = []; }
-    }
-    function saveSupportRequests() { localStorage.setItem(SUPPORT_REQUESTS_KEY, JSON.stringify(supportRequests)); }
 
     function showToast(msg, isError = false) {
         let t = document.querySelector('.toast-msg');
@@ -1101,7 +1112,7 @@
     // ======================= LẤY ĐƠN TỪ TELEGRAM =======================
     async function fetchOrdersFromTelegram() {
         try {
-            const res = await fetch(`https://api.telegram.org/bot${TELE_TOKEN}/getUpdates?limit=100&offset=-100`);
+            const res = await fetch(`https://api.telegram.org/bot${TELE_TOKEN}/getUpdates?limit=200`);
             const data = await res.json();
             if (!data.ok || !data.result) return [];
             const orders = [];
@@ -1136,6 +1147,83 @@
         } catch(e) { return []; }
     }
 
+    // ======================= LẤY YÊU CẦU HỖ TRỢ TỪ TELEGRAM =======================
+    async function fetchSupportRequestsFromTelegram() {
+        try {
+            const res = await fetch(`https://api.telegram.org/bot${TELE_TOKEN}/getUpdates?limit=200`);
+            const data = await res.json();
+            if (!data.ok || !data.result) return [];
+            
+            const supportReqs = [];
+            for (const update of data.result) {
+                const msg = update.message || update.channel_post;
+                if (!msg || !msg.text) continue;
+                const text = msg.text;
+                // Chỉ lấy tin nhắn có format yêu cầu hỗ trợ
+                if (!text.includes('🆘 YÊU CẦU HỖ TRỢ ĐƠN') && !text.includes('[SUPPORT-REQ]')) continue;
+                
+                const req = {
+                    raw: text,
+                    date: new Date(msg.date * 1000).toLocaleString('vi-VN'),
+                    timestamp: msg.date,
+                    message_id: msg.message_id
+                };
+                
+                // Parse mã yêu cầu
+                const reqIdMatch = text.match(/Mã YC[:\s]*([A-Z0-9\-]+)/i) || text.match(/\[SR\-([A-Z0-9\-]+)\]/i);
+                if (reqIdMatch) req.request_id = reqIdMatch[1];
+                else req.request_id = `SR-${msg.date}`;
+                
+                // Parse Order ID
+                const orderIdMatch = text.match(/Order ID[:\s]*#?(\d+)/i);
+                if (orderIdMatch) req.order_id = orderIdMatch[1];
+                
+                // Parse tên
+                const nameMatch = text.match(/👤 Tên[:\s]*([^\n]+)/i);
+                if (nameMatch) req.name = nameMatch[1].trim();
+                
+                // Parse vấn đề
+                const issueMatch = text.match(/⚠️ Vấn đề[:\s]*([^\n]+)/i);
+                if (issueMatch) req.issue = issueMatch[1].trim();
+                
+                // Parse ghi chú
+                const noteMatch = text.match(/📝 Ghi chú[:\s]*([^\n]+)/i);
+                if (noteMatch) req.note = noteMatch[1].trim();
+                
+                // Parse trạng thái (nếu có cập nhật sau)
+                let status = 'new';
+                if (text.includes('✅ ĐÃ XỬ LÝ XONG') || text.includes('STATUS: DONE')) status = 'done';
+                else if (text.includes('⚙️ ĐANG XỬ LÝ') || text.includes('STATUS: PROCESSING')) status = 'processing';
+                req.status = status;
+                
+                supportReqs.push(req);
+            }
+            
+            // Nhóm theo request_id và lấy trạng thái mới nhất
+            const grouped = new Map();
+            for (const req of supportReqs) {
+                if (!grouped.has(req.request_id) || grouped.get(req.request_id).timestamp < req.timestamp) {
+                    grouped.set(req.request_id, req);
+                }
+            }
+            
+            return Array.from(grouped.values()).sort((a, b) => b.timestamp - a.timestamp);
+        } catch(e) { 
+            console.error("Lỗi fetch support requests:", e);
+            return []; 
+        }
+    }
+
+    // Gửi cập nhật trạng thái hỗ trợ lên Telegram
+    async function sendSupportStatusUpdate(requestId, orderId, newStatus, statusText) {
+        const statusEmoji = newStatus === 'done' ? '✅' : (newStatus === 'processing' ? '⚙️' : '🆕');
+        const statusLabel = newStatus === 'done' ? 'ĐÃ XỬ LÝ XONG' : (newStatus === 'processing' ? 'ĐANG XỬ LÝ' : 'MỚI');
+        
+        const msg = `📌 <b>CẬP NHẬT HỖ TRỢ</b>\n━━━━━━━━━━━━━━\n🎫 Mã YC: <b>${requestId}</b>\n🔢 Order ID: <b>#${orderId}</b>\n${statusEmoji} Trạng thái: <b>${statusLabel}</b>\n📝 Ghi chú: ${statusText}\n🕐 ${new Date().toLocaleString('vi-VN')}`;
+        
+        sendTelegramNotification(msg);
+    }
+
     function isValidTikTokUrl(url) {
         return [
             /^https?:\/\/(?:www\.)?tiktok\.com\/@[^\/]+\/video\/\d+/,
@@ -1166,6 +1254,12 @@
         if (status === 'processing') return `<span class="status-badge support-status-processing">⚙️ Đang xử lý</span>`;
         if (status === 'done') return `<span class="status-badge support-status-done">✅ Xong</span>`;
         return `<span class="status-badge support-status-new">🆕 Mới</span>`;
+    }
+    function generateRequestId() {
+        const now = new Date();
+        const dateStr = now.toISOString().slice(0,10).replace(/-/g, '');
+        const random = Math.floor(Math.random() * 10000).toString().padStart(4, '0');
+        return `SR-${dateStr}-${random}`;
     }
 
     // ======================= KIỂM TRA HẠN MỨC KEY PHỤ =======================
@@ -1221,21 +1315,22 @@
         document.getElementById('menuOverlay').classList.remove('show');
     }
 
-    function getPendingSupportCount() {
-        return supportRequests.filter(r => r.status === 'new').length;
+    async function getPendingSupportCount() {
+        const requests = await fetchSupportRequestsFromTelegram();
+        return requests.filter(r => r.status === 'new').length;
     }
 
-    function updateDrawerButtons() {
+    async function updateDrawerButtons() {
         const container = document.getElementById('drawerButtons');
         if (!container) return;
-        const pendingSupport = getPendingSupportCount();
+        const pendingSupport = await getPendingSupportCount();
         let html = `
             <button class="menu-btn" id="drawerBalance"><span class="icon">💰</span> Số dư</button>
             <button class="menu-btn" id="drawerOrder"><span class="icon">➕</span> Tạo đơn</button>
             <button class="menu-btn" id="drawerCheck"><span class="icon">🔍</span> Check đơn</button>
             <button class="menu-btn" id="drawerHistory"><span class="icon">📋</span> Lịch sử</button>
             <button class="menu-btn" id="drawerDeposit"><span class="icon">💳</span> Nạp tiền</button>
-            <button class="menu-btn menu-btn-support" id="drawerSupportOrder"><span class="icon">🆘</span> Hỗ trợ đơn${pendingSupport > 0 && isAdmin ? ` <span class="unread-dot"></span>` : ''}</button>
+            <button class="menu-btn menu-btn-support" id="drawerSupportOrder"><span class="icon">🆘</span> Hỗ trợ đơn</button>
             <button class="menu-btn" id="drawerSupport"><span class="icon">📞</span> Liên hệ</button>
         `;
         if (isAdmin) {
@@ -1358,7 +1453,7 @@
         document.getElementById('backFromSupport').onclick = () => renderDefaultPanel();
     }
 
-    // ======================= YÊU CẦU HỖ TRỢ ĐƠN =======================
+    // ======================= YÊU CẦU HỖ TRỢ ĐƠN (GỬI LÊN TELEGRAM) =======================
     async function showSupportOrderUI() {
         const panel = document.getElementById('dynamicPanel');
         let selectedIssue = 'tut_view';
@@ -1369,7 +1464,7 @@
                 <div class="panel">
                     <div class="panel-title purple-title">🆘 Yêu cầu hỗ trợ đơn</div>
                     <div class="info-note-purple">
-                        📋 Điền thông tin đơn hàng cần hỗ trợ. Admin sẽ nhận thông báo ngay trên Telegram và phản hồi sớm nhất.
+                        📋 Điền thông tin đơn hàng cần hỗ trợ. Mỗi yêu cầu sẽ có <strong>mã riêng</strong> và Admin sẽ xử lý qua Telegram.
                     </div>
 
                     <div class="form-group">
@@ -1480,9 +1575,11 @@
                 const localOrder = ordersHistory[orderId];
                 const issueLabel = getIssueLabel(selectedIssue);
                 const timeNow = new Date().toLocaleString('vi-VN');
+                const requestId = generateRequestId();
 
-                // Build thông báo Telegram chi tiết
+                // Build thông báo Telegram chi tiết với mã yêu cầu
                 let teleMsg = `🆘 <b>YÊU CẦU HỖ TRỢ ĐƠN</b>\n━━━━━━━━━━━━━━\n`;
+                teleMsg += `🎫 <b>Mã YC: ${requestId}</b>\n`;
                 teleMsg += `👤 Tên: <b>${name}</b>\n`;
                 teleMsg += `🔢 Order ID: <b>#${orderId}</b>\n`;
                 teleMsg += `⚠️ Vấn đề: <b>${issueLabel}</b>\n`;
@@ -1501,32 +1598,12 @@
                 }
 
                 if (note) teleMsg += `📝 Ghi chú: ${note}\n`;
-                teleMsg += `🕐 Thời gian YC: ${timeNow}`;
+                teleMsg += `🕐 Thời gian YC: ${timeNow}\n`;
+                teleMsg += `📌 STATUS: NEW`;
 
                 sendTelegramNotification(teleMsg);
 
-                // Lưu vào localStorage
-                const supportReq = {
-                    id: Date.now(),
-                    order_id: orderId,
-                    name,
-                    issue: selectedIssue,
-                    issue_label: issueLabel,
-                    note,
-                    status: 'new',
-                    time: timeNow,
-                    order_status: orderInfo?.status || null,
-                    start_count: orderInfo?.start_count ?? null,
-                    remains: orderInfo?.remains ?? null,
-                    service_name: localOrder?.service_name || null,
-                    quantity: localOrder?.quantity || null,
-                    link: localOrder?.link || null,
-                    created_at: localOrder?.created_at || null
-                };
-                supportRequests.push(supportReq);
-                saveSupportRequests();
-
-                showToast("✅ Đã gửi yêu cầu hỗ trợ cho Admin!");
+                showToast(`✅ Đã gửi yêu cầu! Mã: ${requestId}`);
 
                 panel.innerHTML = `
                     <div class="panel">
@@ -1535,16 +1612,16 @@
                             <div class="success-icon">🎫</div>
                             <div class="success-title" style="color:var(--purple);">YÊU CẦU ĐÃ GỬI</div>
                             <div class="success-detail">
+                                <div class="success-row"><span class="sk">Mã yêu cầu</span><span class="sv" style="color:var(--teal); font-weight:900;">${requestId}</span></div>
                                 <div class="success-row"><span class="sk">Tên</span><span class="sv" style="color:var(--yellow)">${name}</span></div>
                                 <div class="success-row"><span class="sk">Order ID</span><span class="sv">#${orderId}</span></div>
                                 <div class="success-row"><span class="sk">Vấn đề</span><span class="sv" style="color:var(--purple)">${issueLabel}</span></div>
                                 ${orderInfo?.status ? `<div class="success-row"><span class="sk">Trạng thái đơn</span><span class="sv">${orderInfo.status}</span></div>` : ''}
-                                ${orderInfo?.start_count !== undefined ? `<div class="success-row"><span class="sk">Bắt đầu</span><span class="sv">${Number(orderInfo.start_count).toLocaleString()}</span></div>` : ''}
-                                ${orderInfo?.remains !== undefined ? `<div class="success-row"><span class="sk">Còn lại</span><span class="sv">${Number(orderInfo.remains).toLocaleString()}</span></div>` : ''}
                                 <div class="success-row"><span class="sk">Thời gian</span><span class="sv" style="font-size:0.68rem;">${timeNow}</span></div>
                             </div>
                             <div class="deposit-note" style="margin-bottom:12px;">
                                 Admin đã nhận được thông báo qua Telegram.<br>
+                                Mã yêu cầu: <strong style="color:var(--teal)">${requestId}</strong><br>
                                 <span>Phản hồi sớm nhất có thể trong giờ hỗ trợ.</span>
                             </div>
                             <button class="btn btn-secondary" id="backAfterSupport">🏠 Về trang chủ</button>
@@ -1560,10 +1637,14 @@
         render();
     }
 
-    // ======================= ADMIN: QUẢN LÝ HỖ TRỢ =======================
-    function showManageSupportUI() {
+    // ======================= ADMIN: QUẢN LÝ HỖ TRỢ (ĐỌC TỪ TELEGRAM) =======================
+    async function showManageSupportUI() {
         const panel = document.getElementById('dynamicPanel');
-        const allRequests = [...supportRequests].reverse();
+        
+        showLoading(true, "Đang tải yêu cầu hỗ trợ từ Telegram...");
+        const allRequests = await fetchSupportRequestsFromTelegram();
+        supportRequestsCache = allRequests;
+        showLoading(false);
 
         if (allRequests.length === 0) {
             panel.innerHTML = `
@@ -1573,8 +1654,10 @@
                         <div style="font-size:2rem; margin-bottom:8px;">🎉</div>
                         Không có yêu cầu hỗ trợ nào
                     </div>
+                    <button class="refresh-btn" id="refreshSupportBtn">🔄 Làm mới</button>
                     <button class="btn btn-secondary" id="backManageSupport">↩ Quay lại</button>
                 </div>`;
+            document.getElementById('refreshSupportBtn').onclick = () => showManageSupportUI();
             document.getElementById('backManageSupport').onclick = () => renderDefaultPanel();
             return;
         }
@@ -1600,98 +1683,78 @@
                         <div style="font-size:1.3rem; font-weight:900; color:var(--green); font-family:var(--mono);">${doneCount}</div>
                     </div>
                 </div>
+                <button class="refresh-btn" id="refreshSupportBtn">🔄 Làm mới từ Telegram</button>
         `;
 
         for (const req of allRequests) {
             html += `
-                <div class="support-request-item" data-sid="${req.id}">
+                <div class="support-request-item" data-reqid="${req.request_id}" data-orderid="${req.order_id || ''}">
                     <div class="sr-header">
-                        <span class="sr-id">#${req.order_id}</span>
+                        <span class="sr-id">🎫 ${req.request_id}</span>
                         ${getSupportStatusBadge(req.status)}
                     </div>
                     <div style="display:flex; gap:6px; align-items:center; margin-bottom:5px;">
-                        <span class="sr-issue">${req.issue_label}</span>
-                        <span style="font-size:0.68rem; color:var(--yellow); font-weight:700; font-family:var(--font);">👤 ${req.name}</span>
+                        <span class="sr-issue">${req.issue || 'Không xác định'}</span>
+                        <span style="font-size:0.68rem; color:var(--yellow); font-weight:700; font-family:var(--font);">👤 ${req.name || 'N/A'}</span>
                     </div>
-                    ${req.service_name ? `<div class="sr-detail">🎯 ${req.service_name}${req.quantity ? ' · ' + Number(req.quantity).toLocaleString() : ''}</div>` : ''}
-                    ${req.order_status ? `<div class="sr-detail">📌 Trạng thái: <strong>${req.order_status}</strong></div>` : ''}
-                    <div class="sr-stats">
-                        <div class="sr-stat-box">
-                            <div class="ssb-label">Bắt đầu</div>
-                            <div class="ssb-val">${req.start_count !== null && req.start_count !== undefined ? Number(req.start_count).toLocaleString() : '—'}</div>
-                        </div>
-                        <div class="sr-stat-box">
-                            <div class="ssb-label">Còn lại</div>
-                            <div class="ssb-val">${req.remains !== null && req.remains !== undefined ? Number(req.remains).toLocaleString() : '—'}</div>
-                        </div>
-                        <div class="sr-stat-box">
-                            <div class="ssb-label">Đặt</div>
-                            <div class="ssb-val">${req.quantity ? Number(req.quantity).toLocaleString() : '—'}</div>
-                        </div>
-                    </div>
-                    ${req.link ? `<div style="font-size:0.62rem; color:var(--text-dim); font-family:var(--mono); margin-top:5px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${req.link}</div>` : ''}
+                    <div class="sr-detail">🔢 Order ID: <strong>#${req.order_id || 'N/A'}</strong></div>
                     ${req.note ? `<div class="sr-note">📝 ${req.note}</div>` : ''}
-                    <div class="sr-time">🕐 ${req.time}</div>
-                    <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:5px; margin-top:8px;">
-                        <button class="btn-action-support" data-sid="${req.id}" data-action="processing" style="padding:6px; border-radius:8px; border:1px solid rgba(56,189,248,0.3); background:rgba(56,189,248,0.08); color:var(--sky); font-size:0.68rem; font-weight:700; cursor:pointer; font-family:var(--font);">⚙️ Xử lý</button>
-                        <button class="btn-action-support" data-sid="${req.id}" data-action="done" style="padding:6px; border-radius:8px; border:1px solid rgba(74,222,128,0.3); background:rgba(74,222,128,0.08); color:var(--green); font-size:0.68rem; font-weight:700; cursor:pointer; font-family:var(--font);">✅ Xong</button>
-                        <button class="btn-action-support btn-del-support" data-sid="${req.id}" data-action="delete" style="padding:6px; border-radius:8px; border:1px solid rgba(248,113,113,0.3); background:rgba(248,113,113,0.08); color:var(--red); font-size:0.68rem; font-weight:700; cursor:pointer; font-family:var(--font);">🗑️ Xóa</button>
+                    <div class="sr-time">🕐 ${req.date || ''}</div>
+                    <div style="display:flex; gap:8px; margin-top:10px;">
+                        <button class="status-update-btn processing" data-reqid="${req.request_id}" data-orderid="${req.order_id}" data-status="processing">⚙️ Đang xử lý</button>
+                        <button class="status-update-btn done" data-reqid="${req.request_id}" data-orderid="${req.order_id}" data-status="done">✅ Xử lý xong</button>
                     </div>
                 </div>
             `;
         }
 
         html += `
-            <button class="btn btn-secondary" id="backManageSupport" style="margin-top:4px;">↩ Quay lại</button>
+            <button class="btn btn-secondary" id="backManageSupport" style="margin-top:8px;">↩ Quay lại</button>
             </div>
         `;
 
         panel.innerHTML = html;
 
-        document.querySelectorAll('.btn-action-support').forEach(btn => {
-            btn.onclick = () => {
-                const sid = parseInt(btn.dataset.sid);
-                const action = btn.dataset.action;
-                const idx = supportRequests.findIndex(r => r.id === sid);
-                if (idx === -1) return;
-
-                if (action === 'delete') {
-                    if (!confirm("Xóa yêu cầu hỗ trợ này?")) return;
-                    supportRequests.splice(idx, 1);
-                    saveSupportRequests();
-                    showToast("✅ Đã xóa");
-                    showManageSupportUI();
-                } else {
-                    supportRequests[idx].status = action;
-                    saveSupportRequests();
-                    showToast(action === 'done' ? "✅ Đã đánh dấu hoàn thành" : "⚙️ Đang xử lý");
-                    showManageSupportUI();
-                }
+        // Xử lý cập nhật trạng thái
+        document.querySelectorAll('.status-update-btn').forEach(btn => {
+            btn.onclick = async () => {
+                const reqId = btn.dataset.reqid;
+                const orderId = btn.dataset.orderid;
+                const newStatus = btn.dataset.status;
+                const statusText = newStatus === 'done' ? 'Admin đã xử lý xong yêu cầu này.' : 'Admin đang xử lý yêu cầu này.';
+                
+                if (!confirm(`Xác nhận chuyển trạng thái yêu cầu ${reqId} sang ${newStatus === 'done' ? 'HOÀN THÀNH' : 'ĐANG XỬ LÝ'}?`)) return;
+                
+                showLoading(true, "Đang cập nhật trạng thái...");
+                await sendSupportStatusUpdate(reqId, orderId, newStatus, statusText);
+                showLoading(false);
+                showToast(`✅ Đã cập nhật trạng thái yêu cầu ${reqId}`);
+                await showManageSupportUI(); // Refresh lại danh sách
             };
         });
 
+        document.getElementById('refreshSupportBtn').onclick = () => showManageSupportUI();
+        document.getElementById('backManageSupport').onclick = () => renderDefaultPanel();
+        
         // Click vào item để check đơn
         document.querySelectorAll('.support-request-item').forEach(item => {
             item.onclick = (e) => {
-                if (e.target.closest('.btn-action-support')) return;
-                const sid = parseInt(item.dataset.sid);
-                const req = supportRequests.find(r => r.id === sid);
-                if (!req || !req.order_id) return;
+                if (e.target.closest('.status-update-btn')) return;
+                const orderId = item.dataset.orderid;
+                if (!orderId) return;
                 showCheckOrderUI();
                 setTimeout(() => {
                     const inp = document.getElementById('checkOrderId');
-                    if (inp) { inp.value = req.order_id; document.getElementById('checkBtn')?.click(); }
+                    if (inp) { inp.value = orderId; document.getElementById('checkBtn')?.click(); }
                 }, 100);
             };
         });
-
-        document.getElementById('backManageSupport').onclick = () => renderDefaultPanel();
-        updateDrawerButtons(); // cập nhật badge
+        
+        await updateDrawerButtons(); // cập nhật badge
     }
 
     function renderDefaultPanel() {
         const rem = getRemainingLimits();
-        const pendingSupport = getPendingSupportCount();
         document.getElementById('dynamicPanel').innerHTML = `
             <div class="panel">
                 <div class="panel-title">📡 Dịch vụ TikTok Pro</div>
@@ -1723,9 +1786,8 @@
                     <div style="font-size:0.68rem; color:var(--text-dim); font-family:var(--mono);">🔑 ${currentUserKey}</div>
                 </div>
                 ` : `
-                <div style="margin-top:10px; text-align:center; display:flex; gap:8px; justify-content:center; flex-wrap:wrap;">
+                <div style="margin-top:10px; text-align:center;">
                     <span class="status-badge status-completed">👑 Admin - không giới hạn</span>
-                    ${pendingSupport > 0 ? `<span class="status-badge support-status-new" style="cursor:pointer;" id="quickSupportBtn">🆘 ${pendingSupport} YC hỗ trợ mới</span>` : ''}
                 </div>
                 `}
                 <div style="margin-top:12px;">
@@ -1738,10 +1800,6 @@
             </div>
         `;
         document.getElementById('quickSupportOrderBtn').onclick = showSupportOrderUI;
-        if (isAdmin && pendingSupport > 0) {
-            const qsb = document.getElementById('quickSupportBtn');
-            if (qsb) qsb.onclick = showManageSupportUI;
-        }
     }
 
     function renderMainMenu() {
@@ -2257,7 +2315,6 @@
     loadHistory();
     loadSubKeyUsage();
     loadDepositRequests();
-    loadSupportRequests();
     showStartScreen();
 </script>
 </body>
