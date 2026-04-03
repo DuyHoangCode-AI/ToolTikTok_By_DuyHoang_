@@ -8,1734 +8,629 @@
     <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-dark: #0a0f1a;
-            --bg-card: #111827;
-            --bg-panel: #1e293b;
-            --teal: #2dd4bf;
-            --teal-dim: #14b8a6;
-            --teal-glow: rgba(45,212,191,0.15);
-            --teal-border: rgba(45,212,191,0.3);
-            --green: #4ade80;
-            --red: #f87171;
-            --yellow: #facc15;
-            --sky: #38bdf8;
+            --bg: #070e18;
+            --card: #0c1825;
+            --panel: #091420;
+            --teal: #00e5c3;
+            --teal-dim: #00b89c;
+            --teal-glow: rgba(0,229,195,0.12);
+            --teal-border: rgba(0,229,195,0.22);
+            --yellow: #fbbf24;
             --orange: #fb923c;
-            --text-primary: #f3f4f6;
-            --text-muted: #9ca3af;
-            --text-dim: #6b7280;
-            --border: rgba(255,255,255,0.1);
-            --radius-lg: 18px;
-            --radius-pill: 999px;
+            --red: #f87171;
+            --green: #34d399;
+            --text: #e8f4f8;
+            --muted: #648fa8;
+            --dim: #334d5e;
+            --border: rgba(255,255,255,0.06);
             --font: 'Be Vietnam Pro', sans-serif;
             --mono: 'JetBrains Mono', monospace;
         }
 
 ```
-    * { margin: 0; padding: 0; box-sizing: border-box; min-width: 0; -webkit-tap-highlight-color: transparent; }
-    html { font-size: 16px; }
+    * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
     body {
         min-height: 100vh;
-        background: var(--bg-dark);
+        background: var(--bg);
         font-family: var(--font);
         display: flex;
+        flex-direction: column;
+        align-items: center;
         justify-content: center;
-        align-items: flex-start;
-        padding: 12px 12px 48px;
+        padding: 20px 16px 40px;
         position: relative;
-        overflow-x: hidden;
+        overflow: hidden;
     }
+
+    /* Grid bg */
     body::before {
         content: '';
         position: fixed;
         inset: 0;
         background-image:
-            linear-gradient(rgba(45,212,191,0.03) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(45,212,191,0.03) 1px, transparent 1px);
+            linear-gradient(rgba(0,229,195,0.03) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(0,229,195,0.03) 1px, transparent 1px);
         background-size: 36px 36px;
         pointer-events: none;
-        z-index: 0;
     }
-    body::after {
-        content: '';
+
+    /* Glow top */
+    .glow-top {
         position: fixed;
-        top: -150px;
-        left: 50%;
+        top: -120px; left: 50%;
         transform: translateX(-50%);
-        width: 500px; height: 300px;
-        background: radial-gradient(ellipse, rgba(45,212,191,0.08) 0%, transparent 70%);
+        width: 600px; height: 300px;
+        background: radial-gradient(ellipse, rgba(0,229,195,0.1) 0%, transparent 65%);
         pointer-events: none;
-        z-index: 0;
     }
-    .glass-card {
-        max-width: 480px;
+
+    /* Glow bottom */
+    .glow-bottom {
+        position: fixed;
+        bottom: -100px; left: 50%;
+        transform: translateX(-50%);
+        width: 400px; height: 200px;
+        background: radial-gradient(ellipse, rgba(251,191,36,0.07) 0%, transparent 65%);
+        pointer-events: none;
+    }
+
+    /* Floating particles */
+    .particles { position: fixed; inset: 0; pointer-events: none; overflow: hidden; }
+    .particle {
+        position: absolute;
+        width: 2px; height: 2px;
+        background: var(--teal);
+        border-radius: 50%;
+        opacity: 0;
+        animation: float-up var(--dur) ease-in infinite;
+        animation-delay: var(--delay);
+        left: var(--x);
+        bottom: -10px;
+    }
+    @keyframes float-up {
+        0% { opacity: 0; transform: translateY(0) scale(1); }
+        20% { opacity: 0.6; }
+        100% { opacity: 0; transform: translateY(-100vh) scale(0.3); }
+    }
+
+    .card {
+        max-width: 420px;
         width: 100%;
-        background: var(--bg-card);
-        border-radius: 22px;
-        border: 1px solid var(--teal-border);
-        box-shadow: 0 0 0 1px rgba(45,212,191,0.05), 0 24px 48px rgba(0,0,0,0.55), inset 0 1px 0 rgba(255,255,255,0.05);
-        overflow: hidden;
         position: relative;
         z-index: 1;
-        margin-top: 12px;
     }
-    .header {
-        padding: 22px 20px 18px;
-        text-align: center;
-        background: linear-gradient(160deg, #0f172a 0%, #0a0f1a 100%);
+
+    /* Main box */
+    .main-box {
+        background: var(--card);
+        border: 1px solid var(--teal-border);
+        border-radius: 24px;
+        overflow: hidden;
+        box-shadow:
+            0 0 0 1px rgba(0,229,195,0.04),
+            0 32px 64px rgba(0,0,0,0.6),
+            inset 0 1px 0 rgba(255,255,255,0.05);
+    }
+
+    /* Top banner */
+    .banner {
+        background: linear-gradient(135deg, #0a2235 0%, #061520 100%);
         border-bottom: 1px solid var(--teal-border);
+        padding: 32px 24px 28px;
+        text-align: center;
         position: relative;
         overflow: hidden;
     }
-    .header::before {
+
+    .banner::before {
         content: '';
         position: absolute;
-        top: -30px; left: 50%;
+        top: -40px; left: 50%;
         transform: translateX(-50%);
-        width: 180px; height: 90px;
-        background: radial-gradient(ellipse, rgba(45,212,191,0.2) 0%, transparent 70%);
+        width: 250px; height: 120px;
+        background: radial-gradient(ellipse, rgba(0,229,195,0.2) 0%, transparent 70%);
     }
-    .header-badge {
+
+    /* Spinning gear icon */
+    .gear-wrap {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 72px; height: 72px;
+        background: rgba(0,229,195,0.08);
+        border: 1px solid var(--teal-border);
+        border-radius: 20px;
+        margin-bottom: 18px;
+        position: relative;
+    }
+
+    .gear-icon {
+        font-size: 2.2rem;
+        animation: gear-spin 4s linear infinite;
+        display: block;
+    }
+
+    .gear-pulse {
+        position: absolute;
+        inset: -6px;
+        border: 2px solid rgba(0,229,195,0.15);
+        border-radius: 24px;
+        animation: pulse-ring 2s ease-out infinite;
+    }
+
+    @keyframes gear-spin { to { transform: rotate(360deg); } }
+    @keyframes pulse-ring {
+        0% { transform: scale(1); opacity: 0.5; }
+        100% { transform: scale(1.15); opacity: 0; }
+    }
+
+    .badge {
         display: inline-flex;
         align-items: center;
         gap: 5px;
-        background: rgba(45,212,191,0.12);
-        border: 1px solid var(--teal-border);
-        border-radius: var(--radius-pill);
-        padding: 3px 11px;
-        font-size: 0.65rem;
-        font-weight: 700;
-        color: var(--teal);
+        background: rgba(251,191,36,0.1);
+        border: 1px solid rgba(251,191,36,0.25);
+        border-radius: 999px;
+        padding: 3px 12px;
+        font-size: 0.64rem;
+        font-weight: 800;
+        color: var(--yellow);
         letter-spacing: 1.2px;
         text-transform: uppercase;
-        margin-bottom: 10px;
+        font-family: var(--mono);
+        margin-bottom: 14px;
+    }
+
+    .title {
+        font-size: 1.4rem;
+        font-weight: 900;
+        color: var(--text);
+        line-height: 1.2;
+        letter-spacing: -0.3px;
+        margin-bottom: 8px;
+    }
+
+    .title span { color: var(--teal); }
+
+    .subtitle {
+        font-size: 0.8rem;
+        color: var(--muted);
+        font-weight: 500;
+        line-height: 1.5;
+    }
+
+    /* Body */
+    .body { padding: 22px 20px 24px; }
+
+    /* Countdown */
+    .countdown-label {
+        text-align: center;
+        font-size: 0.65rem;
+        font-weight: 800;
+        color: var(--dim);
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
+        font-family: var(--mono);
+        margin-bottom: 12px;
+    }
+
+    .countdown-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 8px;
+        margin-bottom: 20px;
+    }
+
+    .cd-block {
+        background: var(--panel);
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        padding: 14px 8px 10px;
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .cd-block::before {
+        content: '';
+        position: absolute;
+        top: 0; left: 0; right: 0;
+        height: 2px;
+        background: linear-gradient(90deg, transparent, var(--teal-dim), transparent);
+        opacity: 0.6;
+    }
+
+    .cd-num {
+        font-size: 1.8rem;
+        font-weight: 900;
+        font-family: var(--mono);
+        color: var(--teal);
+        line-height: 1;
+        text-shadow: 0 0 20px rgba(0,229,195,0.35);
+        letter-spacing: -1px;
+    }
+
+    .cd-num.zero { color: var(--green); }
+
+    .cd-unit {
+        font-size: 0.58rem;
+        font-weight: 700;
+        color: var(--dim);
+        text-transform: uppercase;
+        letter-spacing: 0.8px;
+        margin-top: 5px;
         font-family: var(--mono);
     }
-    .header h1 {
-        font-size: 1.5rem;
-        font-weight: 900;
-        color: var(--text-primary);
-        letter-spacing: -0.5px;
-        line-height: 1.2;
-        position: relative;
-        font-family: var(--font);
+
+    /* Progress bar */
+    .progress-wrap {
+        margin-bottom: 18px;
     }
-    .header h1 span { color: var(--teal); }
-    .header p {
-        color: var(--text-muted);
-        font-size: 0.78rem;
-        margin-top: 5px;
-        font-weight: 500;
-        font-family: var(--font);
-    }
-    .header-top {
+
+    .progress-info {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        margin-bottom: 12px;
+        margin-bottom: 7px;
+        font-size: 0.72rem;
+        font-weight: 700;
     }
-    .hamburger {
-        background: none;
-        border: none;
-        color: var(--text-primary);
-        font-size: 1.8rem;
-        cursor: pointer;
-        padding: 5px;
-        line-height: 1;
-        transition: all 0.2s;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        width: 40px;
-        height: 40px;
-        border-radius: 12px;
-        background: rgba(0,0,0,0.3);
-        border: 1px solid var(--border);
-        z-index: 20;
-    }
-    .hamburger:hover {
-        background: var(--teal-glow);
-        border-color: var(--teal);
-        color: var(--teal);
-    }
-    .menu-overlay {
-        position: fixed;
-        top: 0; left: 0; right: 0; bottom: 0;
-        background: rgba(0,0,0,0.7);
-        backdrop-filter: blur(4px);
-        z-index: 100;
-        visibility: hidden;
-        opacity: 0;
-        transition: opacity 0.2s ease;
-    }
-    .menu-overlay.show { visibility: visible; opacity: 1; }
-    .menu-drawer {
-        position: fixed;
-        top: 0; right: 0;
-        width: 260px;
-        height: 100%;
-        background: rgba(15,23,42,0.98);
-        backdrop-filter: blur(12px);
-        border-left: 1px solid var(--teal-border);
-        transform: translateX(100%);
-        transition: transform 0.25s ease;
-        z-index: 101;
-        padding: 20px 12px;
-        display: flex;
-        flex-direction: column;
-        gap: 12px;
-        overflow-y: auto;
-    }
-    .menu-drawer.show { transform: translateX(0); }
-    .menu-drawer .menu-btn {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        padding: 12px 16px;
-        background: rgba(255,255,255,0.05);
-        border: 1px solid var(--border);
-        border-radius: 12px;
-        color: var(--text-muted);
-        font-size: 0.85rem;
-        font-weight: 600;
-        font-family: var(--font);
-        cursor: pointer;
-        transition: all 0.18s;
-        width: 100%;
-        text-align: left;
-    }
-    .menu-drawer .menu-btn:hover {
-        background: var(--teal-glow);
-        border-color: var(--teal);
-        color: var(--teal);
-    }
-    .menu-drawer .menu-btn .icon { font-size: 1.2rem; }
-    .menu-drawer .close-drawer {
-        align-self: flex-end;
-        background: none;
-        border: none;
-        color: var(--text-muted);
-        font-size: 1.5rem;
-        cursor: pointer;
-        padding: 5px;
-    }
-    .content { padding: 16px 14px 20px; overflow: hidden; }
-    .panel {
-        background: var(--bg-panel);
-        border: 1px solid var(--border);
-        border-radius: var(--radius-lg);
-        padding: 16px 14px;
-        animation: fadeIn 0.2s ease;
+
+    .progress-info .pi-label { color: var(--muted); }
+    .progress-info .pi-pct { color: var(--teal); font-family: var(--mono); }
+
+    .progress-bar-bg {
+        height: 6px;
+        background: rgba(0,229,195,0.08);
+        border-radius: 999px;
         overflow: hidden;
     }
-    @keyframes fadeIn {
-        from { opacity: 0; transform: translateY(5px); }
-        to { opacity: 1; transform: translateY(0); }
+
+    .progress-bar-fill {
+        height: 100%;
+        border-radius: 999px;
+        background: linear-gradient(90deg, var(--teal-dim), var(--teal));
+        box-shadow: 0 0 10px rgba(0,229,195,0.4);
+        transition: width 1s linear;
     }
-    .panel-title {
-        font-size: 0.72rem;
+
+    /* Info card */
+    .info-card {
+        background: var(--panel);
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        padding: 14px 16px;
+        margin-bottom: 12px;
+    }
+
+    .info-row {
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+        padding: 7px 0;
+        border-bottom: 1px solid var(--border);
+        font-size: 0.8rem;
+    }
+
+    .info-row:last-child { border-bottom: none; padding-bottom: 0; }
+
+    .info-icon { font-size: 1rem; flex-shrink: 0; margin-top: 1px; }
+    .info-label { color: var(--dim); font-size: 0.68rem; font-family: var(--mono); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 2px; }
+    .info-val { color: var(--text); font-weight: 700; line-height: 1.4; }
+
+    /* Update notes */
+    .notes-title {
+        font-size: 0.68rem;
         font-weight: 800;
         color: var(--teal);
         text-transform: uppercase;
-        letter-spacing: 1.2px;
-        margin-bottom: 14px;
+        letter-spacing: 1px;
+        font-family: var(--mono);
+        margin-bottom: 10px;
         display: flex;
         align-items: center;
         gap: 6px;
-        font-family: var(--mono);
     }
-    .panel-title::after {
-        content: '';
-        flex: 1;
-        height: 1px;
-        background: var(--teal-border);
+
+    .notes-title::after { content: ''; flex: 1; height: 1px; background: var(--teal-border); }
+
+    .note-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 8px;
+        padding: 7px 0;
+        font-size: 0.8rem;
+        color: var(--muted);
+        border-bottom: 1px solid var(--border);
     }
-    .form-group { margin-bottom: 12px; width: 100%; overflow: hidden; }
-    label {
-        display: block;
-        margin-bottom: 5px;
-        font-weight: 700;
-        color: var(--text-muted);
-        font-size: 0.7rem;
-        letter-spacing: 0.4px;
-        text-transform: uppercase;
-        font-family: var(--font);
-    }
-    input, select {
-        width: 100%;
-        min-width: 0;
-        padding: 11px 14px;
-        border-radius: 11px;
-        border: 1px solid var(--border);
-        background: rgba(0,0,0,0.4);
-        color: var(--text-primary);
-        font-size: 0.88rem;
-        font-family: var(--font);
-        outline: none;
-        transition: all 0.18s;
-        display: block;
-        -webkit-appearance: none;
-    }
-    input:focus, select:focus {
-        border-color: var(--teal-border);
-        box-shadow: 0 0 0 3px var(--teal-glow);
-        background: rgba(0,0,0,0.55);
-    }
-    input::placeholder { color: var(--text-dim); }
-    select option { background: #1e293b; }
-    .btn {
-        width: 100%;
-        padding: 12px 14px;
-        border: none;
-        border-radius: 11px;
-        font-family: var(--font);
-        font-weight: 800;
-        font-size: 0.88rem;
-        cursor: pointer;
-        transition: all 0.18s;
+
+    .note-item:last-child { border-bottom: none; }
+    .note-dot { color: var(--teal); font-weight: 900; flex-shrink: 0; margin-top: 1px; }
+
+    /* Status indicator */
+    .status-bar {
         display: flex;
         align-items: center;
         justify-content: center;
-        gap: 7px;
-        letter-spacing: 0.2px;
-        -webkit-appearance: none;
-    }
-    .btn + .btn { margin-top: 7px; }
-    .btn-primary {
-        background: linear-gradient(135deg, var(--teal-dim), #0f766e);
-        color: white;
-        box-shadow: 0 4px 14px rgba(20,184,166,0.22);
-    }
-    .btn-primary:hover {
-        background: linear-gradient(135deg, var(--teal), var(--teal-dim));
-        transform: translateY(-1px);
-        box-shadow: 0 6px 18px rgba(45,212,191,0.28);
-    }
-    .btn-secondary {
-        background: rgba(255,255,255,0.05);
-        color: var(--text-muted);
-        border: 1px solid var(--border);
-    }
-    .btn-secondary:hover { background: rgba(255,255,255,0.1); color: var(--text-primary); }
-    .btn-danger {
-        background: rgba(248,113,113,0.1);
-        color: var(--red);
-        border: 1px solid rgba(248,113,113,0.2);
-    }
-    .btn-danger:hover { background: rgba(248,113,113,0.18); }
-    .btn-orange {
-        background: linear-gradient(135deg, #ea580c, #c2410c);
-        color: white;
-        box-shadow: 0 4px 14px rgba(234,88,12,0.22);
-    }
-    .btn-orange:hover {
-        background: linear-gradient(135deg, #f97316, #ea580c);
-        transform: translateY(-1px);
-    }
-    .btn:active { transform: scale(0.97) !important; }
-    .service-tabs {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 7px;
-        margin-bottom: 14px;
-    }
-    .service-tab {
+        gap: 8px;
         padding: 11px;
-        border-radius: 11px;
-        background: rgba(0,0,0,0.3);
-        border: 1px solid var(--border);
-        cursor: pointer;
-        text-align: center;
-        transition: all 0.18s;
-        font-size: 0.78rem;
+        background: rgba(251,191,36,0.06);
+        border: 1px solid rgba(251,191,36,0.18);
+        border-radius: 12px;
+        margin-bottom: 12px;
+        font-size: 0.8rem;
+        color: var(--yellow);
         font-weight: 700;
-        color: var(--text-muted);
-        font-family: var(--font);
     }
-    .service-tab .tab-icon { font-size: 1.3rem; display: block; margin-bottom: 3px; }
-    .service-tab .tab-price { font-size: 0.64rem; color: var(--text-dim); margin-top: 2px; font-family: var(--mono); }
-    .service-tab.active { background: var(--teal-glow); border-color: var(--teal); color: var(--teal); }
-    .service-tab.active .tab-price { color: var(--teal-dim); }
-    .price-estimate {
-        background: rgba(45,212,191,0.08);
-        border: 1px solid var(--teal-border);
-        border-radius: 9px;
-        padding: 9px 12px;
+
+    .status-dot {
+        width: 8px; height: 8px;
+        background: var(--yellow);
+        border-radius: 50%;
+        animation: blink 1.2s ease-in-out infinite;
+        flex-shrink: 0;
+    }
+
+    @keyframes blink {
+        0%, 100% { opacity: 1; transform: scale(1); }
+        50% { opacity: 0.3; transform: scale(0.8); }
+    }
+
+    /* Contact */
+    .contact {
         text-align: center;
-        font-size: 0.78rem;
-        color: var(--sky);
-        margin: 10px 0;
-        font-family: var(--mono);
-    }
-    .balance-display {
-        text-align: center;
-        padding: 20px 14px;
-    }
-    .balance-label {
-        font-size: 0.65rem;
-        text-transform: uppercase;
-        letter-spacing: 1.5px;
-        color: var(--text-dim);
-        font-family: var(--mono);
-        margin-bottom: 6px;
-    }
-    .balance-value {
-        font-size: 2.2rem;
-        font-weight: 900;
-        color: var(--green);
-        font-family: var(--mono);
-        letter-spacing: -1px;
-        text-shadow: 0 0 28px rgba(74,222,128,0.3);
-    }
-    .balance-sub {
+        padding: 10px 0 0;
         font-size: 0.72rem;
-        color: var(--text-dim);
+        color: var(--dim);
+        border-top: 1px solid var(--border);
         margin-top: 4px;
-        font-family: var(--mono);
     }
-    .status-badge {
-        display: inline-flex;
-        align-items: center;
-        gap: 4px;
-        padding: 3px 9px;
-        border-radius: var(--radius-pill);
-        font-size: 0.65rem;
-        font-weight: 700;
-        font-family: var(--mono);
-        letter-spacing: 0.4px;
-    }
-    .status-pending { background: rgba(250,204,21,0.12); color: var(--yellow); border: 1px solid rgba(250,204,21,0.3); }
-    .status-inprogress { background: rgba(56,189,248,0.12); color: var(--sky); border: 1px solid rgba(56,189,248,0.3); }
-    .status-completed { background: rgba(74,222,128,0.12); color: var(--green); border: 1px solid rgba(74,222,128,0.3); }
-    .status-partial { background: rgba(250,204,21,0.12); color: var(--yellow); border: 1px solid rgba(250,204,21,0.3); }
-    .status-cancelled, .status-error { background: rgba(248,113,113,0.12); color: var(--red); border: 1px solid rgba(248,113,113,0.3); }
-    .history-item {
-        background: rgba(0,0,0,0.3);
-        border: 1px solid var(--border);
-        border-radius: 11px;
-        padding: 11px 12px;
-        margin-bottom: 7px;
-        transition: border-color 0.18s;
-        cursor: pointer;
-    }
-    .history-item:hover { border-color: var(--teal-border); }
-    .history-header {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        margin-bottom: 4px;
-    }
-    .history-id { font-family: var(--mono); font-size: 0.76rem; font-weight: 700; color: var(--teal); }
-    .history-date { font-size: 0.64rem; color: var(--text-dim); font-family: var(--font); }
-    .history-detail { font-size: 0.75rem; color: var(--text-muted); margin-bottom: 3px; font-family: var(--font); }
-    .history-link { font-size: 0.64rem; color: var(--text-dim); font-family: var(--mono); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .status-result-card {
-        background: rgba(0,0,0,0.3);
-        border: 1px solid var(--teal-border);
-        border-radius: 13px;
-        padding: 14px;
-        margin-top: 12px;
-    }
-    .status-row {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        padding: 6px 0;
-        border-bottom: 1px solid var(--border);
-        font-size: 0.78rem;
-    }
-    .status-row:last-child { border-bottom: none; padding-bottom: 0; }
-    .status-key { color: var(--text-dim); font-family: var(--mono); font-size: 0.68rem; text-transform: uppercase; }
-    .status-val { color: var(--text-primary); font-weight: 700; text-align: right; font-family: var(--font); }
-    .info-cards {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 7px;
-        margin-bottom: 10px;
-    }
-    .info-card {
-        background: rgba(0,0,0,0.3);
-        border: 1px solid var(--border);
-        border-radius: 11px;
-        padding: 11px;
-        text-align: center;
-    }
-    .info-card .ic-icon { font-size: 1.3rem; margin-bottom: 4px; }
-    .info-card .ic-title { font-size: 0.68rem; color: var(--text-muted); font-weight: 700; font-family: var(--font); }
-    .info-card .ic-price { font-size: 0.74rem; color: var(--teal); font-family: var(--mono); font-weight: 700; margin-top: 2px; }
-    .loading-overlay {
+
+    .contact a { color: var(--teal); text-decoration: none; font-weight: 700; }
+
+    /* Done state */
+    .done-overlay {
+        display: none;
         position: fixed;
         inset: 0;
-        background: rgba(0,0,0,0.85);
-        backdrop-filter: blur(8px);
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        gap: 14px;
-        z-index: 1000;
-        visibility: hidden;
-        opacity: 0;
-        transition: opacity 0.18s;
-    }
-    .spinner {
-        width: 40px; height: 40px;
-        border: 3px solid rgba(45,212,191,0.12);
-        border-top-color: var(--teal);
-        border-radius: 50%;
-        animation: spin 0.7s linear infinite;
-    }
-    @keyframes spin { to { transform: rotate(360deg); } }
-    .loading-text { font-size: 0.85rem; color: var(--text-muted); font-family: var(--mono); }
-    .toast-msg {
-        position: fixed;
-        bottom: 22px;
-        left: 50%;
-        transform: translateX(-50%) translateY(8px);
-        background: rgba(10,20,32,0.96);
-        backdrop-filter: blur(12px);
-        padding: 9px 18px;
-        border-radius: var(--radius-pill);
-        color: var(--text-primary);
-        font-weight: 600;
-        font-size: 0.82rem;
-        z-index: 1100;
-        border: 1px solid var(--teal-border);
-        pointer-events: none;
-        white-space: nowrap;
-        visibility: hidden;
-        opacity: 0;
-        transition: all 0.2s;
-        font-family: var(--font);
-    }
-    .start-screen {
-        display: flex;
+        z-index: 100;
+        background: rgba(7,14,24,0.97);
         flex-direction: column;
         align-items: center;
         justify-content: center;
-        padding: 36px 16px;
-        gap: 18px;
-        min-height: 240px;
-    }
-    .btn-start {
-        background: linear-gradient(135deg, #f97316, #ea580c);
-        color: white;
-        font-size: 1.1rem;
-        font-weight: 900;
-        padding: 15px 40px;
-        border-radius: var(--radius-pill);
-        border: none;
-        cursor: pointer;
-        box-shadow: 0 10px 28px rgba(245,158,11,0.32);
-        transition: all 0.22s;
-        letter-spacing: 1.5px;
-        display: inline-flex;
-        align-items: center;
-        gap: 9px;
-        font-family: var(--font);
-    }
-    .btn-start:hover { transform: scale(1.04); box-shadow: 0 14px 36px rgba(245,158,11,0.45); }
-    .key-box { width: 100%; max-width: 260px; display: flex; flex-direction: column; gap: 7px; overflow: hidden; }
-    .error-shake { animation: shake 0.3s ease-in-out; border-color: var(--red) !important; }
-    @keyframes shake {
-        0%, 100% { transform: translateX(0); }
-        25% { transform: translateX(-5px); }
-        75% { transform: translateX(5px); }
-    }
-    .success-card { text-align: center; padding: 18px 8px; }
-    .success-icon { font-size: 2.6rem; margin-bottom: 8px; }
-    .success-title { font-size: 1rem; font-weight: 900; color: var(--green); margin-bottom: 10px; font-family: var(--font); }
-    .success-detail { background: rgba(0,0,0,0.3); border-radius: 11px; padding: 12px; margin-bottom: 12px; }
-    .success-row { display: flex; justify-content: space-between; padding: 5px 0; font-size: 0.78rem; border-bottom: 1px solid var(--border); }
-    .success-row:last-child { border-bottom: none; }
-    .success-row .sk { color: var(--text-dim); font-family: var(--font); }
-    .success-row .sv { color: var(--text-primary); font-weight: 700; font-family: var(--mono); }
-    .deposit-amounts {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 7px;
-        margin-bottom: 14px;
-    }
-    .amt-btn {
-        padding: 10px 6px;
-        background: rgba(0,0,0,0.3);
-        border: 1px solid var(--border);
-        border-radius: 10px;
-        color: var(--text-muted);
-        font-family: var(--font);
-        font-size: 0.76rem;
-        font-weight: 700;
-        cursor: pointer;
+        gap: 16px;
         text-align: center;
-        transition: all 0.15s;
+        padding: 24px;
     }
-    .amt-btn:hover, .amt-btn.selected {
-        background: var(--teal-glow);
-        border-color: var(--teal);
-        color: var(--teal);
-    }
-    .qr-container { text-align: center; padding: 14px 0 6px; }
-    .qr-img {
-        width: 200px; height: 200px;
-        border-radius: 14px;
-        border: 2px solid var(--teal-border);
-        object-fit: cover;
-        box-shadow: 0 8px 24px rgba(0,0,0,0.5);
-    }
-    .bank-info {
-        background: rgba(0,0,0,0.3);
-        border: 1px solid var(--border);
-        border-radius: 11px;
-        padding: 10px 12px;
-        margin: 10px 0;
-        text-align: center;
-    }
-    .bank-info .bi-name { font-size: 0.7rem; color: var(--text-dim); font-family: var(--mono); text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 3px; }
-    .bank-info .bi-val { font-size: 0.88rem; font-weight: 800; color: var(--text-primary); font-family: var(--mono); }
-    .deposit-note { font-size: 0.7rem; color: var(--text-dim); text-align: center; line-height: 1.5; padding: 0 4px; font-family: var(--font); }
-    .deposit-note span { color: var(--yellow); font-weight: 700; }
-    ::-webkit-scrollbar { width: 3px; }
-    ::-webkit-scrollbar-track { background: transparent; }
-    ::-webkit-scrollbar-thumb { background: var(--teal-border); border-radius: 3px; }
-    .support-buttons {
-        display: flex;
-        justify-content: center;
-        gap: 12px;
-        flex-wrap: wrap;
-        margin: 12px 0;
-    }
-    .support-btn {
-        display: inline-flex;
-        align-items: center;
-        gap: 5px;
-        background: rgba(0,0,0,0.3);
-        border: 1px solid var(--border);
-        border-radius: var(--radius-pill);
-        padding: 8px 16px;
-        font-size: 0.8rem;
-        font-weight: 600;
-        font-family: var(--font);
-        color: var(--text-muted);
-        text-decoration: none;
-        transition: all 0.18s;
-    }
-    .support-btn:hover {
-        background: var(--teal-glow);
-        border-color: var(--teal);
-        color: var(--teal);
-    }
-    .support-time {
-        font-size: 0.7rem;
-        color: var(--text-dim);
-        text-align: center;
+
+    .done-icon { font-size: 4rem; animation: pop-in 0.5s cubic-bezier(0.34,1.56,0.64,1); }
+    @keyframes pop-in { from { transform: scale(0); } to { transform: scale(1); } }
+    .done-title { font-size: 1.6rem; font-weight: 900; color: var(--green); }
+    .done-sub { color: var(--muted); font-size: 0.85rem; max-width: 280px; line-height: 1.6; }
+    .done-btn {
         margin-top: 8px;
-        font-family: var(--font);
-    }
-    .start-support { margin-top: 10px; text-align: center; }
-    .start-support .support-title { font-size: 0.7rem; color: var(--text-dim); margin-bottom: 6px; font-family: var(--font); }
-    .start-support .support-buttons { gap: 10px; }
-    .start-support .support-btn { padding: 5px 12px; font-size: 0.7rem; }
-    .service-description {
-        margin: 12px 0; padding: 12px;
-        background: rgba(45,212,191,0.08);
-        border-radius: 12px; text-align: center;
-    }
-    .service-description .desc-text { font-size: 0.8rem; color: var(--text-primary); margin-bottom: 6px; font-family: var(--font); }
-    .service-description .desc-highlight { color: var(--teal); font-weight: 800; }
-    .admin-info {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-top: 10px;
-        padding-top: 8px;
-        border-top: 1px solid var(--border);
-        font-size: 0.7rem;
-        color: var(--text-dim);
-        font-family: var(--font);
-    }
-
-    /* ====== KEY ITEM - FIX FONT ====== */
-    .key-item {
-        background: rgba(0,0,0,0.3);
-        border: 1px solid var(--border);
-        border-radius: 10px;
-        padding: 12px;
-        margin-bottom: 8px;
-        font-family: var(--font);
-    }
-    .key-item .key-name {
-        font-size: 0.85rem;
+        background: linear-gradient(135deg, var(--teal-dim), #007060);
+        color: white;
+        border: none;
+        border-radius: 12px;
+        padding: 13px 36px;
+        font-size: 0.9rem;
         font-weight: 800;
-        color: var(--teal);
-        font-family: var(--mono);
-        margin-bottom: 6px;
-    }
-    .key-item .key-stat {
-        font-size: 0.75rem;
-        color: var(--text-muted);
-        margin-bottom: 3px;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
         font-family: var(--font);
-    }
-    .key-item .key-stat .ks-val {
-        font-family: var(--mono);
-        font-size: 0.72rem;
-        color: var(--text-primary);
-        font-weight: 700;
-    }
-    .key-progress {
-        width: 100%;
-        height: 4px;
-        background: rgba(255,255,255,0.08);
-        border-radius: 4px;
-        margin-top: 2px;
-        margin-bottom: 6px;
-        overflow: hidden;
-    }
-    .key-progress-bar {
-        height: 100%;
-        background: linear-gradient(90deg, var(--teal-dim), var(--teal));
-        border-radius: 4px;
-        transition: width 0.4s ease;
-    }
-
-    /* ====== DEPOSIT ITEM - FIX FONT ====== */
-    .deposit-item {
-        background: rgba(0,0,0,0.3);
-        border: 1px solid var(--border);
-        border-radius: 10px;
-        padding: 12px;
-        margin-bottom: 8px;
-        font-family: var(--font);
-    }
-    .deposit-item .di-name { font-size: 0.85rem; font-weight: 800; color: var(--text-primary); margin-bottom: 5px; font-family: var(--font); }
-    .deposit-item .di-amount { font-size: 1rem; font-weight: 900; color: var(--green); font-family: var(--mono); }
-    .deposit-item .di-time { font-size: 0.68rem; color: var(--text-dim); margin-top: 3px; font-family: var(--font); }
-    .deposit-item .di-note { font-size: 0.72rem; color: var(--text-muted); margin-top: 3px; font-family: var(--font); }
-
-    /* ====== MANAGE ORDER ITEM ====== */
-    .tele-order-item {
-        background: rgba(0,0,0,0.3);
-        border: 1px solid var(--border);
-        border-radius: 11px;
-        padding: 11px 12px;
-        margin-bottom: 7px;
-        font-family: var(--font);
-    }
-    .tele-order-item .to-header {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        margin-bottom: 5px;
-    }
-    .tele-order-item .to-id {
-        font-family: var(--mono);
-        font-size: 0.76rem;
-        font-weight: 700;
-        color: var(--teal);
-    }
-    .tele-order-item .to-detail {
-        font-size: 0.75rem;
-        color: var(--text-muted);
-        margin-bottom: 2px;
-        font-family: var(--font);
-    }
-    .tele-order-item .to-link {
-        font-size: 0.63rem;
-        color: var(--text-dim);
-        font-family: var(--mono);
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-    }
-    .tele-order-item .to-note {
-        font-size: 0.7rem;
-        color: var(--yellow);
-        font-weight: 600;
-        margin-bottom: 2px;
-        font-family: var(--font);
-    }
-    .info-note {
-        background: rgba(56,189,248,0.08);
-        border: 1px solid rgba(56,189,248,0.2);
-        border-radius: 9px;
-        padding: 9px 12px;
-        font-size: 0.73rem;
-        color: var(--sky);
-        margin-bottom: 12px;
-        line-height: 1.5;
-        font-family: var(--font);
-    }
-    .refresh-btn {
-        background: rgba(56,189,248,0.1);
-        border: 1px solid rgba(56,189,248,0.25);
-        border-radius: 9px;
-        padding: 8px 14px;
-        color: var(--sky);
-        font-size: 0.78rem;
-        font-weight: 700;
         cursor: pointer;
-        font-family: var(--font);
-        transition: all 0.18s;
-        display: flex;
-        align-items: center;
-        gap: 6px;
-        margin-bottom: 12px;
     }
-    .refresh-btn:hover { background: rgba(56,189,248,0.18); }
 </style>
 ```
 
 </head>
 <body>
-<div class="glass-card" id="appContainer">
-    <div class="header">
-        <div class="header-top">
-            <div></div>
-            <div class="header-badge">⚡ v2.5 PRO</div>
-            <button class="hamburger" id="hamburgerBtn">☰</button>
+
+<div class="glow-top"></div>
+<div class="glow-bottom"></div>
+
+<div class="particles" id="particles"></div>
+
+<div class="card">
+    <div class="main-box">
+        <div class="banner">
+            <div class="gear-wrap">
+                <span class="gear-icon">⚙️</span>
+                <div class="gear-pulse"></div>
+            </div>
+            <div class="badge">🔧 Đang cập nhật hệ thống</div>
+            <div class="title">HỆ THỐNG <span>TẠM DỪNG</span></div>
+            <p class="subtitle">Dịch Vụ TikTok Pro đang được nâng cấp.<br>Vui lòng chờ trong giây lát.</p>
         </div>
-        <h1>DỊCH VỤ TIKTOK <span>PRO</span></h1>
-        <p>Tăng View & Tim nhanh chóng · Uy tín số 1</p>
+
+```
+    <div class="body">
+        <div class="status-bar">
+            <div class="status-dot"></div>
+            <span id="statusText">Đang tiến hành cập nhật...</span>
+        </div>
+
+        <div class="countdown-label">⏱ Thời gian dự kiến hoàn thành</div>
+
+        <div class="countdown-grid">
+            <div class="cd-block">
+                <div class="cd-num" id="cdDays">00</div>
+                <div class="cd-unit">Ngày</div>
+            </div>
+            <div class="cd-block">
+                <div class="cd-num" id="cdHours">00</div>
+                <div class="cd-unit">Giờ</div>
+            </div>
+            <div class="cd-block">
+                <div class="cd-num" id="cdMins">00</div>
+                <div class="cd-unit">Phút</div>
+            </div>
+            <div class="cd-block">
+                <div class="cd-num" id="cdSecs">00</div>
+                <div class="cd-unit">Giây</div>
+            </div>
+        </div>
+
+        <div class="progress-wrap">
+            <div class="progress-info">
+                <span class="pi-label">Tiến độ cập nhật</span>
+                <span class="pi-pct" id="progressPct">0%</span>
+            </div>
+            <div class="progress-bar-bg">
+                <div class="progress-bar-fill" id="progressFill" style="width:0%"></div>
+            </div>
+        </div>
+
+        <div class="info-card">
+            <div class="info-row">
+                <span class="info-icon">📅</span>
+                <div>
+                    <div class="info-label">Bắt đầu</div>
+                    <div class="info-val" id="startTimeDisplay">—</div>
+                </div>
+            </div>
+            <div class="info-row">
+                <span class="info-icon">🏁</span>
+                <div>
+                    <div class="info-label">Dự kiến xong</div>
+                    <div class="info-val" id="endTimeDisplay">—</div>
+                </div>
+            </div>
+            <div class="info-row">
+                <span class="info-icon">🔖</span>
+                <div>
+                    <div class="info-label">Phiên bản</div>
+                    <div class="info-val" id="versionDisplay">v2.2 PRO</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="notes-title">📋 Nội dung cập nhật</div>
+        <div id="updateNotes">
+            <div class="note-item"><span class="note-dot">›</span><span>Cải thiện tốc độ xử lý đơn hàng</span></div>
+            <div class="note-item"><span class="note-dot">›</span><span>Bổ sung thêm ID dịch vụ mới</span></div>
+            <div class="note-item"><span class="note-dot">›</span><span>Sửa lỗi hiển thị số dư</span></div>
+            <div class="note-item"><span class="note-dot">›</span><span>Tối ưu giao diện trên điện thoại</span></div>
+        </div>
+
+        <div class="contact" style="margin-top:14px;">
+            Liên hệ: <a href="https://zalo.me/0385933633">Zalo 0385933633</a> · TK: _dxlwdyhg_15.01
+        </div>
     </div>
-    <div class="content" id="mainContent"></div>
+</div>
+```
+
 </div>
 
-<div id="menuOverlay" class="menu-overlay"></div>
-<div id="menuDrawer" class="menu-drawer">
-    <button class="close-drawer" id="closeDrawerBtn">✕</button>
-    <div id="drawerButtons"></div>
-</div>
+<!-- Done overlay -->
 
-<div id="loadingOverlay" class="loading-overlay">
-    <div class="spinner"></div>
-    <div class="loading-text" id="loadingText">Đang xử lý...</div>
+<div class="done-overlay" id="doneOverlay">
+    <div class="done-icon">✅</div>
+    <div class="done-title">Cập nhật hoàn tất!</div>
+    <div class="done-sub">Hệ thống đã sẵn sàng. Cảm ơn bạn đã chờ đợi.</div>
+    <button class="done-btn" onclick="window.location.href='index.html'">🚀 Vào hệ thống ngay</button>
 </div>
 
 <script>
-    // ======================= CẤU HÌNH KEY PHỤ =======================
-    const SUB_KEYS = [
-        { key: "VIP001", max_views: 50000,  max_likes: 2000,  max_logins: 10, label: "VIP 50K View" },
-        { key: "VIP002", max_views: 100000, max_likes: 5000,  max_logins: 15, label: "VIP 100K View" },
-        { key: "VIP003", max_views: 200000, max_likes: 10000, max_logins: 20, label: "VIP 200K View" },
-        { key: "SUB123", max_views: 10000,  max_likes: 500,   max_logins: 5,  label: "Cơ bản 10K" },
-        { key: "SUB456", max_views: 20000,  max_likes: 1000,  max_logins: 10, label: "Cơ bản 20K" },
-        { key: "SUB789", max_views: 30000,  max_likes: 1500,  max_logins: 8,  label: "Cơ bản 30K" },
-        { key: "FREEVER1",max_views: 75000,  max_likes: 3000,  max_logins: 12, label: "Silver 75K" },
-        { key: "GOLD001", max_views: 150000, max_likes: 8000, max_logins: 18, label: "Gold 150K" },
-        { key: "DEMO999", max_views: 5000,   max_likes: 200,  max_logins: 3,  label: "Demo nhỏ" },
-        { key: "TEST100", max_views: 2000,   max_likes: 100,  max_logins: 2,  label: "Test 2K" },
-    ];
-    const ADMIN_KEY = "DuyHoangPro";
+    // =============================================
+    // ⚙️  CẤU HÌNH — chỉ cần sửa phần này
+    // =============================================
 
-    // ======================= CÁC HẰNG SỐ KHÁC =======================
-    const API_URL = "https://subtuongtac.com/api/v2";
-    const API_KEY = "32aa6bcd06e04d69df997fc2dbf8d8f1";
-    const TELE_TOKEN = "8749280669:AAFXp_SD6N0AZsygP85Id1iexwADSKwlp6E";
-    const TELE_CHAT_ID = "6286372153";
-    const HISTORY_KEY = "tiktok_orders_v2";
-    const SUBKEY_USAGE_KEY = "subkey_usage_v1";
-    const DEPOSIT_REQUESTS_KEY = "deposit_requests_v1";
-    const USD_TO_VND = 25400;
-    const BANK_INFO = {
-        bank: "MB Bank",
-        account: "015223",
-        name: "DO LE DUY HOANG",
-        qr: "https://i.postimg.cc/J4ZdxTbt/IMG-6846.jpg"
-    };
-    const SERVICE_IDS = {
-        view: [
-            { id: 6043, name: "View Nhanh", price: 200, min: 1000, desc: "Tăng view tốc độ cao" },
-            { id: 5274, name: "View Thường", price: 500, min: 1000, desc: "View ổn định, giá rẻ" }
+    const CONFIG = {
+        // Thời điểm bắt đầu update (để trống = lúc mở trang)
+        startTime: "2026-04-03T12:36:27",
+
+        // Thời điểm dự kiến kết thúc — format: "YYYY-MM-DDTHH:MM:SS"
+        // Ví dụ: "2025-12-25T18:00:00" = 25/12/2025 lúc 18:00
+        endTime: "2026-04-03T21:00:00",
+
+        // Phiên bản mới
+        version: "v2.7 PRO",
+
+        // Nội dung update (mảng string)
+        notes: [
+            "Cải thiện tốc độ xử lý đơn hàng",
+            "Bổ sung thêm ID dịch vụ mới",
+            "Sửa lỗi hiển thị số dư",
+            "Thêm tính năng mới",
+            "Hỗ trợ cho ngày dùng nhanh nhất",
+            "Tối ưu tốc độ xử lý đơn"
         ],
-        like: [
-            { id: 5839, name: "Tim Chậm", price: 750, min: 50, desc: "Lên từ từ, không tụt" },
-            { id: 355,  name: "Tim Nhanh", price: 600, min: 50, desc: "Lên nhanh, dễ tụt" }
-        ]
+
+        // Link về trang chính khi done
+        mainUrl: "index.html"
     };
-    const SERVICES = {
-        view: { name: "TikTok View", icon: "👀", unit: "view" },
-        like: { name: "TikTok Tim",  icon: "❤️", unit: "tim" }
-    };
-    const DEPOSIT_AMOUNTS = [2000, 5000, 10000, 20000, 50000, 100000];
 
-    // ======================= BIẾN TOÀN CỤC =======================
-    let ordersHistory = {};
-    let isAuthenticated = false;
-    let currentUserKey = null;
-    let isAdmin = false;
-    let subKeyUsage = {};
-    let depositRequests = [];
-    let lastBalanceVND = null;
-    let telegramOrders = [];  // cache đơn từ telegram
+    // =============================================
 
-    // ======================= HÀM TIỆN ÍCH =======================
-    function loadHistory() {
-        try { ordersHistory = JSON.parse(localStorage.getItem(HISTORY_KEY) || '{}'); } catch(e) { ordersHistory = {}; }
-    }
-    function saveHistory() { localStorage.setItem(HISTORY_KEY, JSON.stringify(ordersHistory)); }
-    function loadSubKeyUsage() {
-        try { subKeyUsage = JSON.parse(localStorage.getItem(SUBKEY_USAGE_KEY) || '{}'); } catch(e) { subKeyUsage = {}; }
-        SUB_KEYS.forEach(k => {
-            if (!subKeyUsage[k.key]) subKeyUsage[k.key] = { views_used: 0, likes_used: 0, logins_used: 0 };
-        });
-        saveSubKeyUsage();
-    }
-    function saveSubKeyUsage() { localStorage.setItem(SUBKEY_USAGE_KEY, JSON.stringify(subKeyUsage)); }
-    function loadDepositRequests() {
-        try { depositRequests = JSON.parse(localStorage.getItem(DEPOSIT_REQUESTS_KEY) || '[]'); } catch(e) { depositRequests = []; }
-    }
-    function saveDepositRequests() { localStorage.setItem(DEPOSIT_REQUESTS_KEY, JSON.stringify(depositRequests)); }
+    const now = new Date();
+    const start = CONFIG.startTime ? new Date(CONFIG.startTime) : now;
+    const end = new Date(CONFIG.endTime);
+    const totalDuration = end - start;
 
-    function showToast(msg, isError = false) {
-        let t = document.querySelector('.toast-msg');
-        if (!t) { t = document.createElement('div'); t.className = 'toast-msg'; document.body.appendChild(t); }
-        t.style.borderColor = isError ? 'rgba(248,113,113,0.4)' : 'rgba(45,212,191,0.3)';
-        t.innerHTML = msg;
-        t.style.visibility = 'visible';
-        t.style.opacity = '1';
-        t.style.transform = 'translateX(-50%) translateY(0)';
-        setTimeout(() => {
-            t.style.opacity = '0';
-            t.style.transform = 'translateX(-50%) translateY(8px)';
-            setTimeout(() => t.style.visibility = 'hidden', 300);
-        }, 2800);
+    // Hiển thị thời gian bắt đầu / kết thúc
+    const fmt = d => d.toLocaleString('vi-VN', { hour: '2-digit', minute: '2-digit', day: '2-digit', month: '2-digit', year: 'numeric' });
+    document.getElementById('startTimeDisplay').textContent = fmt(start);
+    document.getElementById('endTimeDisplay').textContent = fmt(end);
+    document.getElementById('versionDisplay').textContent = CONFIG.version;
+
+    // Render notes
+    document.getElementById('updateNotes').innerHTML = CONFIG.notes.map(n =>
+        `<div class="note-item"><span class="note-dot">›</span><span>${n}</span></div>`
+    ).join('');
+
+    // Particles
+    const pContainer = document.getElementById('particles');
+    for (let i = 0; i < 18; i++) {
+        const p = document.createElement('div');
+        p.className = 'particle';
+        p.style.cssText = `--x:${Math.random()*100}%;--dur:${6+Math.random()*8}s;--delay:${Math.random()*8}s`;
+        pContainer.appendChild(p);
     }
-    function showLoading(show, text = "Đang xử lý...") {
-        const ol = document.getElementById('loadingOverlay');
-        const tl = document.getElementById('loadingText');
-        if (tl) tl.textContent = text;
-        ol.style.visibility = show ? 'visible' : 'hidden';
-        ol.style.opacity = show ? '1' : '0';
-    }
-    function sendTelegramNotification(text) {
-        if (!TELE_TOKEN || !TELE_CHAT_ID) return;
-        fetch(`https://api.telegram.org/bot${TELE_TOKEN}/sendMessage`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ chat_id: TELE_CHAT_ID, text, parse_mode: "HTML" })
-        }).catch(() => {});
-    }
-    async function apiRequest(payload) {
-        try {
-            const res = await fetch(API_URL, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'Accept': 'application/json' },
-                body: new URLSearchParams(payload).toString()
+
+    function pad(n) { return String(Math.floor(n)).padStart(2, '0'); }
+
+    function tick() {
+        const now = new Date();
+        const remaining = end - now;
+
+        if (remaining <= 0) {
+            // Done!
+            document.getElementById('cdDays').textContent = '00';
+            document.getElementById('cdHours').textContent = '00';
+            document.getElementById('cdMins').textContent = '00';
+            document.getElementById('cdSecs').textContent = '00';
+            ['cdDays','cdHours','cdMins','cdSecs'].forEach(id => {
+                document.getElementById(id).classList.add('zero');
             });
-            return await res.json();
-        } catch(e) { return { error: e.message || "Lỗi kết nối" }; }
-    }
-
-    // ======================= LẤY ĐƠN TỪ TELEGRAM =======================
-    // Đọc lịch sử đơn từ các tin nhắn đã gửi lên Telegram bot
-    async function fetchOrdersFromTelegram() {
-        try {
-            const res = await fetch(`https://api.telegram.org/bot${TELE_TOKEN}/getUpdates?limit=100&offset=-100`);
-            const data = await res.json();
-            if (!data.ok || !data.result) return [];
-
-            const orders = [];
-            for (const update of data.result) {
-                const msg = update.message || update.channel_post;
-                if (!msg || !msg.text) continue;
-                const text = msg.text;
-
-                // Chỉ lấy tin nhắn có dạng đơn hàng (có "ĐƠN MỚI" hoặc "Order ID")
-                if (!text.includes('ĐƠN MỚI') && !text.includes('Order ID')) continue;
-
-                // Parse thông tin đơn
-                const order = { raw: text, date: new Date(msg.date * 1000).toLocaleString('vi-VN') };
-
-                const orderIdMatch = text.match(/Order ID[:\s]*(\d+)/i);
-                if (orderIdMatch) order.order_id = orderIdMatch[1];
-
-                const svcMatch = text.match(/ĐƠN MỚI[:\s]*([^\n]+)/i);
-                if (svcMatch) order.service_name = svcMatch[1].trim();
-
-                const slMatch = text.match(/SL[:\s]*([\d,\.]+)/i);
-                if (slMatch) order.quantity = slMatch[1].replace(/[,\.]/g, '');
-
-                const linkMatch = text.match(/Link[:\s]*(https?:\/\/[^\n]+)/i);
-                if (linkMatch) order.link = linkMatch[1].trim();
-
-                const noteMatch = text.match(/Tên[:\s]*([^\n]+)/i);
-                if (noteMatch) order.note = noteMatch[1].trim();
-
-                const priceMatch = text.match(/Ước tính[:\s]*([\d,\.]+)đ/i);
-                if (priceMatch) order.price = priceMatch[1];
-
-                const svcIdMatch = text.match(/Service ID[:\s]*(\d+)/i);
-                if (svcIdMatch) order.service_id = svcIdMatch[1];
-
-                if (order.order_id) orders.push(order);
-            }
-
-            // Dedup theo order_id
-            const seen = new Set();
-            return orders.filter(o => {
-                if (seen.has(o.order_id)) return false;
-                seen.add(o.order_id);
-                return true;
-            }).reverse();
-
-        } catch(e) { return []; }
-    }
-
-    function isValidTikTokUrl(url) {
-        return [
-            /^https?:\/\/(?:www\.)?tiktok\.com\/@[^\/]+\/video\/\d+/,
-            /^https?:\/\/(?:vm|vt)\.tiktok\.com\/\w+\/?$/,
-            /^https?:\/\/(?:www\.)?tiktok\.com\/t\/\w+\/?$/
-        ].some(p => p.test(url.trim()));
-    }
-    function calcPriceForSvc(svcEntry, qty) { return Math.ceil(qty / svcEntry.min) * svcEntry.price; }
-    function getStatusBadge(status) {
-        const s = (status || '').toLowerCase();
-        if (s === 'completed') return `<span class="status-badge status-completed">✓ Hoàn thành</span>`;
-        if (s === 'in progress' || s === 'inprogress' || s === 'processing') return `<span class="status-badge status-inprogress">⟳ Đang chạy</span>`;
-        if (s === 'partial') return `<span class="status-badge status-partial">◑ Một phần</span>`;
-        if (s === 'cancelled' || s === 'canceled') return `<span class="status-badge status-cancelled">✕ Đã hủy</span>`;
-        return `<span class="status-badge status-pending">⏳ Chờ xử lý</span>`;
-    }
-    function usdToVnd(usdStr) {
-        const usd = parseFloat(usdStr);
-        if (isNaN(usd)) return null;
-        return Math.round(usd * USD_TO_VND);
-    }
-
-    // ======================= KIỂM TRA HẠN MỨC KEY PHỤ =======================
-    function checkSubKeyLimit(serviceType, quantity) {
-        if (isAdmin) return { allowed: true };
-        const usage = subKeyUsage[currentUserKey];
-        if (!usage) return { allowed: false, message: "Key không hợp lệ!" };
-        const keyInfo = SUB_KEYS.find(k => k.key === currentUserKey);
-        if (!keyInfo) return { allowed: false, message: "Key không được cấu hình!" };
-        if (serviceType === 'view') {
-            const remaining = keyInfo.max_views - usage.views_used;
-            if (remaining < quantity) return { allowed: false, message: `Bạn chỉ còn ${remaining.toLocaleString()} view, không đủ ${quantity.toLocaleString()} view.` };
-        } else if (serviceType === 'like') {
-            const remaining = keyInfo.max_likes - usage.likes_used;
-            if (remaining < quantity) return { allowed: false, message: `Bạn chỉ còn ${remaining.toLocaleString()} tim, không đủ ${quantity.toLocaleString()} tim.` };
-        }
-        return { allowed: true };
-    }
-    function consumeSubKey(serviceType, quantity) {
-        if (isAdmin) return;
-        const usage = subKeyUsage[currentUserKey];
-        if (serviceType === 'view') usage.views_used += quantity;
-        else if (serviceType === 'like') usage.likes_used += quantity;
-        saveSubKeyUsage();
-    }
-    function getRemainingLimits() {
-        if (isAdmin) return { views: '∞', likes: '∞', logins: '∞' };
-        const keyInfo = SUB_KEYS.find(k => k.key === currentUserKey);
-        const usage = subKeyUsage[currentUserKey];
-        if (!keyInfo || !usage) return { views: 0, likes: 0, logins: 0 };
-        return {
-            views: keyInfo.max_views - usage.views_used,
-            likes: keyInfo.max_likes - usage.likes_used,
-            logins: keyInfo.max_logins - usage.logins_used
-        };
-    }
-
-    // ======================= ĐĂNG XUẤT =======================
-    function logout() {
-        isAuthenticated = false; currentUserKey = null; isAdmin = false;
-        showStartScreen();
-        showToast("Đã đăng xuất");
-        closeDrawer();
-    }
-
-    // ======================= MENU DRAWER =======================
-    function toggleDrawer() {
-        document.getElementById('menuDrawer').classList.toggle('show');
-        document.getElementById('menuOverlay').classList.toggle('show');
-    }
-    function closeDrawer() {
-        document.getElementById('menuDrawer').classList.remove('show');
-        document.getElementById('menuOverlay').classList.remove('show');
-    }
-    function updateDrawerButtons() {
-        const container = document.getElementById('drawerButtons');
-        if (!container) return;
-        let html = `
-            <button class="menu-btn" id="drawerBalance"><span class="icon">💰</span> Số dư</button>
-            <button class="menu-btn" id="drawerOrder"><span class="icon">➕</span> Tạo đơn</button>
-            <button class="menu-btn" id="drawerCheck"><span class="icon">🔍</span> Check đơn</button>
-            <button class="menu-btn" id="drawerHistory"><span class="icon">📋</span> Lịch sử</button>
-            <button class="menu-btn" id="drawerDeposit"><span class="icon">💳</span> Nạp tiền</button>
-            <button class="menu-btn" id="drawerSupport"><span class="icon">🆘</span> Hỗ trợ</button>
-        `;
-        if (isAdmin) {
-            html += `
-                <button class="menu-btn" id="drawerManageKeys"><span class="icon">🔑</span> Quản lý key</button>
-                <button class="menu-btn" id="drawerManageOrders"><span class="icon">📦</span> Quản lý đơn</button>
-                <button class="menu-btn" id="drawerManageMoney"><span class="icon">💵</span> Quản lý tiền</button>
-            `;
-        }
-        html += `<button class="menu-btn" id="drawerLogout"><span class="icon">🚪</span> Đăng xuất</button>`;
-        container.innerHTML = html;
-
-        document.getElementById('drawerBalance').onclick = () => { closeDrawer(); handleBalance(); };
-        document.getElementById('drawerOrder').onclick   = () => { closeDrawer(); showCreateOrderUI(); };
-        document.getElementById('drawerCheck').onclick   = () => { closeDrawer(); showCheckOrderUI(); };
-        document.getElementById('drawerHistory').onclick = () => { closeDrawer(); showHistoryUI(); };
-        document.getElementById('drawerDeposit').onclick = () => { closeDrawer(); showDepositUI(); };
-        document.getElementById('drawerSupport').onclick = () => { closeDrawer(); showSupportUI(); };
-        if (isAdmin) {
-            document.getElementById('drawerManageKeys').onclick   = () => { closeDrawer(); showManageKeysUI(); };
-            document.getElementById('drawerManageOrders').onclick = () => { closeDrawer(); showManageOrdersUI(); };
-            document.getElementById('drawerManageMoney').onclick  = () => { closeDrawer(); showManageMoneyUI(); };
-        }
-        document.getElementById('drawerLogout').onclick = () => { closeDrawer(); logout(); };
-    }
-
-    // ======================= MÀN HÌNH START =======================
-    function showStartScreen() {
-        document.getElementById('mainContent').innerHTML = `
-            <div class="start-screen">
-                <div style="font-size:1rem; font-weight:800; color:var(--teal); margin-bottom:8px; font-family:var(--font);">⚡ Dịch Vụ By Duy Hoang</div>
-                <button class="btn-start" id="startBtn">▶ START</button>
-                <div id="keySection" style="display:none;" class="key-box">
-                    <input type="password" id="secretKey" placeholder="🔐 Nhập mã kích hoạt" style="text-align:center;">
-                    <button class="btn btn-primary" id="submitKeyBtn">Xác nhận</button>
-                </div>
-                <div class="start-support">
-                    <div class="support-title">📞 HỖ TRỢ KHÁCH HÀNG</div>
-                    <div class="support-buttons">
-                        <a href="https://zalo.me/84385933633" target="_blank" rel="noopener noreferrer" class="support-btn">📱 Zalo</a>
-                        <a href="https://t.me/duyhoang_1501_tom" target="_blank" rel="noopener noreferrer" class="support-btn">✈️ Telegram</a>
-                    </div>
-                    <div class="support-time">⏰ Hỗ trợ từ 11h30 - 00h hàng ngày</div>
-                </div>
-            </div>
-        `;
-        document.getElementById('startBtn').onclick = () => {
-            showLoading(true, "Đang khởi động...");
-            setTimeout(() => {
-                showLoading(false);
-                document.getElementById('startBtn').style.display = 'none';
-                document.getElementById('keySection').style.display = 'flex';
-                document.getElementById('secretKey').focus();
-                showToast("🔐 Nhập mã kích hoạt để tiếp tục");
-            }, 1200);
-        };
-        const verify = () => {
-            const key = document.getElementById('secretKey').value.trim();
-            if (key === ADMIN_KEY) {
-                showLoading(true, "Xác thực admin...");
-                setTimeout(() => {
-                    showLoading(false);
-                    isAuthenticated = true; currentUserKey = ADMIN_KEY; isAdmin = true;
-                    renderMainMenu();
-                    startBalanceWatch();
-                    showToast("✅ Đăng nhập thành công (Admin)");
-                }, 700);
-                return;
-            }
-            const subKeyInfo = SUB_KEYS.find(k => k.key === key);
-            if (subKeyInfo) {
-                const usage = subKeyUsage[subKeyInfo.key];
-                if (usage.logins_used >= subKeyInfo.max_logins) {
-                    showToast("❌ Key đã hết số lần đăng nhập!", true);
-                    const inp = document.getElementById('secretKey');
-                    inp.value = '';
-                    inp.classList.add('error-shake');
-                    setTimeout(() => inp.classList.remove('error-shake'), 400);
-                    return;
-                }
-                showLoading(true, "Xác thực key...");
-                setTimeout(() => {
-                    showLoading(false);
-                    isAuthenticated = true; currentUserKey = subKeyInfo.key; isAdmin = false;
-                    subKeyUsage[subKeyInfo.key].logins_used++;
-                    saveSubKeyUsage();
-                    renderMainMenu();
-                    startBalanceWatch();
-                    showToast(`✅ Đăng nhập thành công (${subKeyInfo.label})`);
-                }, 700);
-            } else {
-                const inp = document.getElementById('secretKey');
-                inp.classList.add('error-shake');
-                showToast("❌ Mã kích hoạt không đúng!", true);
-                setTimeout(() => inp.classList.remove('error-shake'), 400);
-                inp.value = ''; inp.focus();
-            }
-        };
-        document.getElementById('submitKeyBtn').onclick = verify;
-        document.getElementById('secretKey').onkeypress = e => { if (e.key === 'Enter') verify(); };
-    }
-
-    // ======================= HỖ TRỢ =======================
-    function showSupportUI() {
-        document.getElementById('dynamicPanel').innerHTML = `
-            <div class="panel">
-                <div class="panel-title">📞 Hỗ trợ khách hàng</div>
-                <div class="support-buttons" style="margin: 15px 0;">
-                    <a href="https://zalo.me/84385933633" target="_blank" rel="noopener noreferrer" class="support-btn">📱 Zalo</a>
-                    <a href="https://t.me/duyhoang_1501_tom" target="_blank" rel="noopener noreferrer" class="support-btn">✈️ Telegram</a>
-                </div>
-                <div class="support-time">⏰ Thời gian hỗ trợ: <strong>11h30 - 00h</strong> hàng ngày</div>
-                <div style="margin-top:16px; text-align:center; font-size:0.75rem; color:var(--text-dim); font-family:var(--font);">Liên hệ nếu bạn cần trợ giúp về dịch vụ hoặc nạp tiền.</div>
-                <button class="btn btn-secondary" id="backFromSupport" style="margin-top:12px;">↩ Quay lại</button>
-            </div>
-        `;
-        document.getElementById('backFromSupport').onclick = () => renderDefaultPanel();
-    }
-
-    function renderDefaultPanel() {
-        const rem = getRemainingLimits();
-        document.getElementById('dynamicPanel').innerHTML = `
-            <div class="panel">
-                <div class="panel-title">📡 Dịch vụ TikTok Pro</div>
-                <div class="info-cards">
-                    <div class="info-card">
-                        <div class="ic-icon">👀</div>
-                        <div class="ic-title">TikTok View</div>
-                        <div class="ic-price">500đ / 1k</div>
-                    </div>
-                    <div class="info-card">
-                        <div class="ic-icon">❤️</div>
-                        <div class="ic-title">TikTok Tim</div>
-                        <div class="ic-price">600đ / 50</div>
-                    </div>
-                </div>
-                <div class="service-description">
-                    <div class="desc-text">⚡ <span class="desc-highlight">Tăng Tim & View siêu nhanh</span> ⚡</div>
-                    <div class="desc-text">✅ Uy tín hàng đầu - Chạy ngay sau khi đặt</div>
-                    <div class="desc-text">🚀 Hỗ trợ 24/7, bảo hành trọn gói</div>
-                </div>
-                ${!isAdmin ? `
-                <div style="margin-top:10px; background:rgba(0,0,0,0.3); border-radius:10px; padding:10px; text-align:center;">
-                    <div style="font-size:0.7rem; color:var(--text-dim); font-family:var(--font);">📊 Hạn mức còn lại:</div>
-                    <div style="font-size:0.82rem; color:var(--teal); font-weight:700; font-family:var(--font); margin:4px 0;">
-                        👀 ${typeof rem.views === 'number' ? rem.views.toLocaleString() : rem.views} view
-                        &nbsp;|&nbsp;
-                        ❤️ ${typeof rem.likes === 'number' ? rem.likes.toLocaleString() : rem.likes} tim
-                    </div>
-                    <div style="font-size:0.68rem; color:var(--text-dim); font-family:var(--mono);">🔑 ${currentUserKey}</div>
-                </div>
-                ` : `<div style="margin-top:10px; text-align:center;"><span class="status-badge status-completed">👑 Admin - không giới hạn</span></div>`}
-                <div class="admin-info">
-                    <span>👤 Admin: Duy Hoang</span>
-                    <span>⚡ v2.5 Pro</span>
-                </div>
-            </div>
-        `;
-    }
-
-    function renderMainMenu() {
-        document.getElementById('mainContent').innerHTML = `<div id="dynamicPanel"></div>`;
-        updateDrawerButtons();
-        const hamburger = document.getElementById('hamburgerBtn');
-        hamburger.onclick = toggleDrawer;
-        document.getElementById('menuOverlay').onclick = closeDrawer;
-        document.getElementById('closeDrawerBtn').onclick = closeDrawer;
-        renderDefaultPanel();
-    }
-
-    // ======================= QUẢN LÝ KEY (ADMIN) - FIX FONT =======================
-    function showManageKeysUI() {
-        const panel = document.getElementById('dynamicPanel');
-        let html = `<div class="panel"><div class="panel-title">🔑 Quản lý key phụ (${SUB_KEYS.length})</div>`;
-        for (const keyInfo of SUB_KEYS) {
-            const usage = subKeyUsage[keyInfo.key] || { views_used: 0, likes_used: 0, logins_used: 0 };
-            const viewPct = Math.min(100, Math.round((usage.views_used / keyInfo.max_views) * 100));
-            const likePct = Math.min(100, Math.round((usage.likes_used / keyInfo.max_likes) * 100));
-            html += `
-                <div class="key-item">
-                    <div class="key-name">${keyInfo.key} <span style="font-size:0.65rem; color:var(--text-dim); font-family:var(--font); font-weight:400;">· ${keyInfo.label}</span></div>
-                    <div class="key-stat">
-                        <span>👀 View</span>
-                        <span class="ks-val">${usage.views_used.toLocaleString()} / ${keyInfo.max_views.toLocaleString()}</span>
-                    </div>
-                    <div class="key-progress"><div class="key-progress-bar" style="width:${viewPct}%"></div></div>
-                    <div class="key-stat">
-                        <span>❤️ Tim</span>
-                        <span class="ks-val">${usage.likes_used.toLocaleString()} / ${keyInfo.max_likes.toLocaleString()}</span>
-                    </div>
-                    <div class="key-progress"><div class="key-progress-bar" style="width:${likePct}%; background: linear-gradient(90deg, #be185d, #f43f5e);"></div></div>
-                    <div class="key-stat">
-                        <span>🔑 Đăng nhập</span>
-                        <span class="ks-val">${usage.logins_used} / ${keyInfo.max_logins}</span>
-                    </div>
-                </div>
-            `;
-        }
-        html += `<button class="btn btn-secondary" id="backManageKeys">↩ Quay lại</button></div>`;
-        panel.innerHTML = html;
-        document.getElementById('backManageKeys').onclick = () => renderDefaultPanel();
-    }
-
-    // ======================= QUẢN LÝ ĐƠN (ADMIN) - ĐỌC TỪ TELEGRAM =======================
-    async function showManageOrdersUI() {
-        const panel = document.getElementById('dynamicPanel');
-        panel.innerHTML = `
-            <div class="panel">
-                <div class="panel-title">📦 Quản lý đơn hàng</div>
-                <div class="info-note">
-                    📡 Đơn hàng được đọc từ <strong>Telegram Bot</strong> — bao gồm mọi đơn từ tất cả thiết bị. Nhấn làm mới để cập nhật.
-                </div>
-                <button class="refresh-btn" id="refreshOrdersBtn">🔄 Làm mới từ Telegram</button>
-                <div id="ordersListContainer">
-                    <div style="text-align:center; padding:20px; color:var(--text-dim); font-size:0.82rem; font-family:var(--font);">⏳ Đang tải đơn từ Telegram...</div>
-                </div>
-                <button class="btn btn-secondary" style="margin-top:8px;" id="backManageOrders">↩ Quay lại</button>
-            </div>
-        `;
-        document.getElementById('backManageOrders').onclick = () => renderDefaultPanel();
-        document.getElementById('refreshOrdersBtn').onclick = () => loadAndRenderTeleOrders();
-        await loadAndRenderTeleOrders();
-    }
-
-    async function loadAndRenderTeleOrders() {
-        const container = document.getElementById('ordersListContainer');
-        if (!container) return;
-        container.innerHTML = `<div style="text-align:center; padding:20px; color:var(--text-dim); font-size:0.82rem; font-family:var(--font);">⏳ Đang tải từ Telegram...</div>`;
-        const orders = await fetchOrdersFromTelegram();
-        telegramOrders = orders;
-        if (orders.length === 0) {
-            container.innerHTML = `<div style="text-align:center; padding:20px; color:var(--text-dim); font-size:0.82rem; font-family:var(--font);">📭 Không tìm thấy đơn hàng nào trong Telegram</div>`;
+            document.getElementById('progressFill').style.width = '100%';
+            document.getElementById('progressPct').textContent = '100%';
+            document.getElementById('statusText').textContent = 'Cập nhật hoàn tất! 🎉';
+            document.getElementById('doneOverlay').style.display = 'flex';
+            document.querySelector('.done-btn').onclick = () => window.location.href = CONFIG.mainUrl;
             return;
         }
-        let html = `<div style="font-size:0.7rem; color:var(--text-dim); margin-bottom:8px; font-family:var(--font);">✅ Tìm thấy ${orders.length} đơn từ Telegram</div>`;
-        for (const o of orders) {
-            html += `
-                <div class="tele-order-item" data-oid="${o.order_id || ''}">
-                    <div class="to-header">
-                        <span class="to-id">#${o.order_id || 'N/A'}</span>
-                        ${getStatusBadge(ordersHistory[o.order_id]?.status || 'Pending')}
-                    </div>
-                    ${o.service_name ? `<div class="to-detail">🎯 ${o.service_name}${o.quantity ? ' · ' + Number(o.quantity).toLocaleString() : ''}</div>` : ''}
-                    ${o.note ? `<div class="to-note">👤 ${o.note}</div>` : ''}
-                    ${o.price ? `<div class="to-detail">💰 ${Number(o.price.replace(/\./g,'')).toLocaleString('vi-VN')}đ</div>` : ''}
-                    <div class="history-date">${o.date || ''}</div>
-                    ${o.link ? `<div class="to-link">${o.link}</div>` : ''}
-                </div>
-            `;
-        }
-        container.innerHTML = html;
 
-        // Click vào đơn để check status
-        container.querySelectorAll('.tele-order-item[data-oid]').forEach(item => {
-            item.onclick = () => {
-                const oid = item.dataset.oid;
-                if (!oid) return;
-                showCheckOrderUI();
-                setTimeout(() => {
-                    const inp = document.getElementById('checkOrderId');
-                    if (inp) { inp.value = oid; document.getElementById('checkBtn')?.click(); }
-                }, 100);
-            };
-        });
+        const days = Math.floor(remaining / 86400000);
+        const hours = Math.floor((remaining % 86400000) / 3600000);
+        const mins = Math.floor((remaining % 3600000) / 60000);
+        const secs = Math.floor((remaining % 60000) / 1000);
+
+        document.getElementById('cdDays').textContent = pad(days);
+        document.getElementById('cdHours').textContent = pad(hours);
+        document.getElementById('cdMins').textContent = pad(mins);
+        document.getElementById('cdSecs').textContent = pad(secs);
+
+        // Progress: phần đã qua / tổng
+        const elapsed = now - start;
+        const pct = Math.min(100, Math.max(0, Math.round((elapsed / totalDuration) * 100)));
+        document.getElementById('progressFill').style.width = pct + '%';
+        document.getElementById('progressPct').textContent = pct + '%';
+
+        setTimeout(tick, 1000);
     }
 
-    // ======================= QUẢN LÝ TIỀN (ADMIN) - FIX FONT =======================
-    function showManageMoneyUI() {
-        const panel = document.getElementById('dynamicPanel');
-        const pending = depositRequests.filter(req => req.status === 'pending');
-        if (pending.length === 0) {
-            panel.innerHTML = `
-                <div class="panel">
-                    <div class="panel-title">💵 Quản lý tiền nạp</div>
-                    <div style="text-align:center; padding:20px; color:var(--text-dim); font-size:0.82rem; font-family:var(--font);">Không có yêu cầu nạp tiền nào đang chờ xử lý</div>
-                    <button class="btn btn-secondary" id="backManageMoney">↩ Quay lại</button>
-                </div>`;
-            document.getElementById('backManageMoney').onclick = () => renderDefaultPanel();
-            return;
-        }
-        let html = `<div class="panel"><div class="panel-title">💵 Yêu cầu nạp tiền (${pending.length})</div>`;
-        for (const req of pending) {
-            html += `
-                <div class="deposit-item" data-id="${req.id}">
-                    <div class="di-name">👤 ${req.name}</div>
-                    <div class="di-amount">+${req.amount.toLocaleString('vi-VN')}đ</div>
-                    <div class="di-note">📝 ${req.note}</div>
-                    <div class="di-time">🕐 ${req.time}</div>
-                    <button class="btn btn-primary" style="margin-top:10px;" data-id="${req.id}">✅ Xác nhận đã nhận tiền</button>
-                </div>
-            `;
-        }
-        html += `<button class="btn btn-secondary" id="backManageMoney" style="margin-top:4px;">↩ Quay lại</button></div>`;
-        panel.innerHTML = html;
-        document.querySelectorAll('.deposit-item .btn-primary').forEach(btn => {
-            btn.onclick = () => {
-                const id = btn.dataset.id;
-                const idx = depositRequests.findIndex(r => r.id == id);
-                if (idx !== -1) {
-                    depositRequests[idx].status = 'completed';
-                    saveDepositRequests();
-                    showToast(`✅ Đã xác nhận nạp tiền cho ${depositRequests[idx].name}`);
-                    showManageMoneyUI();
-                }
-            };
-        });
-        document.getElementById('backManageMoney').onclick = () => renderDefaultPanel();
-    }
-
-    // ======================= SỐ DƯ =======================
-    async function handleBalance() {
-        showLoading(true, "Đang kiểm tra số dư...");
-        const result = await apiRequest({ key: API_KEY, action: "balance" });
-        showLoading(false);
-        const panel = document.getElementById('dynamicPanel');
-        if (result && result.balance !== undefined) {
-            const usdRaw = parseFloat(result.balance);
-            const vnd = usdToVnd(result.balance);
-            const vndStr = vnd !== null ? vnd.toLocaleString('vi-VN') : 'N/A';
-            const usdStr = isNaN(usdRaw) ? 'N/A' : usdRaw.toFixed(4);
-            lastBalanceVND = vnd;
-            panel.innerHTML = `
-                <div class="panel">
-                    <div class="panel-title">💰 Số dư tài khoản</div>
-                    <div class="balance-display">
-                        <div class="balance-label">SỐ DƯ KHẢ DỤNG</div>
-                        <div class="balance-value">${vndStr}đ</div>
-                        <div class="balance-sub">≈ $${usdStr} USD · Tỷ giá ${USD_TO_VND.toLocaleString('vi-VN')}đ/$</div>
-                    </div>
-                    <button class="btn btn-orange" id="goDepositBtn">💳 Nạp thêm tiền</button>
-                </div>
-            `;
-            document.getElementById('goDepositBtn').onclick = showDepositUI;
-        } else {
-            panel.innerHTML = `<div class="panel" style="text-align:center; padding:22px; color:var(--red); font-size:0.85rem; font-family:var(--font);">❌ ${result?.error || "Không thể lấy số dư"}</div>`;
-        }
-    }
-
-    // ======================= NẠP TIỀN =======================
-    function showDepositUI() {
-        const panel = document.getElementById('dynamicPanel');
-        let selectedAmount = null;
-        function render() {
-            panel.innerHTML = `
-                <div class="panel">
-                    <div class="panel-title">💳 Nạp tiền</div>
-                    <div style="font-size:0.72rem; color:var(--text-muted); margin-bottom:10px; font-weight:600; font-family:var(--font);">Chọn số tiền nạp:</div>
-                    <div class="deposit-amounts">
-                        ${DEPOSIT_AMOUNTS.map(a => `<div class="amt-btn ${selectedAmount === a ? 'selected' : ''}" data-amount="${a}">${a >= 1000000 ? (a/1000000)+'M' : a >= 1000 ? (a/1000)+'k' : a}đ</div>`).join('')}
-                    </div>
-                    <div class="form-group"><label>💵 Hoặc nhập số tiền khác (VNĐ)</label><input type="number" id="customAmount" placeholder="Ví dụ: 5000" min="2000" step="1000"></div>
-                    <div class="form-group"><label>👤 Tên của bạn</label><input type="text" id="depositorName" placeholder="Nhập tên để admin nhận diện..."></div>
-                    <button class="btn btn-orange" id="showQRBtn">📲 Xem QR & Xác nhận nạp</button>
-                    <div id="qrSection" style="display:none;">
-                        <div class="qr-container"><img class="qr-img" src="${BANK_INFO.qr}" alt="QR Bank" onerror="this.src='https://placehold.co/200x200/0c1825/00e5c3?text=QR+BANK'"></div>
-                        <div class="bank-info"><div class="bi-name">${BANK_INFO.bank} · Số tài khoản</div><div class="bi-val">${BANK_INFO.account}</div></div>
-                        <div class="bank-info" style="margin-top:-3px;"><div class="bi-name">Chủ tài khoản</div><div class="bi-val">${BANK_INFO.name}</div></div>
-                        <div class="bank-info" style="margin-top:-3px;"><div class="bi-name">Số tiền</div><div class="bi-val" id="finalAmtDisplay">—</div></div>
-                        <div class="deposit-note" style="margin:10px 0;">Nội dung CK: <span id="transferNote">NAP TIEN</span><br>Sau khi chuyển khoản, nhấn xác nhận bên dưới</div>
-                        <button class="btn btn-primary" id="confirmDepositBtn">✅ Đã chuyển khoản · Thông báo Admin</button>
-                    </div>
-                    <button class="btn btn-secondary" style="margin-top:8px;" id="backDepositBtn">↩ Quay lại</button>
-                </div>
-            `;
-            panel.querySelectorAll('.amt-btn').forEach(b => {
-                b.onclick = () => { selectedAmount = parseInt(b.dataset.amount); document.getElementById('customAmount').value = ''; render(); };
-            });
-            document.getElementById('customAmount').oninput = () => { selectedAmount = null; panel.querySelectorAll('.amt-btn').forEach(b => b.classList.remove('selected')); };
-            document.getElementById('showQRBtn').onclick = () => {
-                const custom = parseInt(document.getElementById('customAmount').value);
-                const finalAmt = selectedAmount || (custom > 0 ? custom : null);
-                const name = document.getElementById('depositorName').value.trim();
-                if (!finalAmt || finalAmt < 2000) { showToast("Vui lòng chọn hoặc nhập số tiền tối thiểu 2,000đ", true); return; }
-                if (!name) { showToast("Vui lòng nhập tên của bạn", true); document.getElementById('depositorName').classList.add('error-shake'); setTimeout(() => document.getElementById('depositorName')?.classList.remove('error-shake'), 400); return; }
-                selectedAmount = finalAmt;
-                document.getElementById('qrSection').style.display = 'block';
-                document.getElementById('finalAmtDisplay').textContent = finalAmt.toLocaleString('vi-VN') + 'đ';
-                document.getElementById('transferNote').textContent = `NAP ${finalAmt.toLocaleString('vi-VN')} ${name}`;
-                document.getElementById('showQRBtn').style.display = 'none';
-                document.getElementById('qrSection').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-            };
-            document.getElementById('confirmDepositBtn').onclick = async () => {
-                const amt = selectedAmount;
-                const name = document.getElementById('depositorName')?.value.trim() || '—';
-                if (!amt) return;
-                showLoading(true, "Đang gửi thông báo...");
-                const balResult = await apiRequest({ key: API_KEY, action: "balance" });
-                showLoading(false);
-                const curVnd = balResult?.balance !== undefined ? usdToVnd(balResult.balance) : null;
-                let msg = `💰 <b>YÊU CẦU NẠP TIỀN</b>\n━━━━━━━━━━━━━━\n👤 Tên: <b>${name}</b>\n💵 Số tiền nạp: <b>${amt.toLocaleString('vi-VN')}đ</b>\n🏦 Ngân hàng: ${BANK_INFO.bank} · ${BANK_INFO.account}\n`;
-                if (curVnd !== null) msg += `📊 Số dư hiện tại: ${curVnd.toLocaleString('vi-VN')}đ\n`;
-                msg += `🕐 Thời gian: ${new Date().toLocaleString('vi-VN')}`;
-                sendTelegramNotification(msg);
-                const newRequest = { id: Date.now(), name, amount: amt, time: new Date().toLocaleString('vi-VN'), note: `NAP ${amt.toLocaleString('vi-VN')} ${name}`, status: 'pending' };
-                depositRequests.push(newRequest);
-                saveDepositRequests();
-                showToast("✅ Đã gửi thông báo cho Admin!");
-                panel.innerHTML = `
-                    <div class="panel">
-                        <div class="panel-title">✅ Đã gửi yêu cầu</div>
-                        <div class="success-card">
-                            <div class="success-icon">📨</div>
-                            <div class="success-title">THÔNG BÁO ĐÃ GỬI</div>
-                            <div class="success-detail">
-                                <div class="success-row"><span class="sk">Tên</span><span class="sv" style="color:var(--yellow)">${name}</span></div>
-                                <div class="success-row"><span class="sk">Số tiền nạp</span><span class="sv">${amt.toLocaleString('vi-VN')}đ</span></div>
-                                <div class="success-row"><span class="sk">Ngân hàng</span><span class="sv">${BANK_INFO.bank}</span></div>
-                                <div class="success-row"><span class="sk">STK</span><span class="sv">${BANK_INFO.account}</span></div>
-                                ${curVnd !== null ? `<div class="success-row"><span class="sk">Số dư hiện tại</span><span class="sv">${curVnd.toLocaleString('vi-VN')}đ</span></div>` : ''}
-                            </div>
-                            <div class="deposit-note" style="margin-bottom:12px;">Admin sẽ xác nhận và cộng tiền trong vài phút.<br><span>Liên hệ ZL: 0385933633 nếu chưa nhận được.</span></div>
-                            <button class="btn btn-secondary" id="backAfterDeposit">🏠 Về trang chủ</button>
-                        </div>
-                    </div>`;
-                document.getElementById('backAfterDeposit').onclick = () => renderDefaultPanel();
-            };
-            document.getElementById('backDepositBtn').onclick = () => renderDefaultPanel();
-        }
-        render();
-    }
-
-    // ======================= TẠO ĐƠN =======================
-    async function showCreateOrderUI() {
-        let selectedService = 'view';
-        let selectedSvcIdx = 0;
-        const panel = document.getElementById('dynamicPanel');
-        function renderForm() {
-            const svcInfo = SERVICES[selectedService];
-            const idList = SERVICE_IDS[selectedService] || [];
-            if (selectedSvcIdx >= idList.length) selectedSvcIdx = 0;
-            const selectedEntry = idList[selectedSvcIdx] || null;
-            panel.innerHTML = `
-                <div class="panel">
-                    <div class="panel-title">➕ Tạo đơn mới</div>
-                    <div class="service-tabs">
-                        <div class="service-tab ${selectedService === 'view' ? 'active' : ''}" data-s="view"><span class="tab-icon">👀</span>VIEW</div>
-                        <div class="service-tab ${selectedService === 'like' ? 'active' : ''}" data-s="like"><span class="tab-icon">❤️</span>TIM</div>
-                    </div>
-                    <div class="form-group">
-                        <label>🎯 Chọn loại dịch vụ</label>
-                        <div id="idPicker" style="display:flex; flex-direction:column; gap:7px; margin-bottom:2px;">
-                            ${idList.length === 0 ? `<div style="color:var(--red);font-size:0.78rem;">⚠️ Không có dịch vụ</div>` :
-                            idList.map((entry, i) => `
-                                <div class="id-pick-item" data-idx="${i}" style="background:${i === selectedSvcIdx ? 'var(--teal-glow)' : 'rgba(0,0,0,0.3)'};border:1px solid ${i === selectedSvcIdx ? 'var(--teal)' : 'var(--border)'};border-radius:10px; padding:10px 12px; cursor:pointer; transition:all 0.15s;">
-                                    <div style="display:flex;justify-content:space-between;align-items:center;">
-                                        <span style="font-weight:800;font-size:0.82rem;font-family:var(--font);color:${i === selectedSvcIdx ? 'var(--teal)' : 'var(--text-primary)'};">${entry.name}</span>
-                                        <span style="font-family:var(--mono);font-size:0.72rem;color:var(--yellow);font-weight:700;">${entry.price.toLocaleString('vi-VN')}đ/min</span>
-                                    </div>
-                                    <div style="display:flex;gap:10px;margin-top:3px;">
-                                        <span style="font-size:0.65rem;color:var(--text-dim);font-family:var(--mono);">ID: ${entry.id}</span>
-                                        <span style="font-size:0.65rem;color:var(--text-dim);font-family:var(--font);">Min: ${entry.min.toLocaleString()}</span>
-                                    </div>
-                                    ${entry.desc ? `<div style="font-size:0.68rem;color:var(--text-muted);margin-top:2px;font-family:var(--font);">${entry.desc}</div>` : ''}
-                                </div>
-                            `).join('')}
-                        </div>
-                    </div>
-                    <div class="form-group"><label>🔗 Link video TikTok</label><input type="text" id="videoLink" placeholder="https://www.tiktok.com/@user/video/..."></div>
-                    <div class="form-group"><label>🔢 Số lượng ${svcInfo.unit}${selectedEntry ? ' (tối thiểu ' + selectedEntry.min.toLocaleString() + ')' : ''}</label><input type="number" id="quantity" placeholder="${selectedEntry ? selectedEntry.min : 1000}" min="${selectedEntry ? selectedEntry.min : 1}" step="${selectedService === 'view' ? 100 : 50}"></div>
-                    <div class="form-group"><label>👤 Tên của bạn (gửi lên Telegram)</label><input type="text" id="orderNote" placeholder="Nhập tên của bạn..."></div>
-                    <div class="price-estimate" id="priceEst">💰 Nhập số lượng để xem ước tính</div>
-                    <button class="btn btn-primary" id="submitBtn">🚀 Tạo đơn ngay</button>
-                    <button class="btn btn-secondary" id="cancelBtn">↩ Hủy</button>
-                </div>
-            `;
-            document.querySelectorAll('.service-tab').forEach(t => { t.onclick = () => { selectedService = t.dataset.s; selectedSvcIdx = 0; renderForm(); }; });
-            document.querySelectorAll('.id-pick-item').forEach(el => { el.onclick = () => { selectedSvcIdx = parseInt(el.dataset.idx); renderForm(); }; });
-            const qtyInput = document.getElementById('quantity');
-            const estDiv = document.getElementById('priceEst');
-            qtyInput.oninput = () => {
-                const qty = parseInt(qtyInput.value);
-                const entry = (SERVICE_IDS[selectedService] || [])[selectedSvcIdx];
-                if (!isNaN(qty) && qty > 0 && entry) estDiv.textContent = `💰 Dự tính: ${calcPriceForSvc(entry, qty).toLocaleString('vi-VN')}đ cho ${qty.toLocaleString()} ${SERVICES[selectedService].unit}`;
-                else estDiv.textContent = `💰 Nhập số lượng để xem ước tính`;
-            };
-            document.getElementById('submitBtn').onclick = async () => {
-                const link = document.getElementById('videoLink').value.trim();
-                const qty = parseInt(qtyInput.value);
-                const entry = (SERVICE_IDS[selectedService] || [])[selectedSvcIdx];
-                if (!entry) { showToast("Vui lòng chọn loại dịch vụ!", true); return; }
-                if (!link) { showToast("Vui lòng nhập link video", true); return; }
-                if (!isValidTikTokUrl(link)) { showToast("Link TikTok không hợp lệ!", true); return; }
-                if (isNaN(qty) || qty < entry.min) { showToast(`Tối thiểu ${entry.min.toLocaleString()} ${SERVICES[selectedService].unit}!`, true); return; }
-                const note = document.getElementById('orderNote').value.trim();
-                if (!isAdmin) {
-                    const limitCheck = checkSubKeyLimit(selectedService, qty);
-                    if (!limitCheck.allowed) { showToast(limitCheck.message, true); return; }
-                }
-                await createOrder(link, qty, selectedService, note, entry);
-            };
-            document.getElementById('cancelBtn').onclick = () => renderDefaultPanel();
-        }
-        renderForm();
-    }
-
-    async function createOrder(link, quantity, serviceType, note = '', svcEntry = null) {
-        const svcInfo = SERVICES[serviceType];
-        const entryName = svcEntry ? svcEntry.name : svcInfo.name;
-        const entryId = svcEntry ? svcEntry.id : '';
-        showLoading(true, `Đang tạo đơn ${entryName}...`);
-        const result = await apiRequest({ key: API_KEY, action: "add", service: String(entryId), link, quantity: String(quantity) });
-        showLoading(false);
-        if (result && result.order) {
-            const orderId = result.order;
-            const priceEst = svcEntry ? calcPriceForSvc(svcEntry, quantity) : 0;
-            ordersHistory[orderId] = {
-                order_id: orderId, link, quantity, service: serviceType,
-                service_name: entryName, service_id: entryId, charge: result.charge, note,
-                created_at: new Date().toLocaleString('vi-VN'), status: "Pending"
-            };
-            saveHistory();
-            if (!isAdmin) consumeSubKey(serviceType, quantity);
-            sendTelegramNotification(`✅ ĐƠN MỚI: ${entryName.toUpperCase()}\n🔰 Order ID: ${orderId}\n🆔 Service ID: ${entryId}${note ? '\n👤 Tên: ' + note : ''}\n📊 SL: ${quantity.toLocaleString()} ${svcInfo.unit}\n🔗 Link: ${link}\n💰 Ước tính: ${priceEst.toLocaleString('vi-VN')}đ`);
-            showToast(`✅ Tạo đơn thành công! Mã: ${orderId}`);
-            document.getElementById('dynamicPanel').innerHTML = `
-                <div class="panel">
-                    <div class="panel-title">✅ Tạo đơn thành công</div>
-                    <div class="success-card">
-                        <div class="success-icon">🎉</div>
-                        <div class="success-title">ĐƠN HÀNG ĐÃ TẠO</div>
-                        <div class="success-detail">
-                            <div class="success-row"><span class="sk">Order ID</span><span class="sv">#${orderId}</span></div>
-                            <div class="success-row"><span class="sk">Dịch vụ</span><span class="sv">${svcInfo.icon} ${entryName}</span></div>
-                            <div class="success-row"><span class="sk">Service ID</span><span class="sv">${entryId}</span></div>
-                            ${note ? `<div class="success-row"><span class="sk">Tên</span><span class="sv" style="color:var(--yellow)">${note}</span></div>` : ''}
-                            <div class="success-row"><span class="sk">Số lượng</span><span class="sv">${quantity.toLocaleString()} ${svcInfo.unit}</span></div>
-                            <div class="success-row"><span class="sk">Ước tính</span><span class="sv">${priceEst.toLocaleString('vi-VN')}đ</span></div>
-                        </div>
-                        <button class="btn btn-secondary" id="backHomeBtn">🏠 Về trang chủ</button>
-                    </div>
-                </div>
-            `;
-            document.getElementById('backHomeBtn').onclick = () => renderDefaultPanel();
-        } else {
-            const errMsg = result?.error || "Không tạo được đơn, kiểm tra số dư hoặc liên hệ admin";
-            showToast(`❌ Thất bại: ${errMsg}`, true);
-            sendTelegramNotification(`⚠️ LỖI TẠO ĐƠN ${entryName}: ${errMsg}\nLink: ${link}\nSL: ${quantity}`);
-        }
-    }
-
-    // ======================= CHECK ĐƠN =======================
-    function showCheckOrderUI() {
-        const panel = document.getElementById('dynamicPanel');
-        const lastOrderId = Object.keys(ordersHistory).pop() || '';
-        panel.innerHTML = `
-            <div class="panel">
-                <div class="panel-title">🔍 Kiểm tra trạng thái</div>
-                <div class="form-group"><label>🔢 Mã đơn hàng (Order ID)</label><input type="text" id="checkOrderId" placeholder="Nhập Order ID..." value="${lastOrderId}"></div>
-                <button class="btn btn-primary" id="checkBtn">🔍 Kiểm tra ngay</button>
-                <div id="checkResult"></div>
-                <button class="btn btn-secondary" style="margin-top:8px;" id="cancelCheckBtn">↩ Quay lại</button>
-            </div>
-        `;
-        document.getElementById('checkBtn').onclick = async () => {
-            const orderId = document.getElementById('checkOrderId').value.trim();
-            if (!orderId) { showToast("Vui lòng nhập Order ID", true); return; }
-            await fetchOrderStatus(orderId);
-        };
-        document.getElementById('cancelCheckBtn').onclick = () => renderDefaultPanel();
-        document.getElementById('checkOrderId').onkeypress = e => { if (e.key === 'Enter') document.getElementById('checkBtn').click(); };
-    }
-
-    async function fetchOrderStatus(orderId) {
-        showLoading(true, `Đang kiểm tra đơn #${orderId}...`);
-        const result = await apiRequest({ key: API_KEY, action: "status", order: orderId });
-        showLoading(false);
-        const resultDiv = document.getElementById('checkResult');
-        if (!resultDiv) return;
-        if (result && result.status !== undefined) {
-            if (ordersHistory[orderId]) { ordersHistory[orderId].status = result.status; saveHistory(); }
-            const statusBadge = getStatusBadge(result.status);
-            const startCount = result.start_count !== undefined ? Number(result.start_count).toLocaleString() : 'N/A';
-            const remains = result.remains !== undefined ? Number(result.remains).toLocaleString() : 'N/A';
-            const localOrder = ordersHistory[orderId];
-            // Tìm trong telegram orders nếu không có local
-            const teleOrder = telegramOrders.find(o => o.order_id === orderId);
-            const svcName = localOrder ? `${SERVICES[localOrder.service]?.icon || ''} ${localOrder.service_name}` : (teleOrder?.service_name || '—');
-            const noteDisp = localOrder?.note || teleOrder?.note || null;
-            resultDiv.innerHTML = `
-                <div class="status-result-card">
-                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
-                        <span style="font-family:var(--mono); font-size:0.78rem; color:var(--teal);">#${orderId}</span>
-                        ${statusBadge}
-                    </div>
-                    <div class="status-row"><span class="status-key">Trạng thái</span><span class="status-val">${result.status}</span></div>
-                    <div class="status-row"><span class="status-key">Dịch vụ</span><span class="status-val">${svcName}</span></div>
-                    ${noteDisp ? `<div class="status-row"><span class="status-key">Tên</span><span class="status-val" style="color:var(--yellow)">${noteDisp}</span></div>` : ''}
-                    ${localOrder ? `<div class="status-row"><span class="status-key">Số lượng</span><span class="status-val">${Number(localOrder.quantity).toLocaleString()} ${SERVICES[localOrder.service]?.unit || ''}</span></div>` : ''}
-                    <div class="status-row"><span class="status-key">Start count</span><span class="status-val">${startCount}</span></div>
-                    <div class="status-row"><span class="status-key">Còn lại</span><span class="status-val">${remains}</span></div>
-                    ${localOrder ? `<div class="status-row"><span class="status-key">Tạo lúc</span><span class="status-val" style="font-size:0.68rem;">${localOrder.created_at}</span></div>` : ''}
-                    ${teleOrder && !localOrder ? `<div class="status-row"><span class="status-key">Tạo lúc</span><span class="status-val" style="font-size:0.68rem;">${teleOrder.date}</span></div>` : ''}
-                </div>
-            `;
-        } else {
-            const errMsg = result?.error || "Không tìm thấy đơn hàng này";
-            resultDiv.innerHTML = `<div style="text-align:center; padding:14px; color:var(--red); font-size:0.82rem; margin-top:10px; font-family:var(--font);">❌ ${errMsg}</div>`;
-            showToast(`❌ ${errMsg}`, true);
-        }
-    }
-
-    // ======================= LỊCH SỬ (THIẾT BỊ HIỆN TẠI) =======================
-    function showHistoryUI() {
-        const panel = document.getElementById('dynamicPanel');
-        const orders = Object.values(ordersHistory).reverse();
-        if (orders.length === 0) {
-            panel.innerHTML = `
-                <div class="panel" style="text-align:center; padding:28px 14px;">
-                    <div style="font-size:1.8rem; margin-bottom:9px;">📭</div>
-                    <div style="color:var(--text-dim); font-size:0.82rem; font-family:var(--font);">Chưa có đơn nào trên thiết bị này</div>
-                    <div style="color:var(--text-dim); font-size:0.72rem; margin-top:6px; font-family:var(--font);">Mọi đơn đều lưu trên Telegram (Admin xem qua Quản lý đơn)</div>
-                    <button class="btn btn-secondary" style="margin-top:14px;" id="backHistory">↩ Quay lại</button>
-                </div>`;
-            document.getElementById('backHistory').onclick = () => renderDefaultPanel();
-            return;
-        }
-        let html = `<div class="panel"><div class="panel-title">📋 Lịch sử thiết bị này (${orders.length})</div>`;
-        for (const d of orders) {
-            const svc = SERVICES[d.service] || {};
-            html += `
-                <div class="history-item" data-oid="${d.order_id}">
-                    <div class="history-header"><span class="history-id">#${d.order_id}</span>${getStatusBadge(d.status)}</div>
-                    <div class="history-detail">${svc.icon || ''} ${d.service_name || d.service} · ${Number(d.quantity).toLocaleString()} ${svc.unit || ''}</div>
-                    ${d.note ? `<div style="font-size:0.7rem; color:var(--yellow); margin-bottom:2px; font-weight:600; font-family:var(--font);">👤 ${d.note}</div>` : ''}
-                    <div class="history-date" style="margin-bottom:3px;">${d.created_at || ''}</div>
-                    <div class="history-link">${d.link || ''}</div>
-                </div>`;
-        }
-        html += `
-            <div style="display:grid; grid-template-columns:1fr 1fr; gap:7px; margin-top:4px;">
-                <button class="btn btn-danger" id="clearHistoryBtn">🗑️ Xóa lịch sử</button>
-                <button class="btn btn-secondary" id="backHistoryBtn">↩ Quay lại</button>
-            </div>
-        </div>`;
-        panel.innerHTML = html;
-        panel.querySelectorAll('.history-item').forEach(item => {
-            item.onclick = () => {
-                const oid = item.dataset.oid;
-                showCheckOrderUI();
-                setTimeout(() => { const inp = document.getElementById('checkOrderId'); if (inp) { inp.value = oid; document.getElementById('checkBtn')?.click(); } }, 100);
-            };
-        });
-        document.getElementById('clearHistoryBtn').onclick = () => {
-            if (confirm("Xóa toàn bộ lịch sử đơn hàng trên thiết bị này?")) { ordersHistory = {}; saveHistory(); showHistoryUI(); showToast("Đã xóa lịch sử"); }
-        };
-        document.getElementById('backHistoryBtn').onclick = () => renderDefaultPanel();
-    }
-
-    // ======================= BALANCE WATCH =======================
-    let balanceWatchInterval = null;
-    let prevBalanceVND = null;
-    function startBalanceWatch() {
-        if (balanceWatchInterval) clearInterval(balanceWatchInterval);
-        balanceWatchInterval = setInterval(async () => {
-            const result = await apiRequest({ key: API_KEY, action: "balance" });
-            if (!result || result.balance === undefined) return;
-            const curVnd = usdToVnd(result.balance);
-            if (prevBalanceVND !== null && curVnd !== null && curVnd !== prevBalanceVND && curVnd > prevBalanceVND) {
-                const diff = curVnd - prevBalanceVND;
-                sendTelegramNotification(`✅ <b>SỐ DƯ ĐÃ ĐƯỢC CỘNG</b>\n━━━━━━━━━━━━━━\n📊 Số dư cũ: ${prevBalanceVND.toLocaleString('vi-VN')}đ\n📈 Số dư mới: ${curVnd.toLocaleString('vi-VN')}đ\n💰 Số tiền nạp: <b>+${diff.toLocaleString('vi-VN')}đ</b>\n🕐 ${new Date().toLocaleString('vi-VN')}`);
-            }
-            prevBalanceVND = curVnd;
-        }, 30000);
-    }
-
-    // ======================= KHỞI TẠO =======================
-    loadHistory();
-    loadSubKeyUsage();
-    loadDepositRequests();
-    showStartScreen();
+    tick();
 </script>
 
 </body>
