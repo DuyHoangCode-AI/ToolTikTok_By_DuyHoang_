@@ -7,249 +7,192 @@
     <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-dark: #0a0f1a; --bg-card: #111827; --bg-panel: #1e293b;
-            --teal: #2dd4bf; --teal-dim: #14b8a6; --teal-glow: rgba(45,212,191,0.15); --teal-border: rgba(45,212,191,0.3);
-            --green: #4ade80; --red: #f87171; --yellow: #facc15; --sky: #38bdf8; --orange: #fb923c; --purple: #a78bfa;
-            --text-primary: #f3f4f6; --text-muted: #9ca3af; --text-dim: #6b7280;
-            --border: rgba(255,255,255,0.1); --radius-lg: 18px; --radius-pill: 999px;
-            --font: 'Be Vietnam Pro', sans-serif; --mono: 'JetBrains Mono', monospace;
+            --bg-dark:#0a0f1a; --bg-card:#111827; --bg-panel:#1e293b;
+            --teal:#2dd4bf; --teal-dim:#14b8a6; --teal-glow:rgba(45,212,191,0.15); --teal-border:rgba(45,212,191,0.3);
+            --green:#4ade80; --red:#f87171; --yellow:#facc15; --sky:#38bdf8; --orange:#fb923c; --purple:#a78bfa;
+            --text-primary:#f3f4f6; --text-muted:#9ca3af; --text-dim:#6b7280;
+            --border:rgba(255,255,255,0.1); --radius-lg:18px; --radius-pill:999px;
+            --font:'Be Vietnam Pro',sans-serif; --mono:'JetBrains Mono',monospace;
         }
-        * { margin:0; padding:0; box-sizing:border-box; min-width:0; -webkit-tap-highlight-color:transparent; }
-        html { font-size:16px; }
-        body {
-            min-height:100vh; background:var(--bg-dark); font-family:var(--font);
-            display:flex; justify-content:center; align-items:flex-start;
-            padding:12px 12px 48px; position:relative; overflow-x:hidden;
-        }
-        body::before {
-            content:''; position:fixed; inset:0;
-            background-image: linear-gradient(rgba(45,212,191,0.03) 1px,transparent 1px), linear-gradient(90deg,rgba(45,212,191,0.03) 1px,transparent 1px);
-            background-size:36px 36px; pointer-events:none; z-index:0;
-        }
-        body::after {
-            content:''; position:fixed; top:-150px; left:50%; transform:translateX(-50%);
-            width:500px; height:300px;
-            background:radial-gradient(ellipse,rgba(45,212,191,0.08) 0%,transparent 70%);
-            pointer-events:none; z-index:0;
-        }
-        .glass-card {
-            max-width:480px; width:100%; background:var(--bg-card); border-radius:22px;
-            border:1px solid var(--teal-border);
-            box-shadow:0 0 0 1px rgba(45,212,191,0.05),0 24px 48px rgba(0,0,0,0.55),inset 0 1px 0 rgba(255,255,255,0.05);
-            overflow:hidden; position:relative; z-index:1; margin-top:12px;
-        }
-        .header {
-            padding:22px 20px 18px; text-align:center;
-            background:linear-gradient(160deg,#0f172a 0%,#0a0f1a 100%);
-            border-bottom:1px solid var(--teal-border); position:relative; overflow:hidden;
-        }
-        .header::before {
-            content:''; position:absolute; top:-30px; left:50%; transform:translateX(-50%);
-            width:180px; height:90px; background:radial-gradient(ellipse,rgba(45,212,191,0.2) 0%,transparent 70%);
-        }
-        .header-badge {
-            display:inline-flex; align-items:center; gap:5px;
-            background:rgba(45,212,191,0.12); border:1px solid var(--teal-border);
-            border-radius:var(--radius-pill); padding:3px 11px;
-            font-size:0.65rem; font-weight:700; color:var(--teal);
-            letter-spacing:1.2px; text-transform:uppercase; margin-bottom:10px; font-family:var(--mono);
-        }
-        .header h1 { font-size:1.5rem; font-weight:900; color:var(--text-primary); letter-spacing:-0.5px; line-height:1.2; font-family:var(--font); }
-        .header h1 span { color:var(--teal); }
-        .header p { color:var(--text-muted); font-size:0.78rem; margin-top:5px; font-weight:500; }
-        .header-top { display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; }
-        .hamburger {
-            background:rgba(0,0,0,0.3); border:1px solid var(--border); border-radius:12px;
-            color:var(--text-primary); font-size:1.8rem; cursor:pointer; padding:5px;
-            width:40px; height:40px; display:inline-flex; align-items:center; justify-content:center; transition:all 0.2s; z-index:20;
-        }
-        .hamburger:hover { background:var(--teal-glow); border-color:var(--teal); color:var(--teal); }
-        .menu-overlay { position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.7); backdrop-filter:blur(4px); z-index:100; visibility:hidden; opacity:0; transition:opacity 0.2s ease; }
-        .menu-overlay.show { visibility:visible; opacity:1; }
-        .menu-drawer {
-            position:fixed; top:0; right:0; width:260px; height:100%;
-            background:rgba(15,23,42,0.98); backdrop-filter:blur(12px);
-            border-left:1px solid var(--teal-border); transform:translateX(100%);
-            transition:transform 0.25s ease; z-index:101;
-            padding:20px 12px; display:flex; flex-direction:column; gap:10px; overflow-y:auto;
-        }
-        .menu-drawer.show { transform:translateX(0); }
-        .menu-drawer .menu-btn {
-            display:flex; align-items:center; gap:12px; padding:12px 16px;
-            background:rgba(255,255,255,0.05); border:1px solid var(--border); border-radius:12px;
-            color:var(--text-muted); font-size:0.85rem; font-weight:600; font-family:var(--font);
-            cursor:pointer; transition:all 0.18s; width:100%; text-align:left; position:relative;
-        }
-        .menu-drawer .menu-btn:hover { background:var(--teal-glow); border-color:var(--teal); color:var(--teal); }
-        .menu-drawer .menu-btn.support-btn-menu { border-color:rgba(167,139,250,0.3); color:var(--purple); background:rgba(167,139,250,0.08); }
-        .menu-drawer .menu-btn.support-btn-menu:hover { background:rgba(167,139,250,0.18); border-color:var(--purple); }
-        .menu-drawer .menu-btn .icon { font-size:1.2rem; }
-        .menu-drawer .close-drawer { align-self:flex-end; background:none; border:none; color:var(--text-muted); font-size:1.5rem; cursor:pointer; padding:5px; }
-        .menu-section-label { font-size:0.6rem; color:var(--text-dim); text-transform:uppercase; letter-spacing:1.2px; font-family:var(--mono); padding:0 4px; }
-        .content { padding:16px 14px 20px; overflow:hidden; }
-        .panel {
-            background:var(--bg-panel); border:1px solid var(--border); border-radius:var(--radius-lg);
-            padding:16px 14px; animation:fadeIn 0.2s ease; overflow:hidden;
-        }
-        @keyframes fadeIn { from{opacity:0;transform:translateY(5px)} to{opacity:1;transform:translateY(0)} }
-        .panel-title {
-            font-size:0.72rem; font-weight:800; color:var(--teal); text-transform:uppercase;
-            letter-spacing:1.2px; margin-bottom:14px; display:flex; align-items:center; gap:6px; font-family:var(--mono);
-        }
-        .panel-title::after { content:''; flex:1; height:1px; background:var(--teal-border); }
-        .panel-title.purple-title { color:var(--purple); }
-        .panel-title.purple-title::after { background:rgba(167,139,250,0.3); }
-        .form-group { margin-bottom:12px; width:100%; overflow:hidden; }
-        label { display:block; margin-bottom:5px; font-weight:700; color:var(--text-muted); font-size:0.7rem; letter-spacing:0.4px; text-transform:uppercase; font-family:var(--font); }
-        input, select, textarea {
-            width:100%; min-width:0; padding:11px 14px; border-radius:11px; border:1px solid var(--border);
-            background:rgba(0,0,0,0.4); color:var(--text-primary); font-size:0.88rem; font-family:var(--font);
-            outline:none; transition:all 0.18s; display:block; -webkit-appearance:none;
-        }
-        textarea { resize:vertical; min-height:80px; line-height:1.5; }
-        input:focus, select:focus, textarea:focus { border-color:var(--teal-border); box-shadow:0 0 0 3px var(--teal-glow); background:rgba(0,0,0,0.55); }
-        input::placeholder, textarea::placeholder { color:var(--text-dim); }
-        select option { background:#1e293b; }
-        .btn {
-            width:100%; padding:12px 14px; border:none; border-radius:11px; font-family:var(--font);
-            font-weight:800; font-size:0.88rem; cursor:pointer; transition:all 0.18s;
-            display:flex; align-items:center; justify-content:center; gap:7px; letter-spacing:0.2px; -webkit-appearance:none;
-        }
-        .btn + .btn { margin-top:7px; }
-        .btn-primary { background:linear-gradient(135deg,var(--teal-dim),#0f766e); color:white; box-shadow:0 4px 14px rgba(20,184,166,0.22); }
-        .btn-primary:hover { background:linear-gradient(135deg,var(--teal),var(--teal-dim)); transform:translateY(-1px); box-shadow:0 6px 18px rgba(45,212,191,0.28); }
-        .btn-secondary { background:rgba(255,255,255,0.05); color:var(--text-muted); border:1px solid var(--border); }
-        .btn-secondary:hover { background:rgba(255,255,255,0.1); color:var(--text-primary); }
-        .btn-danger { background:rgba(248,113,113,0.1); color:var(--red); border:1px solid rgba(248,113,113,0.2); }
-        .btn-danger:hover { background:rgba(248,113,113,0.18); }
-        .btn-orange { background:linear-gradient(135deg,#ea580c,#c2410c); color:white; box-shadow:0 4px 14px rgba(234,88,12,0.22); }
-        .btn-orange:hover { background:linear-gradient(135deg,#f97316,#ea580c); transform:translateY(-1px); }
-        .btn-purple { background:linear-gradient(135deg,#7c3aed,#6d28d9); color:white; box-shadow:0 4px 14px rgba(124,58,237,0.25); }
-        .btn-purple:hover { background:linear-gradient(135deg,#8b5cf6,#7c3aed); transform:translateY(-1px); }
-        .btn:active { transform:scale(0.97) !important; }
-        .service-tabs { display:grid; grid-template-columns:1fr 1fr; gap:7px; margin-bottom:14px; }
-        .service-tab {
-            padding:11px; border-radius:11px; background:rgba(0,0,0,0.3); border:1px solid var(--border);
-            cursor:pointer; text-align:center; transition:all 0.18s; font-size:0.78rem; font-weight:700; color:var(--text-muted); font-family:var(--font);
-        }
-        .service-tab .tab-icon { font-size:1.3rem; display:block; margin-bottom:3px; }
-        .service-tab.active { background:var(--teal-glow); border-color:var(--teal); color:var(--teal); }
-        .price-estimate { background:rgba(45,212,191,0.08); border:1px solid var(--teal-border); border-radius:9px; padding:9px 12px; text-align:center; font-size:0.78rem; color:var(--sky); margin:10px 0; font-family:var(--mono); }
-        .balance-display { text-align:center; padding:20px 14px; }
-        .balance-label { font-size:0.65rem; text-transform:uppercase; letter-spacing:1.5px; color:var(--text-dim); font-family:var(--mono); margin-bottom:6px; }
-        .balance-value { font-size:2.2rem; font-weight:900; color:var(--green); font-family:var(--mono); letter-spacing:-1px; text-shadow:0 0 28px rgba(74,222,128,0.3); }
-        .balance-sub { font-size:0.72rem; color:var(--text-dim); margin-top:4px; font-family:var(--mono); }
-        .status-badge { display:inline-flex; align-items:center; gap:4px; padding:3px 9px; border-radius:var(--radius-pill); font-size:0.65rem; font-weight:700; font-family:var(--mono); letter-spacing:0.4px; }
-        .status-pending { background:rgba(250,204,21,0.12); color:var(--yellow); border:1px solid rgba(250,204,21,0.3); }
-        .status-inprogress { background:rgba(56,189,248,0.12); color:var(--sky); border:1px solid rgba(56,189,248,0.3); }
-        .status-completed { background:rgba(74,222,128,0.12); color:var(--green); border:1px solid rgba(74,222,128,0.3); }
-        .status-partial { background:rgba(250,204,21,0.12); color:var(--yellow); border:1px solid rgba(250,204,21,0.3); }
-        .status-cancelled { background:rgba(248,113,113,0.12); color:var(--red); border:1px solid rgba(248,113,113,0.3); }
-        .history-item { background:rgba(0,0,0,0.3); border:1px solid var(--border); border-radius:11px; padding:11px 12px; margin-bottom:7px; transition:border-color 0.18s; cursor:pointer; }
-        .history-item:hover { border-color:var(--teal-border); }
-        .history-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:4px; }
-        .history-id { font-family:var(--mono); font-size:0.76rem; font-weight:700; color:var(--teal); }
-        .history-date { font-size:0.64rem; color:var(--text-dim); }
-        .history-detail { font-size:0.75rem; color:var(--text-muted); margin-bottom:3px; }
-        .history-link { font-size:0.64rem; color:var(--text-dim); font-family:var(--mono); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-        .status-result-card { background:rgba(0,0,0,0.3); border:1px solid var(--teal-border); border-radius:13px; padding:14px; margin-top:12px; }
-        .status-row { display:flex; align-items:center; justify-content:space-between; padding:6px 0; border-bottom:1px solid var(--border); font-size:0.78rem; }
-        .status-row:last-child { border-bottom:none; padding-bottom:0; }
-        .status-key { color:var(--text-dim); font-family:var(--mono); font-size:0.68rem; text-transform:uppercase; }
-        .status-val { color:var(--text-primary); font-weight:700; text-align:right; font-family:var(--font); }
-        .info-cards { display:grid; grid-template-columns:1fr 1fr; gap:7px; margin-bottom:10px; }
-        .info-card { background:rgba(0,0,0,0.3); border:1px solid var(--border); border-radius:11px; padding:11px; text-align:center; }
-        .info-card .ic-icon { font-size:1.3rem; margin-bottom:4px; }
-        .info-card .ic-title { font-size:0.68rem; color:var(--text-muted); font-weight:700; }
-        .info-card .ic-price { font-size:0.74rem; color:var(--teal); font-family:var(--mono); font-weight:700; margin-top:2px; }
-        .loading-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.85); backdrop-filter:blur(8px); display:flex; flex-direction:column; justify-content:center; align-items:center; gap:14px; z-index:1000; visibility:hidden; opacity:0; transition:opacity 0.18s; }
-        .spinner { width:40px; height:40px; border:3px solid rgba(45,212,191,0.12); border-top-color:var(--teal); border-radius:50%; animation:spin 0.7s linear infinite; }
-        @keyframes spin { to{transform:rotate(360deg)} }
-        .loading-text { font-size:0.85rem; color:var(--text-muted); font-family:var(--mono); }
-        .toast-msg { position:fixed; bottom:22px; left:50%; transform:translateX(-50%) translateY(8px); background:rgba(10,20,32,0.96); backdrop-filter:blur(12px); padding:9px 18px; border-radius:var(--radius-pill); color:var(--text-primary); font-weight:600; font-size:0.82rem; z-index:1100; border:1px solid var(--teal-border); pointer-events:none; white-space:nowrap; visibility:hidden; opacity:0; transition:all 0.2s; font-family:var(--font); }
-        .start-screen { display:flex; flex-direction:column; align-items:center; justify-content:center; padding:36px 16px; gap:18px; min-height:240px; }
-        .btn-start { background:linear-gradient(135deg,#f97316,#ea580c); color:white; font-size:1.1rem; font-weight:900; padding:15px 40px; border-radius:var(--radius-pill); border:none; cursor:pointer; box-shadow:0 10px 28px rgba(245,158,11,0.32); transition:all 0.22s; letter-spacing:1.5px; display:inline-flex; align-items:center; gap:9px; font-family:var(--font); }
-        .btn-start:hover { transform:scale(1.04); box-shadow:0 14px 36px rgba(245,158,11,0.45); }
-        .key-box { width:100%; max-width:260px; display:flex; flex-direction:column; gap:7px; overflow:hidden; }
-        .error-shake { animation:shake 0.3s ease-in-out; border-color:var(--red) !important; }
-        @keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-5px)} 75%{transform:translateX(5px)} }
-        .success-card { text-align:center; padding:18px 8px; }
-        .success-icon { font-size:2.6rem; margin-bottom:8px; }
-        .success-title { font-size:1rem; font-weight:900; color:var(--green); margin-bottom:10px; }
-        .success-detail { background:rgba(0,0,0,0.3); border-radius:11px; padding:12px; margin-bottom:12px; }
-        .success-row { display:flex; justify-content:space-between; padding:5px 0; font-size:0.78rem; border-bottom:1px solid var(--border); }
-        .success-row:last-child { border-bottom:none; }
-        .success-row .sk { color:var(--text-dim); }
-        .success-row .sv { color:var(--text-primary); font-weight:700; font-family:var(--mono); }
-        .deposit-amounts { display:grid; grid-template-columns:repeat(3,1fr); gap:7px; margin-bottom:14px; }
-        .amt-btn { padding:10px 6px; background:rgba(0,0,0,0.3); border:1px solid var(--border); border-radius:10px; color:var(--text-muted); font-family:var(--font); font-size:0.76rem; font-weight:700; cursor:pointer; text-align:center; transition:all 0.15s; }
-        .amt-btn:hover, .amt-btn.selected { background:var(--teal-glow); border-color:var(--teal); color:var(--teal); }
-        .qr-container { text-align:center; padding:14px 0 6px; }
-        .qr-img { width:200px; height:200px; border-radius:14px; border:2px solid var(--teal-border); object-fit:cover; box-shadow:0 8px 24px rgba(0,0,0,0.5); }
-        .bank-info { background:rgba(0,0,0,0.3); border:1px solid var(--border); border-radius:11px; padding:10px 12px; margin:10px 0; text-align:center; }
-        .bank-info .bi-name { font-size:0.7rem; color:var(--text-dim); font-family:var(--mono); text-transform:uppercase; letter-spacing:0.8px; margin-bottom:3px; }
-        .bank-info .bi-val { font-size:0.88rem; font-weight:800; color:var(--text-primary); font-family:var(--mono); }
-        .deposit-note { font-size:0.7rem; color:var(--text-dim); text-align:center; line-height:1.5; padding:0 4px; }
-        .deposit-note span { color:var(--yellow); font-weight:700; }
-        ::-webkit-scrollbar { width:3px; }
-        ::-webkit-scrollbar-track { background:transparent; }
-        ::-webkit-scrollbar-thumb { background:var(--teal-border); border-radius:3px; }
-        .support-btns { display:flex; justify-content:center; gap:12px; flex-wrap:wrap; margin:12px 0; }
-        .support-link { display:inline-flex; align-items:center; gap:5px; background:rgba(0,0,0,0.3); border:1px solid var(--border); border-radius:var(--radius-pill); padding:8px 16px; font-size:0.8rem; font-weight:600; font-family:var(--font); color:var(--text-muted); text-decoration:none; transition:all 0.18s; }
-        .support-link:hover { background:var(--teal-glow); border-color:var(--teal); color:var(--teal); }
-        .service-description { margin:12px 0; padding:12px; background:rgba(45,212,191,0.08); border-radius:12px; text-align:center; }
-        .service-description .desc-text { font-size:0.8rem; color:var(--text-primary); margin-bottom:6px; }
-        .service-description .desc-highlight { color:var(--teal); font-weight:800; }
-        .admin-info { display:flex; justify-content:space-between; align-items:center; margin-top:10px; padding-top:8px; border-top:1px solid var(--border); font-size:0.7rem; color:var(--text-dim); }
-        .key-item { background:rgba(0,0,0,0.3); border:1px solid var(--border); border-radius:10px; padding:12px; margin-bottom:8px; }
-        .key-item .key-name { font-size:0.85rem; font-weight:800; color:var(--teal); font-family:var(--mono); margin-bottom:6px; }
-        .key-item .key-stat { font-size:0.75rem; color:var(--text-muted); margin-bottom:3px; display:flex; justify-content:space-between; align-items:center; }
-        .key-item .key-stat .ks-val { font-family:var(--mono); font-size:0.72rem; color:var(--text-primary); font-weight:700; }
-        .key-progress { width:100%; height:4px; background:rgba(255,255,255,0.08); border-radius:4px; margin-top:2px; margin-bottom:6px; overflow:hidden; }
-        .key-progress-bar { height:100%; background:linear-gradient(90deg,var(--teal-dim),var(--teal)); border-radius:4px; transition:width 0.4s ease; }
-        .deposit-item { background:rgba(0,0,0,0.3); border:1px solid var(--border); border-radius:10px; padding:12px; margin-bottom:8px; }
-        .deposit-item .di-name { font-size:0.85rem; font-weight:800; color:var(--text-primary); margin-bottom:5px; }
-        .deposit-item .di-amount { font-size:1rem; font-weight:900; color:var(--green); font-family:var(--mono); }
-        .deposit-item .di-time { font-size:0.68rem; color:var(--text-dim); margin-top:3px; }
-        .deposit-item .di-note { font-size:0.72rem; color:var(--text-muted); margin-top:3px; }
-        .tele-item { background:rgba(0,0,0,0.3); border:1px solid var(--border); border-radius:11px; padding:11px 12px; margin-bottom:7px; cursor:pointer; transition:border-color 0.18s; }
-        .tele-item:hover { border-color:var(--teal-border); }
-        .tele-item .ti-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:5px; }
-        .tele-item .ti-id { font-family:var(--mono); font-size:0.76rem; font-weight:700; color:var(--teal); }
-        .tele-item .ti-detail { font-size:0.75rem; color:var(--text-muted); margin-bottom:2px; }
-        .tele-item .ti-link { font-size:0.63rem; color:var(--text-dim); font-family:var(--mono); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-        .tele-item .ti-note { font-size:0.7rem; color:var(--yellow); font-weight:600; margin-bottom:2px; }
-        .info-note { background:rgba(56,189,248,0.08); border:1px solid rgba(56,189,248,0.2); border-radius:9px; padding:9px 12px; font-size:0.73rem; color:var(--sky); margin-bottom:12px; line-height:1.5; }
-        .info-note-purple { background:rgba(167,139,250,0.08); border:1px solid rgba(167,139,250,0.2); border-radius:9px; padding:9px 12px; font-size:0.73rem; color:var(--purple); margin-bottom:12px; line-height:1.5; }
-        .refresh-btn { background:rgba(56,189,248,0.1); border:1px solid rgba(56,189,248,0.25); border-radius:9px; padding:8px 14px; color:var(--sky); font-size:0.78rem; font-weight:700; cursor:pointer; font-family:var(--font); transition:all 0.18s; display:flex; align-items:center; gap:6px; margin-bottom:12px; }
-        .refresh-btn:hover { background:rgba(56,189,248,0.18); }
-        /* Support */
-        .issue-tabs { display:grid; grid-template-columns:1fr 1fr; gap:7px; margin-bottom:14px; }
-        .issue-tab { padding:10px 8px; border-radius:10px; background:rgba(0,0,0,0.3); border:1px solid var(--border); cursor:pointer; text-align:center; transition:all 0.18s; font-size:0.76rem; font-weight:700; color:var(--text-muted); font-family:var(--font); }
-        .issue-tab .it-icon { font-size:1.1rem; display:block; margin-bottom:3px; }
-        .issue-tab.active { background:rgba(167,139,250,0.12); border-color:rgba(167,139,250,0.4); color:var(--purple); }
-        .support-req-item { background:rgba(0,0,0,0.3); border:1px solid rgba(167,139,250,0.2); border-radius:11px; padding:12px; margin-bottom:8px; cursor:pointer; transition:border-color 0.18s; }
-        .support-req-item:hover { border-color:rgba(167,139,250,0.45); }
-        .support-req-item .sri-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:6px; }
-        .support-req-item .sri-id { font-family:var(--mono); font-size:0.76rem; font-weight:700; color:var(--purple); }
-        .support-req-item .sri-issue { font-size:0.7rem; color:var(--yellow); font-weight:700; background:rgba(250,204,21,0.08); border-radius:6px; padding:3px 8px; display:inline-block; margin-bottom:4px; }
-        .support-req-item .sri-detail { font-size:0.74rem; color:var(--text-muted); margin-bottom:2px; }
-        .support-req-item .sri-stats { display:grid; grid-template-columns:1fr 1fr 1fr; gap:5px; margin-top:7px; }
-        .support-req-item .sri-stat { background:rgba(0,0,0,0.3); border-radius:7px; padding:5px 6px; text-align:center; }
-        .support-req-item .sri-stat .sl { font-size:0.52rem; color:var(--text-dim); text-transform:uppercase; letter-spacing:0.5px; font-family:var(--mono); }
-        .support-req-item .sri-stat .sv { font-size:0.7rem; font-weight:700; color:var(--text-primary); font-family:var(--mono); }
-        .support-req-item .sri-time { font-size:0.63rem; color:var(--text-dim); margin-top:5px; }
-        .support-req-item .sri-note { font-size:0.7rem; color:var(--text-muted); margin-top:3px; line-height:1.4; }
-        .unread-dot { width:7px; height:7px; background:var(--red); border-radius:50%; display:inline-block; margin-left:5px; animation:pulse 1.5s ease-in-out infinite; vertical-align:middle; }
-        @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.5;transform:scale(0.8)} }
-        .stat-grid-3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:7px; margin-bottom:14px; }
-        .stat-mini { border-radius:9px; padding:9px; text-align:center; }
-        .stat-mini .sm-label { font-size:0.58rem; text-transform:uppercase; letter-spacing:0.5px; font-family:var(--mono); margin-bottom:2px; }
-        .stat-mini .sm-val { font-size:1.2rem; font-weight:900; font-family:var(--mono); }
-        /* action btns */
-        .action-row { display:grid; grid-template-columns:1fr 1fr 1fr; gap:5px; margin-top:8px; }
-        .act-btn { padding:6px 4px; border-radius:8px; font-size:0.66rem; font-weight:700; cursor:pointer; font-family:var(--font); text-align:center; transition:all 0.15s; }
-        .act-btn:hover { opacity:0.85; }
+        *{margin:0;padding:0;box-sizing:border-box;min-width:0;-webkit-tap-highlight-color:transparent}
+        html{font-size:16px}
+        body{min-height:100vh;background:var(--bg-dark);font-family:var(--font);display:flex;justify-content:center;align-items:flex-start;padding:12px 12px 48px;position:relative;overflow-x:hidden}
+        body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(45,212,191,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(45,212,191,0.03) 1px,transparent 1px);background-size:36px 36px;pointer-events:none;z-index:0}
+        body::after{content:'';position:fixed;top:-150px;left:50%;transform:translateX(-50%);width:500px;height:300px;background:radial-gradient(ellipse,rgba(45,212,191,0.08) 0%,transparent 70%);pointer-events:none;z-index:0}
+        .glass-card{max-width:480px;width:100%;background:var(--bg-card);border-radius:22px;border:1px solid var(--teal-border);box-shadow:0 0 0 1px rgba(45,212,191,0.05),0 24px 48px rgba(0,0,0,0.55),inset 0 1px 0 rgba(255,255,255,0.05);overflow:hidden;position:relative;z-index:1;margin-top:12px}
+        .header{padding:22px 20px 18px;text-align:center;background:linear-gradient(160deg,#0f172a 0%,#0a0f1a 100%);border-bottom:1px solid var(--teal-border);position:relative;overflow:hidden}
+        .header::before{content:'';position:absolute;top:-30px;left:50%;transform:translateX(-50%);width:180px;height:90px;background:radial-gradient(ellipse,rgba(45,212,191,0.2) 0%,transparent 70%)}
+        .header-badge{display:inline-flex;align-items:center;gap:5px;background:rgba(45,212,191,0.12);border:1px solid var(--teal-border);border-radius:var(--radius-pill);padding:3px 11px;font-size:0.65rem;font-weight:700;color:var(--teal);letter-spacing:1.2px;text-transform:uppercase;margin-bottom:10px;font-family:var(--mono)}
+        .header h1{font-size:1.5rem;font-weight:900;color:var(--text-primary);letter-spacing:-0.5px;line-height:1.2}
+        .header h1 span{color:var(--teal)}
+        .header p{color:var(--text-muted);font-size:0.78rem;margin-top:5px;font-weight:500}
+        .header-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+        .hamburger{background:rgba(0,0,0,0.3);border:1px solid var(--border);border-radius:12px;color:var(--text-primary);font-size:1.8rem;cursor:pointer;width:40px;height:40px;display:inline-flex;align-items:center;justify-content:center;transition:all 0.2s;z-index:20}
+        .hamburger:hover{background:var(--teal-glow);border-color:var(--teal);color:var(--teal)}
+        .menu-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.7);backdrop-filter:blur(4px);z-index:100;visibility:hidden;opacity:0;transition:opacity 0.2s ease}
+        .menu-overlay.show{visibility:visible;opacity:1}
+        .menu-drawer{position:fixed;top:0;right:0;width:260px;height:100%;background:rgba(15,23,42,0.98);backdrop-filter:blur(12px);border-left:1px solid var(--teal-border);transform:translateX(100%);transition:transform 0.25s ease;z-index:101;padding:20px 12px;display:flex;flex-direction:column;gap:9px;overflow-y:auto}
+        .menu-drawer.show{transform:translateX(0)}
+        .menu-btn{display:flex;align-items:center;gap:12px;padding:11px 15px;background:rgba(255,255,255,0.05);border:1px solid var(--border);border-radius:12px;color:var(--text-muted);font-size:0.84rem;font-weight:600;font-family:var(--font);cursor:pointer;transition:all 0.18s;width:100%;text-align:left}
+        .menu-btn:hover{background:var(--teal-glow);border-color:var(--teal);color:var(--teal)}
+        .menu-btn.mb-purple{border-color:rgba(167,139,250,0.3);color:var(--purple);background:rgba(167,139,250,0.08)}
+        .menu-btn.mb-purple:hover{background:rgba(167,139,250,0.18);border-color:var(--purple)}
+        .menu-btn.mb-green{border-color:rgba(74,222,128,0.3);color:var(--green);background:rgba(74,222,128,0.08)}
+        .menu-btn.mb-green:hover{background:rgba(74,222,128,0.18);border-color:var(--green)}
+        .menu-btn .icon{font-size:1.15rem}
+        .close-drawer{align-self:flex-end;background:none;border:none;color:var(--text-muted);font-size:1.5rem;cursor:pointer;padding:5px}
+        .menu-sep{font-size:0.58rem;color:var(--text-dim);text-transform:uppercase;letter-spacing:1.2px;font-family:var(--mono);padding:0 4px;margin-top:3px}
+        .content{padding:16px 14px 20px;overflow:hidden}
+        .panel{background:var(--bg-panel);border:1px solid var(--border);border-radius:var(--radius-lg);padding:16px 14px;animation:fadeIn 0.2s ease;overflow:hidden}
+        @keyframes fadeIn{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+        .pt{font-size:0.72rem;font-weight:800;color:var(--teal);text-transform:uppercase;letter-spacing:1.2px;margin-bottom:14px;display:flex;align-items:center;gap:6px;font-family:var(--mono)}
+        .pt::after{content:'';flex:1;height:1px;background:var(--teal-border)}
+        .pt.purple{color:var(--purple)}.pt.purple::after{background:rgba(167,139,250,0.3)}
+        .pt.green{color:var(--green)}.pt.green::after{background:rgba(74,222,128,0.3)}
+        .fg{margin-bottom:12px;width:100%;overflow:hidden}
+        label{display:block;margin-bottom:5px;font-weight:700;color:var(--text-muted);font-size:0.7rem;letter-spacing:0.4px;text-transform:uppercase}
+        input,select,textarea{width:100%;min-width:0;padding:11px 14px;border-radius:11px;border:1px solid var(--border);background:rgba(0,0,0,0.4);color:var(--text-primary);font-size:0.88rem;font-family:var(--font);outline:none;transition:all 0.18s;display:block;-webkit-appearance:none}
+        textarea{resize:vertical;min-height:76px;line-height:1.5}
+        input:focus,select:focus,textarea:focus{border-color:var(--teal-border);box-shadow:0 0 0 3px var(--teal-glow);background:rgba(0,0,0,0.55)}
+        input::placeholder,textarea::placeholder{color:var(--text-dim)}
+        select option{background:#1e293b}
+        .btn{width:100%;padding:12px 14px;border:none;border-radius:11px;font-family:var(--font);font-weight:800;font-size:0.88rem;cursor:pointer;transition:all 0.18s;display:flex;align-items:center;justify-content:center;gap:7px;-webkit-appearance:none}
+        .btn+.btn{margin-top:7px}
+        .btn-primary{background:linear-gradient(135deg,var(--teal-dim),#0f766e);color:#fff;box-shadow:0 4px 14px rgba(20,184,166,0.22)}
+        .btn-primary:hover{background:linear-gradient(135deg,var(--teal),var(--teal-dim));transform:translateY(-1px);box-shadow:0 6px 18px rgba(45,212,191,0.28)}
+        .btn-sec{background:rgba(255,255,255,0.05);color:var(--text-muted);border:1px solid var(--border)}
+        .btn-sec:hover{background:rgba(255,255,255,0.1);color:var(--text-primary)}
+        .btn-danger{background:rgba(248,113,113,0.1);color:var(--red);border:1px solid rgba(248,113,113,0.2)}
+        .btn-orange{background:linear-gradient(135deg,#ea580c,#c2410c);color:#fff;box-shadow:0 4px 14px rgba(234,88,12,0.22)}
+        .btn-orange:hover{background:linear-gradient(135deg,#f97316,#ea580c);transform:translateY(-1px)}
+        .btn-purple{background:linear-gradient(135deg,#7c3aed,#6d28d9);color:#fff;box-shadow:0 4px 14px rgba(124,58,237,0.25)}
+        .btn-purple:hover{background:linear-gradient(135deg,#8b5cf6,#7c3aed);transform:translateY(-1px)}
+        .btn-green{background:linear-gradient(135deg,#16a34a,#15803d);color:#fff;box-shadow:0 4px 14px rgba(22,163,74,0.25)}
+        .btn-green:hover{background:linear-gradient(135deg,#22c55e,#16a34a);transform:translateY(-1px)}
+        .btn:active{transform:scale(0.97)!important}
+        .svc-tabs{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:14px}
+        .svc-tab{padding:11px;border-radius:11px;background:rgba(0,0,0,0.3);border:1px solid var(--border);cursor:pointer;text-align:center;transition:all 0.18s;font-size:0.78rem;font-weight:700;color:var(--text-muted)}
+        .svc-tab .ti{font-size:1.3rem;display:block;margin-bottom:3px}
+        .svc-tab.active{background:var(--teal-glow);border-color:var(--teal);color:var(--teal)}
+        .price-est{background:rgba(45,212,191,0.08);border:1px solid var(--teal-border);border-radius:9px;padding:9px 12px;text-align:center;font-size:0.78rem;color:var(--sky);margin:10px 0;font-family:var(--mono)}
+        .bal-display{text-align:center;padding:20px 14px}
+        .bal-label{font-size:0.65rem;text-transform:uppercase;letter-spacing:1.5px;color:var(--text-dim);font-family:var(--mono);margin-bottom:6px}
+        .bal-value{font-size:2.2rem;font-weight:900;color:var(--green);font-family:var(--mono);letter-spacing:-1px;text-shadow:0 0 28px rgba(74,222,128,0.3)}
+        .bal-sub{font-size:0.72rem;color:var(--text-dim);margin-top:4px;font-family:var(--mono)}
+        .sbadge{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:var(--radius-pill);font-size:0.65rem;font-weight:700;font-family:var(--mono);letter-spacing:0.4px}
+        .s-pending{background:rgba(250,204,21,0.12);color:var(--yellow);border:1px solid rgba(250,204,21,0.3)}
+        .s-progress{background:rgba(56,189,248,0.12);color:var(--sky);border:1px solid rgba(56,189,248,0.3)}
+        .s-done{background:rgba(74,222,128,0.12);color:var(--green);border:1px solid rgba(74,222,128,0.3)}
+        .s-partial{background:rgba(250,204,21,0.12);color:var(--yellow);border:1px solid rgba(250,204,21,0.3)}
+        .s-cancel{background:rgba(248,113,113,0.12);color:var(--red);border:1px solid rgba(248,113,113,0.3)}
+        .his-item{background:rgba(0,0,0,0.3);border:1px solid var(--border);border-radius:11px;padding:11px 12px;margin-bottom:7px;transition:border-color 0.18s;cursor:pointer}
+        .his-item:hover{border-color:var(--teal-border)}
+        .his-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:4px}
+        .his-id{font-family:var(--mono);font-size:0.76rem;font-weight:700;color:var(--teal)}
+        .his-date{font-size:0.64rem;color:var(--text-dim)}
+        .his-detail{font-size:0.75rem;color:var(--text-muted);margin-bottom:3px}
+        .his-link{font-size:0.64rem;color:var(--text-dim);font-family:var(--mono);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+        .sr-card{background:rgba(0,0,0,0.3);border:1px solid var(--teal-border);border-radius:13px;padding:14px;margin-top:12px}
+        .sr-row{display:flex;align-items:center;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border);font-size:0.78rem}
+        .sr-row:last-child{border-bottom:none;padding-bottom:0}
+        .sr-key{color:var(--text-dim);font-family:var(--mono);font-size:0.68rem;text-transform:uppercase}
+        .sr-val{color:var(--text-primary);font-weight:700;text-align:right}
+        .ic-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:10px}
+        .ic{background:rgba(0,0,0,0.3);border:1px solid var(--border);border-radius:11px;padding:11px;text-align:center}
+        .ic .ii{font-size:1.3rem;margin-bottom:4px}
+        .ic .it{font-size:0.68rem;color:var(--text-muted);font-weight:700}
+        .ic .ip{font-size:0.74rem;color:var(--teal);font-family:var(--mono);font-weight:700;margin-top:2px}
+        .lo{position:fixed;inset:0;background:rgba(0,0,0,0.85);backdrop-filter:blur(8px);display:flex;flex-direction:column;justify-content:center;align-items:center;gap:14px;z-index:1000;visibility:hidden;opacity:0;transition:opacity 0.18s}
+        .spinner{width:40px;height:40px;border:3px solid rgba(45,212,191,0.12);border-top-color:var(--teal);border-radius:50%;animation:spin 0.7s linear infinite}
+        @keyframes spin{to{transform:rotate(360deg)}}
+        .lo-text{font-size:0.85rem;color:var(--text-muted);font-family:var(--mono)}
+        .toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%) translateY(8px);background:rgba(10,20,32,0.96);backdrop-filter:blur(12px);padding:9px 18px;border-radius:var(--radius-pill);color:var(--text-primary);font-weight:600;font-size:0.82rem;z-index:1100;border:1px solid var(--teal-border);pointer-events:none;white-space:nowrap;visibility:hidden;opacity:0;transition:all 0.2s}
+        .start-screen{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:36px 16px;gap:18px;min-height:240px}
+        .btn-start{background:linear-gradient(135deg,#f97316,#ea580c);color:#fff;font-size:1.1rem;font-weight:900;padding:15px 40px;border-radius:var(--radius-pill);border:none;cursor:pointer;box-shadow:0 10px 28px rgba(245,158,11,0.32);transition:all 0.22s;letter-spacing:1.5px;display:inline-flex;align-items:center;gap:9px}
+        .btn-start:hover{transform:scale(1.04);box-shadow:0 14px 36px rgba(245,158,11,0.45)}
+        .key-box{width:100%;max-width:260px;display:flex;flex-direction:column;gap:7px}
+        .shake{animation:shake 0.3s ease-in-out;border-color:var(--red)!important}
+        @keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+        .sc{text-align:center;padding:18px 8px}
+        .sc-icon{font-size:2.6rem;margin-bottom:8px}
+        .sc-title{font-size:1rem;font-weight:900;color:var(--green);margin-bottom:10px}
+        .sc-detail{background:rgba(0,0,0,0.3);border-radius:11px;padding:12px;margin-bottom:12px}
+        .sc-row{display:flex;justify-content:space-between;padding:5px 0;font-size:0.78rem;border-bottom:1px solid var(--border)}
+        .sc-row:last-child{border-bottom:none}
+        .sc-row .sk{color:var(--text-dim)}
+        .sc-row .sv{color:var(--text-primary);font-weight:700;font-family:var(--mono)}
+        .dep-amounts{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-bottom:14px}
+        .amt-btn{padding:10px 6px;background:rgba(0,0,0,0.3);border:1px solid var(--border);border-radius:10px;color:var(--text-muted);font-size:0.76rem;font-weight:700;cursor:pointer;text-align:center;transition:all 0.15s}
+        .amt-btn:hover,.amt-btn.sel{background:var(--teal-glow);border-color:var(--teal);color:var(--teal)}
+        .qr-wrap{text-align:center;padding:14px 0 6px}
+        .qr-img{width:200px;height:200px;border-radius:14px;border:2px solid var(--teal-border);object-fit:cover;box-shadow:0 8px 24px rgba(0,0,0,0.5)}
+        .binfo{background:rgba(0,0,0,0.3);border:1px solid var(--border);border-radius:11px;padding:10px 12px;margin:10px 0;text-align:center}
+        .binfo .bn{font-size:0.7rem;color:var(--text-dim);font-family:var(--mono);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:3px}
+        .binfo .bv{font-size:0.88rem;font-weight:800;color:var(--text-primary);font-family:var(--mono)}
+        .dep-note{font-size:0.7rem;color:var(--text-dim);text-align:center;line-height:1.5;padding:0 4px}
+        .dep-note span{color:var(--yellow);font-weight:700}
+        ::-webkit-scrollbar{width:3px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--teal-border);border-radius:3px}
+        .svc-desc{margin:12px 0;padding:12px;background:rgba(45,212,191,0.08);border-radius:12px;text-align:center}
+        .svc-desc .dt{font-size:0.8rem;color:var(--text-primary);margin-bottom:6px}
+        .svc-desc .dh{color:var(--teal);font-weight:800}
+        .admin-bar{display:flex;justify-content:space-between;align-items:center;margin-top:10px;padding-top:8px;border-top:1px solid var(--border);font-size:0.7rem;color:var(--text-dim)}
+        .issue-tabs{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:14px}
+        .it-tab{padding:10px 8px;border-radius:10px;background:rgba(0,0,0,0.3);border:1px solid var(--border);cursor:pointer;text-align:center;transition:all 0.18s;font-size:0.76rem;font-weight:700;color:var(--text-muted)}
+        .it-tab .iti{font-size:1.1rem;display:block;margin-bottom:3px}
+        .it-tab.active{background:rgba(167,139,250,0.12);border-color:rgba(167,139,250,0.4);color:var(--purple)}
+        .tele-item{background:rgba(0,0,0,0.3);border:1px solid var(--border);border-radius:11px;padding:11px 12px;margin-bottom:7px;cursor:pointer;transition:border-color 0.18s}
+        .tele-item:hover{border-color:var(--teal-border)}
+        .ti-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:5px}
+        .ti-id{font-family:var(--mono);font-size:0.76rem;font-weight:700;color:var(--teal)}
+        .ti-det{font-size:0.75rem;color:var(--text-muted);margin-bottom:2px}
+        .ti-link{font-size:0.63rem;color:var(--text-dim);font-family:var(--mono);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+        .ti-note{font-size:0.7rem;color:var(--yellow);font-weight:600;margin-bottom:2px}
+        .info-note{background:rgba(56,189,248,0.08);border:1px solid rgba(56,189,248,0.2);border-radius:9px;padding:9px 12px;font-size:0.73rem;color:var(--sky);margin-bottom:12px;line-height:1.5}
+        .info-note-p{background:rgba(167,139,250,0.08);border:1px solid rgba(167,139,250,0.2);border-radius:9px;padding:9px 12px;font-size:0.73rem;color:var(--purple);margin-bottom:12px;line-height:1.5}
+        .ref-btn{background:rgba(56,189,248,0.1);border:1px solid rgba(56,189,248,0.25);border-radius:9px;padding:8px 14px;color:var(--sky);font-size:0.78rem;font-weight:700;cursor:pointer;transition:all 0.18s;display:flex;align-items:center;gap:6px;margin-bottom:12px}
+        .ref-btn:hover{background:rgba(56,189,248,0.18)}
+        .key-item{background:rgba(0,0,0,0.3);border:1px solid var(--border);border-radius:10px;padding:12px;margin-bottom:8px}
+        .key-name{font-size:0.85rem;font-weight:800;color:var(--teal);font-family:var(--mono);margin-bottom:6px}
+        .key-stat{font-size:0.75rem;color:var(--text-muted);margin-bottom:3px;display:flex;justify-content:space-between;align-items:center}
+        .key-stat .ksv{font-family:var(--mono);font-size:0.72rem;color:var(--text-primary);font-weight:700}
+        .kprog{width:100%;height:4px;background:rgba(255,255,255,0.08);border-radius:4px;margin-top:2px;margin-bottom:6px;overflow:hidden}
+        .kprog-bar{height:100%;background:linear-gradient(90deg,var(--teal-dim),var(--teal));border-radius:4px;transition:width 0.4s ease}
+        .sup-item{background:rgba(0,0,0,0.3);border:1px solid rgba(167,139,250,0.2);border-radius:11px;padding:12px;margin-bottom:8px;cursor:pointer;transition:border-color 0.18s}
+        .sup-item:hover{border-color:rgba(167,139,250,0.45)}
+        .sup-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
+        .sup-id{font-family:var(--mono);font-size:0.76rem;font-weight:700;color:var(--purple)}
+        .sup-issue{font-size:0.7rem;color:var(--yellow);font-weight:700;background:rgba(250,204,21,0.08);border-radius:6px;padding:3px 8px;display:inline-block;margin-bottom:4px}
+        .sup-det{font-size:0.74rem;color:var(--text-muted);margin-bottom:2px}
+        .sup-stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:5px;margin-top:7px}
+        .sup-stat{background:rgba(0,0,0,0.3);border-radius:7px;padding:5px 6px;text-align:center}
+        .sup-stat .ssl{font-size:0.52rem;color:var(--text-dim);text-transform:uppercase;letter-spacing:0.5px;font-family:var(--mono)}
+        .sup-stat .ssv{font-size:0.7rem;font-weight:700;color:var(--text-primary);font-family:var(--mono)}
+        .unread-dot{width:7px;height:7px;background:var(--red);border-radius:50%;display:inline-block;margin-left:5px;animation:pulse 1.5s ease-in-out infinite;vertical-align:middle}
+        @keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.5;transform:scale(0.8)}}
+        .act-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:5px;margin-top:8px}
+        .act-btn{padding:6px 4px;border-radius:8px;font-size:0.66rem;font-weight:700;cursor:pointer;text-align:center;transition:opacity 0.15s;border:1px solid}
+        .act-btn:hover{opacity:0.8}
+        /* ===== REVENUE ===== */
+        .rev-period-tabs{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:6px;margin-bottom:16px}
+        .rev-tab{padding:8px 4px;border-radius:9px;background:rgba(0,0,0,0.3);border:1px solid var(--border);cursor:pointer;text-align:center;font-size:0.72rem;font-weight:700;color:var(--text-muted);transition:all 0.18s}
+        .rev-tab.active{background:rgba(74,222,128,0.12);border-color:rgba(74,222,128,0.4);color:var(--green)}
+        .rev-big{text-align:center;padding:18px 0 12px}
+        .rev-big-label{font-size:0.62rem;text-transform:uppercase;letter-spacing:1.5px;color:var(--text-dim);font-family:var(--mono);margin-bottom:5px}
+        .rev-big-val{font-size:2rem;font-weight:900;color:var(--green);font-family:var(--mono);letter-spacing:-1px;text-shadow:0 0 24px rgba(74,222,128,0.35)}
+        .rev-section{background:rgba(0,0,0,0.25);border:1px solid var(--border);border-radius:13px;padding:13px;margin-bottom:10px}
+        .rev-section-title{font-size:0.66rem;font-weight:800;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.8px;font-family:var(--mono);margin-bottom:10px;display:flex;align-items:center;gap:5px}
+        .rev-row{display:flex;align-items:center;justify-content:space-between;padding:5px 0;border-bottom:1px solid var(--border);font-size:0.78rem}
+        .rev-row:last-child{border-bottom:none;padding-bottom:0}
+        .rev-key{color:var(--text-dim);font-size:0.72rem}
+        .rev-val{font-weight:800;font-family:var(--mono);font-size:0.8rem}
+        .rev-metric-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:10px}
+        .rev-metric{background:rgba(0,0,0,0.3);border-radius:10px;padding:10px;text-align:center;border:1px solid var(--border)}
+        .rev-metric .rm-icon{font-size:1.2rem;margin-bottom:4px}
+        .rev-metric .rm-label{font-size:0.62rem;color:var(--text-dim);margin-bottom:3px;text-transform:uppercase;letter-spacing:0.5px;font-family:var(--mono)}
+        .rev-metric .rm-val{font-size:1rem;font-weight:900;font-family:var(--mono)}
+        .dep-tag{font-size:0.62rem;padding:2px 7px;border-radius:var(--radius-pill);font-family:var(--mono);font-weight:700}
+        .dep-pending-tag{background:rgba(250,204,21,0.12);color:var(--yellow);border:1px solid rgba(250,204,21,0.3)}
+        .dep-done-tag{background:rgba(74,222,128,0.12);color:var(--green);border:1px solid rgba(74,222,128,0.3)}
     </style>
 </head>
 <body>
@@ -257,7 +200,7 @@
     <div class="header">
         <div class="header-top">
             <div></div>
-            <div class="header-badge">⚡ v2.9 PRO</div>
+            <div class="header-badge">⚡ v3.0 PRO</div>
             <button class="hamburger" id="hamburgerBtn">☰</button>
         </div>
         <h1>DỊCH VỤ TIKTOK <span>PRO</span></h1>
@@ -265,282 +208,298 @@
     </div>
     <div class="content" id="mainContent"></div>
 </div>
-
 <div id="menuOverlay" class="menu-overlay"></div>
 <div id="menuDrawer" class="menu-drawer">
     <button class="close-drawer" id="closeDrawerBtn">✕</button>
     <div id="drawerButtons"></div>
 </div>
-
-<div id="loadingOverlay" class="loading-overlay">
+<div id="loadingOverlay" class="lo">
     <div class="spinner"></div>
-    <div class="loading-text" id="loadingText">Đang xử lý...</div>
+    <div class="lo-text" id="loadingText">Đang xử lý...</div>
 </div>
 
 <script>
-// ======================= CONFIG =======================
-const SUB_KEYS = [
-    { key:"VIP001", max_views:50000,  max_likes:2000,  max_logins:10, label:"VIP 50K View" },
-    { key:"VIP002", max_views:100000, max_likes:5000,  max_logins:15, label:"VIP 100K View" },
-    { key:"VIP003", max_views:200000, max_likes:10000, max_logins:20, label:"VIP 200K View" },
-    { key:"SUB123", max_views:10000,  max_likes:500,   max_logins:5,  label:"Cơ bản 10K" },
-    { key:"SUB456", max_views:20000,  max_likes:1000,  max_logins:10, label:"Cơ bản 20K" },
-    { key:"SUB789", max_views:30000,  max_likes:1500,  max_logins:8,  label:"Cơ bản 30K" },
-    { key:"FREEVER1",max_views:75000, max_likes:3000,  max_logins:12, label:"Silver 75K" },
-    { key:"GOLD001", max_views:150000,max_likes:8000,  max_logins:18, label:"Gold 150K" },
-    { key:"DEMO999", max_views:5000,  max_likes:200,   max_logins:3,  label:"Demo nhỏ" },
-    { key:"TEST100", max_views:2000,  max_likes:100,   max_logins:2,  label:"Test 2K" },
+// ========================= CONFIG =========================
+const SUB_KEYS=[
+    {key:"VIP001",max_views:50000, max_likes:2000, max_logins:10,label:"VIP 50K View"},
+    {key:"VIP002",max_views:100000,max_likes:5000, max_logins:15,label:"VIP 100K View"},
+    {key:"VIP003",max_views:200000,max_likes:10000,max_logins:20,label:"VIP 200K View"},
+    {key:"SUB123",max_views:10000, max_likes:500,  max_logins:5, label:"Cơ bản 10K"},
+    {key:"SUB456",max_views:20000, max_likes:1000, max_logins:10,label:"Cơ bản 20K"},
+    {key:"SUB789",max_views:30000, max_likes:1500, max_logins:8, label:"Cơ bản 30K"},
+    {key:"FREEVER1",max_views:75000,max_likes:3000,max_logins:12,label:"Silver 75K"},
+    {key:"GOLD001",max_views:150000,max_likes:8000,max_logins:18,label:"Gold 150K"},
+    {key:"DEMO999",max_views:5000, max_likes:200,  max_logins:3, label:"Demo nhỏ"},
+    {key:"TEST100",max_views:2000, max_likes:100,  max_logins:2, label:"Test 2K"},
 ];
-const ADMIN_KEY = "DuyHoangPro";
-const API_URL   = "https://subtuongtac.com/api/v2";
-const API_KEY_V = "32aa6bcd06e04d69df997fc2dbf8d8f1";
-const TELE_TOKEN   = "8749280669:AAFXp_SD6N0AZsygP85Id1iexwADSKwlp6E";
-const TELE_CHAT_ID = "6286372153";
-const HISTORY_KEY     = "tiktok_orders_v2";
-const SUBKEY_USAGE_KEY= "subkey_usage_v1";
-const USD_TO_VND = 25400;
-const BANK_INFO = { bank:"MB Bank", account:"015223", name:"DO LE DUY HOANG", qr:"https://i.postimg.cc/J4ZdxTbt/IMG-6846.jpg" };
-const SERVICE_IDS = {
-    view: [
-        { id:6043, name:"View Nhanh", price:200, min:1000, desc:"Tăng view tốc độ cao" },
-        { id:5274, name:"View Thường", price:500, min:1000, desc:"View ổn định, giá rẻ" }
-    ],
-    like: [
-        { id:5839, name:"Tim Chậm", price:750, min:50, desc:"Lên từ từ, không tụt" },
-        { id:355,  name:"Tim Nhanh", price:600, min:50, desc:"Lên nhanh, dễ tụt" }
-    ]
+const ADMIN_KEY="DuyHoangPro";
+const API_URL="https://subtuongtac.com/api/v2";
+const API_KEY_V="32aa6bcd06e04d69df997fc2dbf8d8f1";
+const TELE_TOKEN="8749280669:AAFXp_SD6N0AZsygP85Id1iexwADSKwlp6E";
+const TELE_CHAT_ID="6286372153";
+const USD_TO_VND=25400;
+const BANK_INFO={bank:"MB Bank",account:"015223",name:"DO LE DUY HOANG",qr:"https://i.postimg.cc/J4ZdxTbt/IMG-6846.jpg"};
+const SERVICE_IDS={
+    view:[{id:6043,name:"View Nhanh",price:200,min:1000,desc:"Tăng view tốc độ cao"},{id:5274,name:"View Thường",price:500,min:1000,desc:"View ổn định, giá rẻ"}],
+    like:[{id:5839,name:"Tim Chậm",price:750,min:50,desc:"Lên từ từ, không tụt"},{id:355,name:"Tim Nhanh",price:600,min:50,desc:"Lên nhanh, dễ tụt"}]
 };
-const SERVICES = { view:{name:"TikTok View",icon:"👀",unit:"view"}, like:{name:"TikTok Tim",icon:"❤️",unit:"tim"} };
-const DEPOSIT_AMOUNTS = [2000,5000,10000,20000,50000,100000];
-const ISSUE_TYPES = [
-    { key:"tut_view", label:"Tụt View",  icon:"📉" },
-    { key:"tut_like", label:"Tụt Tim",   icon:"💔" },
-    { key:"slow",     label:"Lên Chậm",  icon:"🐌" },
-    { key:"other",    label:"Khác",       icon:"❓" }
+const SERVICES={view:{name:"TikTok View",icon:"👀",unit:"view"},like:{name:"TikTok Tim",icon:"❤️",unit:"tim"}};
+const DEPOSIT_AMOUNTS=[2000,5000,10000,20000,50000,100000];
+const ISSUE_TYPES=[
+    {key:"tut_view",label:"Tụt View",icon:"📉"},
+    {key:"tut_like",label:"Tụt Tim",icon:"💔"},
+    {key:"slow",label:"Lên Chậm",icon:"🐌"},
+    {key:"other",label:"Khác",icon:"❓"}
 ];
+// 3 tên file JSON cố định trên Telegram (caption làm key duy nhất)
+const JSON_CAPTION={
+    ORDERS:"[DB_ORDERS] orders.json",
+    DEPOSITS:"[DB_DEPOSITS] deposits.json",
+    SUPPORTS:"[DB_SUPPORTS] supports.json"
+};
 
-// Telegram document caption prefixes để phân loại
-const DOC_TYPE = { ORDER:"ORDER_JSON", DEPOSIT:"DEPOSIT_JSON", SUPPORT:"SUPPORT_JSON" };
+// ========================= STATE =========================
+let ordersHistory={};
+let isAuthenticated=false,currentUserKey=null,isAdmin=false;
+let subKeyUsage={};
+let prevBalanceVND=null,balanceWatchInterval=null;
+// Cache admin
+let cachedOrders=[],cachedDeposits=[],cachedSupports=[];
+// Telegram message IDs của 3 file DB (để xoá & gửi lại)
+let dbMsgIds={orders:null,deposits:null,supports:null};
 
-// ======================= STATE =======================
-let ordersHistory = {};
-let isAuthenticated = false;
-let currentUserKey = null;
-let isAdmin = false;
-let subKeyUsage = {};
-let prevBalanceVND = null;
-let balanceWatchInterval = null;
-// Admin cache từ Telegram
-let cachedOrders   = [];
-let cachedDeposits = [];
-let cachedSupports = [];
-
-// ======================= LOCAL STORAGE =======================
-function loadHistory()   { try { ordersHistory = JSON.parse(localStorage.getItem(HISTORY_KEY)||'{}'); } catch(e){ ordersHistory={}; } }
-function saveHistory()   { localStorage.setItem(HISTORY_KEY, JSON.stringify(ordersHistory)); }
+// ========================= LOCAL STORAGE =========================
+function loadHistory(){try{ordersHistory=JSON.parse(localStorage.getItem('tiktok_orders_v2')||'{}');}catch(e){ordersHistory={};}}
+function saveHistory(){localStorage.setItem('tiktok_orders_v2',JSON.stringify(ordersHistory));}
 function loadSubKeyUsage(){
-    try { subKeyUsage = JSON.parse(localStorage.getItem(SUBKEY_USAGE_KEY)||'{}'); } catch(e){ subKeyUsage={}; }
-    SUB_KEYS.forEach(k=>{ if(!subKeyUsage[k.key]) subKeyUsage[k.key]={views_used:0,likes_used:0,logins_used:0}; });
+    try{subKeyUsage=JSON.parse(localStorage.getItem('subkey_usage_v1')||'{}');}catch(e){subKeyUsage={};}
+    SUB_KEYS.forEach(k=>{if(!subKeyUsage[k.key])subKeyUsage[k.key]={views_used:0,likes_used:0,logins_used:0};});
     saveSubKeyUsage();
 }
-function saveSubKeyUsage(){ localStorage.setItem(SUBKEY_USAGE_KEY, JSON.stringify(subKeyUsage)); }
+function saveSubKeyUsage(){localStorage.setItem('subkey_usage_v1',JSON.stringify(subKeyUsage));}
 
-// ======================= UI HELPERS =======================
-function showToast(msg, isError=false){
-    let t = document.querySelector('.toast-msg');
-    if(!t){ t=document.createElement('div'); t.className='toast-msg'; document.body.appendChild(t); }
-    t.style.borderColor = isError ? 'rgba(248,113,113,0.4)' : 'rgba(45,212,191,0.3)';
-    t.innerHTML=msg; t.style.visibility='visible'; t.style.opacity='1'; t.style.transform='translateX(-50%) translateY(0)';
-    setTimeout(()=>{ t.style.opacity='0'; t.style.transform='translateX(-50%) translateY(8px)'; setTimeout(()=>t.style.visibility='hidden',300); },2800);
+// ========================= UI HELPERS =========================
+function showToast(msg,isErr=false){
+    let t=document.querySelector('.toast');
+    if(!t){t=document.createElement('div');t.className='toast';document.body.appendChild(t);}
+    t.style.borderColor=isErr?'rgba(248,113,113,0.4)':'rgba(45,212,191,0.3)';
+    t.innerHTML=msg;t.style.visibility='visible';t.style.opacity='1';t.style.transform='translateX(-50%) translateY(0)';
+    setTimeout(()=>{t.style.opacity='0';t.style.transform='translateX(-50%) translateY(8px)';setTimeout(()=>t.style.visibility='hidden',300);},2800);
 }
-function showLoading(show, text="Đang xử lý..."){
-    const ol=document.getElementById('loadingOverlay'), tl=document.getElementById('loadingText');
-    if(tl) tl.textContent=text;
-    ol.style.visibility=show?'visible':'hidden'; ol.style.opacity=show?'1':'0';
+function showLoading(show,text="Đang xử lý..."){
+    const ol=document.getElementById('loadingOverlay'),tl=document.getElementById('loadingText');
+    if(tl)tl.textContent=text;
+    ol.style.visibility=show?'visible':'hidden';ol.style.opacity=show?'1':'0';
 }
 
-// ======================= TELEGRAM API =======================
+// ========================= TELEGRAM CORE =========================
 async function sendTeleText(text){
-    if(!TELE_TOKEN||!TELE_CHAT_ID) return;
-    try {
-        await fetch(`https://api.telegram.org/bot${TELE_TOKEN}/sendMessage`,{
-            method:'POST', headers:{'Content-Type':'application/json'},
-            body:JSON.stringify({chat_id:TELE_CHAT_ID, text, parse_mode:"HTML"})
-        });
-    } catch(e){}
+    try{await fetch(`https://api.telegram.org/bot${TELE_TOKEN}/sendMessage`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({chat_id:TELE_CHAT_ID,text,parse_mode:"HTML"})});}catch(e){}
 }
 
-// Gửi JSON document lên Telegram với caption phân loại
-async function sendTeleJSON(type, data, caption){
-    const jsonStr = JSON.stringify(data, null, 2);
-    const blob = new Blob([jsonStr], {type:'application/json'});
-    const fd = new FormData();
-    fd.append('chat_id', TELE_CHAT_ID);
-    fd.append('document', blob, `${type}_${Date.now()}.json`);
-    fd.append('caption', `[${type}] ${caption}`);
-    try {
-        await fetch(`https://api.telegram.org/bot${TELE_TOKEN}/sendDocument`, {method:'POST', body:fd});
-    } catch(e){}
-}
-
-// Lấy tất cả updates từ Telegram
-async function getTeleUpdates(){
-    try {
-        const res = await fetch(`https://api.telegram.org/bot${TELE_TOKEN}/getUpdates?limit=200&offset=-200`);
-        const data = await res.json();
-        return data.ok ? data.result : [];
-    } catch(e){ return []; }
-}
-
-// Lấy nội dung file JSON từ Telegram
-async function fetchTeleDocument(fileId){
-    try {
-        const r1 = await fetch(`https://api.telegram.org/bot${TELE_TOKEN}/getFile?file_id=${fileId}`);
-        const d1 = await r1.json();
-        if(!d1.ok) return null;
-        const filePath = d1.result.file_path;
-        const r2 = await fetch(`https://api.telegram.org/file/bot${TELE_TOKEN}/${filePath}`);
-        return await r2.json();
-    } catch(e){ return null; }
-}
-
-// Parse toàn bộ dữ liệu từ Telegram documents
-async function fetchAllFromTelegram(){
-    const updates = await getTeleUpdates();
-    const ordersMap   = new Map(); // order_id → data
-    const depositsMap = new Map(); // id → data
-    const supportsMap = new Map(); // id → data
-
-    for(const upd of updates){
-        const msg = upd.message || upd.channel_post;
-        if(!msg || !msg.document) continue;
-        const caption = msg.caption || '';
-        const fileId  = msg.document.file_id;
-
-        if(caption.startsWith(`[${DOC_TYPE.ORDER}]`)){
-            const data = await fetchTeleDocument(fileId);
-            if(data && data.order_id){
-                // newer overwrites older (later in array = newer update)
-                ordersMap.set(String(data.order_id), data);
-            }
-        } else if(caption.startsWith(`[${DOC_TYPE.DEPOSIT}]`)){
-            const data = await fetchTeleDocument(fileId);
-            if(data && data.id) depositsMap.set(String(data.id), data);
-        } else if(caption.startsWith(`[${DOC_TYPE.SUPPORT}]`)){
-            const data = await fetchTeleDocument(fileId);
-            if(data && data.id) supportsMap.set(String(data.id), data);
-        }
+// Gửi / ghi đè 1 file JSON cố định: xoá message cũ rồi gửi lại
+async function upsertTeleDB(dbKey, arr, captionStr){
+    // Xoá message cũ nếu biết ID
+    if(dbMsgIds[dbKey]){
+        try{await fetch(`https://api.telegram.org/bot${TELE_TOKEN}/deleteMessage`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({chat_id:TELE_CHAT_ID,message_id:dbMsgIds[dbKey]})});}catch(e){}
     }
-
-    return {
-        orders:   [...ordersMap.values()].reverse(),
-        deposits: [...depositsMap.values()].reverse(),
-        supports: [...supportsMap.values()].reverse(),
-    };
+    // Upload file JSON mới
+    const blob=new Blob([JSON.stringify(arr,null,2)],{type:'application/json'});
+    const fd=new FormData();
+    fd.append('chat_id',TELE_CHAT_ID);
+    fd.append('document',blob,captionStr.replace(/[\[\] ]/g,'_').replace(/__+/g,'_')+'.json');
+    fd.append('caption',captionStr);
+    try{
+        const res=await fetch(`https://api.telegram.org/bot${TELE_TOKEN}/sendDocument`,{method:'POST',body:fd});
+        const data=await res.json();
+        if(data.ok&&data.result) dbMsgIds[dbKey]=data.result.message_id;
+    }catch(e){}
 }
 
-// ======================= API =======================
+// Tải nội dung 1 document từ Telegram
+async function fetchTeleDocument(fileId){
+    try{
+        const r1=await fetch(`https://api.telegram.org/bot${TELE_TOKEN}/getFile?file_id=${fileId}`);
+        const d1=await r1.json();if(!d1.ok)return null;
+        const r2=await fetch(`https://api.telegram.org/file/bot${TELE_TOKEN}/${d1.result.file_path}`);
+        return await r2.json();
+    }catch(e){return null;}
+}
+
+// Tải toàn bộ 3 DB từ Telegram (tìm message mới nhất có caption khớp)
+async function loadAllDBFromTelegram(){
+    try{
+        const res=await fetch(`https://api.telegram.org/bot${TELE_TOKEN}/getUpdates?limit=200&offset=-200`);
+        const data=await res.json();
+        if(!data.ok)return;
+        const updates=data.result;
+        // Tìm message_id mới nhất cho mỗi caption
+        const found={orders:null,deposits:null,supports:null};
+        for(const upd of updates){
+            const msg=upd.message||upd.channel_post;
+            if(!msg||!msg.document)continue;
+            const cap=msg.caption||'';
+            if(cap===JSON_CAPTION.ORDERS) found.orders={msgId:msg.message_id,fileId:msg.document.file_id};
+            if(cap===JSON_CAPTION.DEPOSITS) found.deposits={msgId:msg.message_id,fileId:msg.document.file_id};
+            if(cap===JSON_CAPTION.SUPPORTS) found.supports={msgId:msg.message_id,fileId:msg.document.file_id};
+        }
+        // Download từng file
+        if(found.orders){dbMsgIds.orders=found.orders.msgId;const d=await fetchTeleDocument(found.orders.fileId);if(Array.isArray(d))cachedOrders=d;}
+        if(found.deposits){dbMsgIds.deposits=found.deposits.msgId;const d=await fetchTeleDocument(found.deposits.fileId);if(Array.isArray(d))cachedDeposits=d;}
+        if(found.supports){dbMsgIds.supports=found.supports.msgId;const d=await fetchTeleDocument(found.supports.fileId);if(Array.isArray(d))cachedSupports=d;}
+    }catch(e){}
+}
+
+// Thêm đơn hàng vào DB orders rồi upsert
+async function dbAddOrder(orderData){
+    cachedOrders.unshift(orderData);
+    await upsertTeleDB('orders',cachedOrders,JSON_CAPTION.ORDERS);
+}
+// Thêm yêu cầu nạp tiền
+async function dbAddDeposit(depositData){
+    cachedDeposits.unshift(depositData);
+    await upsertTeleDB('deposits',cachedDeposits,JSON_CAPTION.DEPOSITS);
+}
+// Thêm yêu cầu hỗ trợ
+async function dbAddSupport(supportData){
+    cachedSupports.unshift(supportData);
+    await upsertTeleDB('supports',cachedSupports,JSON_CAPTION.SUPPORTS);
+}
+// Cập nhật trạng thái support rồi sync
+async function dbUpdateSupportStatus(id,newStatus){
+    const idx=cachedSupports.findIndex(s=>String(s.id)===String(id));
+    if(idx===-1)return;
+    cachedSupports[idx].status=newStatus;
+    await upsertTeleDB('supports',cachedSupports,JSON_CAPTION.SUPPORTS);
+}
+// Cập nhật trạng thái deposit rồi sync
+async function dbUpdateDepositStatus(id,newStatus){
+    const idx=cachedDeposits.findIndex(d=>String(d.id)===String(id));
+    if(idx===-1)return;
+    cachedDeposits[idx].status=newStatus;
+    await upsertTeleDB('deposits',cachedDeposits,JSON_CAPTION.DEPOSITS);
+}
+
+// ========================= API =========================
 async function apiRequest(payload){
-    try {
-        const res = await fetch(API_URL,{
-            method:'POST',
-            headers:{'Content-Type':'application/x-www-form-urlencoded','Accept':'application/json'},
-            body: new URLSearchParams(payload).toString()
-        });
-        return await res.json();
-    } catch(e){ return {error:e.message||"Lỗi kết nối"}; }
+    try{const res=await fetch(API_URL,{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded','Accept':'application/json'},body:new URLSearchParams(payload).toString()});return await res.json();}
+    catch(e){return{error:e.message||"Lỗi kết nối"};}
 }
 
-// ======================= HELPERS =======================
-function isValidTikTokUrl(url){
-    return [/^https?:\/\/(?:www\.)?tiktok\.com\/@[^\/]+\/video\/\d+/,/^https?:\/\/(?:vm|vt)\.tiktok\.com\/\w+\/?$/,/^https?:\/\/(?:www\.)?tiktok\.com\/t\/\w+\/?$/].some(p=>p.test(url.trim()));
-}
-function calcPrice(entry,qty){ return Math.ceil(qty/entry.min)*entry.price; }
-function usdToVnd(v){ const u=parseFloat(v); return isNaN(u)?null:Math.round(u*USD_TO_VND); }
-function getIssueLabel(key){ const f=ISSUE_TYPES.find(i=>i.key===key); return f?`${f.icon} ${f.label}`:key; }
+// ========================= HELPERS =========================
+function isValidTikTokUrl(u){return[/^https?:\/\/(?:www\.)?tiktok\.com\/@[^\/]+\/video\/\d+/,/^https?:\/\/(?:vm|vt)\.tiktok\.com\/\w+\/?$/,/^https?:\/\/(?:www\.)?tiktok\.com\/t\/\w+\/?$/].some(p=>p.test(u.trim()));}
+function calcPrice(e,q){return Math.ceil(q/e.min)*e.price;}
+function usdToVnd(v){const u=parseFloat(v);return isNaN(u)?null:Math.round(u*USD_TO_VND);}
+function getIssueLabel(k){const f=ISSUE_TYPES.find(i=>i.key===k);return f?`${f.icon} ${f.label}`:k;}
 function getStatusBadge(s){
     const st=(s||'').toLowerCase();
-    if(st==='completed') return `<span class="status-badge status-completed">✓ Hoàn thành</span>`;
-    if(st==='in progress'||st==='inprogress'||st==='processing') return `<span class="status-badge status-inprogress">⟳ Đang chạy</span>`;
-    if(st==='partial') return `<span class="status-badge status-partial">◑ Một phần</span>`;
-    if(st==='cancelled'||st==='canceled') return `<span class="status-badge status-cancelled">✕ Đã hủy</span>`;
-    return `<span class="status-badge status-pending">⏳ Chờ xử lý</span>`;
+    if(st==='completed')return`<span class="sbadge s-done">✓ Hoàn thành</span>`;
+    if(st==='in progress'||st==='inprogress'||st==='processing')return`<span class="sbadge s-progress">⟳ Đang chạy</span>`;
+    if(st==='partial')return`<span class="sbadge s-partial">◑ Một phần</span>`;
+    if(st==='cancelled'||st==='canceled')return`<span class="sbadge s-cancel">✕ Đã hủy</span>`;
+    return`<span class="sbadge s-pending">⏳ Chờ xử lý</span>`;
 }
-function getSupportStatusBadge(s){
-    if(s==='done') return `<span class="status-badge status-completed">✅ Xong</span>`;
-    if(s==='processing') return `<span class="status-badge status-inprogress">⚙️ Đang xử lý</span>`;
-    return `<span class="status-badge status-pending">🆕 Mới</span>`;
+function getSupportBadge(s){
+    if(s==='done')return`<span class="sbadge s-done">✅ Xong</span>`;
+    if(s==='processing')return`<span class="sbadge s-progress">⚙️ Xử lý</span>`;
+    return`<span class="sbadge s-pending">🆕 Mới</span>`;
 }
 function checkSubKeyLimit(svcType,qty){
-    if(isAdmin) return {allowed:true};
-    const usage=subKeyUsage[currentUserKey]; if(!usage) return {allowed:false,message:"Key không hợp lệ!"};
-    const ki=SUB_KEYS.find(k=>k.key===currentUserKey); if(!ki) return {allowed:false,message:"Key lỗi!"};
-    if(svcType==='view'){ const r=ki.max_views-usage.views_used; if(r<qty) return {allowed:false,message:`Còn ${r.toLocaleString()} view, không đủ ${qty.toLocaleString()}`}; }
-    if(svcType==='like'){ const r=ki.max_likes-usage.likes_used; if(r<qty) return {allowed:false,message:`Còn ${r.toLocaleString()} tim, không đủ ${qty.toLocaleString()}`}; }
-    return {allowed:true};
+    if(isAdmin)return{allowed:true};
+    const u=subKeyUsage[currentUserKey];if(!u)return{allowed:false,message:"Key không hợp lệ!"};
+    const ki=SUB_KEYS.find(k=>k.key===currentUserKey);if(!ki)return{allowed:false,message:"Key lỗi!"};
+    if(svcType==='view'){const r=ki.max_views-u.views_used;if(r<qty)return{allowed:false,message:`Còn ${r.toLocaleString()} view, không đủ ${qty.toLocaleString()}`};}
+    if(svcType==='like'){const r=ki.max_likes-u.likes_used;if(r<qty)return{allowed:false,message:`Còn ${r.toLocaleString()} tim, không đủ ${qty.toLocaleString()}`};}
+    return{allowed:true};
 }
 function consumeSubKey(svcType,qty){
-    if(isAdmin) return;
+    if(isAdmin)return;
     const u=subKeyUsage[currentUserKey];
-    if(svcType==='view') u.views_used+=qty;
-    else if(svcType==='like') u.likes_used+=qty;
+    if(svcType==='view')u.views_used+=qty;
+    else if(svcType==='like')u.likes_used+=qty;
     saveSubKeyUsage();
 }
 function getRemainingLimits(){
-    if(isAdmin) return {views:'∞',likes:'∞'};
-    const ki=SUB_KEYS.find(k=>k.key===currentUserKey);
-    const u=subKeyUsage[currentUserKey];
-    if(!ki||!u) return {views:0,likes:0};
-    return {views:ki.max_views-u.views_used, likes:ki.max_likes-u.likes_used};
+    if(isAdmin)return{views:'∞',likes:'∞'};
+    const ki=SUB_KEYS.find(k=>k.key===currentUserKey),u=subKeyUsage[currentUserKey];
+    if(!ki||!u)return{views:0,likes:0};
+    return{views:ki.max_views-u.views_used,likes:ki.max_likes-u.likes_used};
+}
+function parseDate(str){
+    // "dd/mm/yyyy, hh:mm:ss" hoặc ISO
+    if(!str)return null;
+    try{
+        if(str.includes('/')){
+            const[datePart,timePart]=(str||'').split(', ');
+            if(!datePart)return null;
+            const[d,m,y]=datePart.split('/');
+            return new Date(`${y}-${m.padStart(2,'0')}-${d.padStart(2,'0')}${timePart?'T'+timePart:''}`);
+        }
+        return new Date(str);
+    }catch(e){return null;}
+}
+function filterByDays(arr,days,dateField='time'){
+    const cutoff=new Date(Date.now()-days*24*60*60*1000);
+    return arr.filter(item=>{
+        const d=parseDate(item[dateField]);
+        return d&&d>=cutoff;
+    });
 }
 
-// ======================= AUTH =======================
-function logout(){ isAuthenticated=false; currentUserKey=null; isAdmin=false; if(balanceWatchInterval) clearInterval(balanceWatchInterval); showStartScreen(); showToast("Đã đăng xuất"); closeDrawer(); }
+// ========================= AUTH =========================
+function logout(){
+    isAuthenticated=false;currentUserKey=null;isAdmin=false;
+    if(balanceWatchInterval)clearInterval(balanceWatchInterval);
+    cachedOrders=[];cachedDeposits=[];cachedSupports=[];
+    dbMsgIds={orders:null,deposits:null,supports:null};
+    showStartScreen();showToast("Đã đăng xuất");closeDrawer();
+}
 
-// ======================= DRAWER =======================
-function toggleDrawer(){ document.getElementById('menuDrawer').classList.toggle('show'); document.getElementById('menuOverlay').classList.toggle('show'); }
-function closeDrawer(){ document.getElementById('menuDrawer').classList.remove('show'); document.getElementById('menuOverlay').classList.remove('show'); }
-
+// ========================= DRAWER =========================
+function toggleDrawer(){document.getElementById('menuDrawer').classList.toggle('show');document.getElementById('menuOverlay').classList.toggle('show');}
+function closeDrawer(){document.getElementById('menuDrawer').classList.remove('show');document.getElementById('menuOverlay').classList.remove('show');}
 function updateDrawerButtons(){
-    const c=document.getElementById('drawerButtons'); if(!c) return;
-    const newSupports = cachedSupports.filter(s=>s.status==='new').length;
+    const c=document.getElementById('drawerButtons');if(!c)return;
+    const newSup=cachedSupports.filter(s=>s.status==='new').length;
     c.innerHTML=`
-        <div class="menu-section-label">CHÍNH</div>
+        <span class="menu-sep">CHÍNH</span>
         <button class="menu-btn" id="db-balance"><span class="icon">💰</span> Số dư</button>
         <button class="menu-btn" id="db-order"><span class="icon">➕</span> Tạo đơn</button>
         <button class="menu-btn" id="db-check"><span class="icon">🔍</span> Check đơn</button>
         <button class="menu-btn" id="db-history"><span class="icon">📋</span> Lịch sử</button>
-        <div class="menu-section-label" style="margin-top:4px;">DỊCH VỤ</div>
+        <span class="menu-sep">DỊCH VỤ</span>
         <button class="menu-btn" id="db-deposit"><span class="icon">💳</span> Nạp tiền</button>
-        <button class="menu-btn support-btn-menu" id="db-support-order"><span class="icon">🆘</span> Hỗ trợ đơn</button>
+        <button class="menu-btn mb-purple" id="db-sup-order"><span class="icon">🆘</span> Hỗ trợ đơn</button>
         <button class="menu-btn" id="db-contact"><span class="icon">📞</span> Liên hệ</button>
-        ${isAdmin ? `
-        <div class="menu-section-label" style="margin-top:4px;">ADMIN</div>
+        ${isAdmin?`
+        <span class="menu-sep">ADMIN</span>
+        <button class="menu-btn mb-green" id="db-revenue"><span class="icon">📊</span> Doanh thu</button>
         <button class="menu-btn" id="db-keys"><span class="icon">🔑</span> Quản lý key</button>
         <button class="menu-btn" id="db-orders"><span class="icon">📦</span> Quản lý đơn</button>
         <button class="menu-btn" id="db-money"><span class="icon">💵</span> Quản lý tiền</button>
-        <button class="menu-btn support-btn-menu" id="db-supports"><span class="icon">🎫</span> Quản lý hỗ trợ${newSupports>0?`<span class="unread-dot"></span>`:''}</button>
-        ` : ''}
-        <div class="menu-section-label" style="margin-top:4px;"></div>
+        <button class="menu-btn mb-purple" id="db-supports"><span class="icon">🎫</span> Quản lý hỗ trợ${newSup>0?`<span class="unread-dot"></span>`:''}</button>
+        `:''}
+        <span class="menu-sep"></span>
         <button class="menu-btn" id="db-logout"><span class="icon">🚪</span> Đăng xuất</button>
     `;
-    document.getElementById('db-balance').onclick  = ()=>{ closeDrawer(); handleBalance(); };
-    document.getElementById('db-order').onclick    = ()=>{ closeDrawer(); showCreateOrderUI(); };
-    document.getElementById('db-check').onclick    = ()=>{ closeDrawer(); showCheckOrderUI(); };
-    document.getElementById('db-history').onclick  = ()=>{ closeDrawer(); showHistoryUI(); };
-    document.getElementById('db-deposit').onclick  = ()=>{ closeDrawer(); showDepositUI(); };
-    document.getElementById('db-support-order').onclick = ()=>{ closeDrawer(); showSupportOrderUI(); };
-    document.getElementById('db-contact').onclick  = ()=>{ closeDrawer(); showContactUI(); };
-    document.getElementById('db-logout').onclick   = ()=>{ closeDrawer(); logout(); };
+    document.getElementById('db-balance').onclick=()=>{closeDrawer();handleBalance();};
+    document.getElementById('db-order').onclick=()=>{closeDrawer();showCreateOrderUI();};
+    document.getElementById('db-check').onclick=()=>{closeDrawer();showCheckOrderUI();};
+    document.getElementById('db-history').onclick=()=>{closeDrawer();showHistoryUI();};
+    document.getElementById('db-deposit').onclick=()=>{closeDrawer();showDepositUI();};
+    document.getElementById('db-sup-order').onclick=()=>{closeDrawer();showSupportOrderUI();};
+    document.getElementById('db-contact').onclick=()=>{closeDrawer();showContactUI();};
+    document.getElementById('db-logout').onclick=()=>{closeDrawer();logout();};
     if(isAdmin){
-        document.getElementById('db-keys').onclick     = ()=>{ closeDrawer(); showManageKeysUI(); };
-        document.getElementById('db-orders').onclick   = ()=>{ closeDrawer(); showManageOrdersUI(); };
-        document.getElementById('db-money').onclick    = ()=>{ closeDrawer(); showManageMoneyUI(); };
-        document.getElementById('db-supports').onclick = ()=>{ closeDrawer(); showManageSupportUI(); };
+        document.getElementById('db-revenue').onclick=()=>{closeDrawer();showRevenueUI();};
+        document.getElementById('db-keys').onclick=()=>{closeDrawer();showManageKeysUI();};
+        document.getElementById('db-orders').onclick=()=>{closeDrawer();showManageOrdersUI();};
+        document.getElementById('db-money').onclick=()=>{closeDrawer();showManageMoneyUI();};
+        document.getElementById('db-supports').onclick=()=>{closeDrawer();showManageSupportUI();};
     }
 }
 
-// ======================= START SCREEN =======================
+// ========================= START =========================
 function showStartScreen(){
     document.getElementById('mainContent').innerHTML=`
         <div class="start-screen">
@@ -550,38 +509,48 @@ function showStartScreen(){
                 <input type="password" id="secretKey" placeholder="🔐 Nhập mã kích hoạt" style="text-align:center;">
                 <button class="btn btn-primary" id="submitKeyBtn">Xác nhận</button>
             </div>
-            <div style="text-align:center; margin-top:8px;">
+            <div style="text-align:center;margin-top:8px;">
                 <div style="font-size:0.7rem;color:var(--text-dim);margin-bottom:6px;">📞 HỖ TRỢ KHÁCH HÀNG</div>
-                <div class="support-btns">
-                    <a href="https://zalo.me/84385933633" target="_blank" class="support-link">📱 Zalo</a>
-                    <a href="https://t.me/duyhoang_1501_tom" target="_blank" class="support-link">✈️ Telegram</a>
+                <div style="display:flex;justify-content:center;gap:10px;margin-bottom:6px;">
+                    <a href="https://zalo.me/84385933633" target="_blank" style="display:inline-flex;align-items:center;gap:5px;background:rgba(0,0,0,0.3);border:1px solid var(--border);border-radius:var(--radius-pill);padding:7px 14px;font-size:0.78rem;font-weight:600;color:var(--text-muted);text-decoration:none;">📱 Zalo</a>
+                    <a href="https://t.me/duyhoang_1501_tom" target="_blank" style="display:inline-flex;align-items:center;gap:5px;background:rgba(0,0,0,0.3);border:1px solid var(--border);border-radius:var(--radius-pill);padding:7px 14px;font-size:0.78rem;font-weight:600;color:var(--text-muted);text-decoration:none;">✈️ Telegram</a>
                 </div>
-                <div style="font-size:0.7rem;color:var(--text-dim);">⏰ Hỗ trợ từ 11h30 - 00h</div>
+                <div style="font-size:0.7rem;color:var(--text-dim);">⏰ Hỗ trợ 11h30–00h hàng ngày</div>
             </div>
         </div>
     `;
     document.getElementById('startBtn').onclick=()=>{
         showLoading(true,"Đang khởi động...");
-        setTimeout(()=>{ showLoading(false); document.getElementById('startBtn').style.display='none'; document.getElementById('keySection').style.display='flex'; document.getElementById('secretKey').focus(); showToast("🔐 Nhập mã kích hoạt để tiếp tục"); },1200);
+        setTimeout(()=>{showLoading(false);document.getElementById('startBtn').style.display='none';document.getElementById('keySection').style.display='flex';document.getElementById('secretKey').focus();showToast("🔐 Nhập mã kích hoạt để tiếp tục");},1200);
     };
     const verify=()=>{
         const key=document.getElementById('secretKey').value.trim();
-        if(key===ADMIN_KEY){ showLoading(true,"Xác thực admin..."); setTimeout(()=>{ showLoading(false); isAuthenticated=true; currentUserKey=ADMIN_KEY; isAdmin=true; renderMainMenu(); startBalanceWatch(); showToast("✅ Admin đăng nhập thành công"); },700); return; }
+        if(key===ADMIN_KEY){
+            showLoading(true,"Xác thực admin...");
+            setTimeout(async()=>{
+                isAuthenticated=true;currentUserKey=ADMIN_KEY;isAdmin=true;
+                showLoading(true,"Đang tải dữ liệu từ Telegram...");
+                await loadAllDBFromTelegram();
+                showLoading(false);
+                renderMainMenu();startBalanceWatch();
+                showToast("✅ Admin đăng nhập thành công");
+            },400);return;
+        }
         const ski=SUB_KEYS.find(k=>k.key===key);
         if(ski){
             const u=subKeyUsage[ski.key];
-            if(u.logins_used>=ski.max_logins){ showToast("❌ Key đã hết lượt đăng nhập!",true); const inp=document.getElementById('secretKey'); inp.value=''; inp.classList.add('error-shake'); setTimeout(()=>inp.classList.remove('error-shake'),400); return; }
+            if(u.logins_used>=ski.max_logins){showToast("❌ Key đã hết lượt!",true);const inp=document.getElementById('secretKey');inp.value='';inp.classList.add('shake');setTimeout(()=>inp.classList.remove('shake'),400);return;}
             showLoading(true,"Xác thực key...");
-            setTimeout(()=>{ showLoading(false); isAuthenticated=true; currentUserKey=ski.key; isAdmin=false; subKeyUsage[ski.key].logins_used++; saveSubKeyUsage(); renderMainMenu(); startBalanceWatch(); showToast(`✅ Đăng nhập thành công (${ski.label})`); },700);
-        } else {
-            const inp=document.getElementById('secretKey'); inp.classList.add('error-shake'); showToast("❌ Mã kích hoạt không đúng!",true); setTimeout(()=>inp.classList.remove('error-shake'),400); inp.value=''; inp.focus();
+            setTimeout(()=>{showLoading(false);isAuthenticated=true;currentUserKey=ski.key;isAdmin=false;subKeyUsage[ski.key].logins_used++;saveSubKeyUsage();renderMainMenu();startBalanceWatch();showToast(`✅ Đăng nhập (${ski.label})`);},700);
+        }else{
+            const inp=document.getElementById('secretKey');inp.classList.add('shake');showToast("❌ Mã không đúng!",true);setTimeout(()=>inp.classList.remove('shake'),400);inp.value='';inp.focus();
         }
     };
     document.getElementById('submitKeyBtn').onclick=verify;
-    document.getElementById('secretKey').onkeypress=e=>{ if(e.key==='Enter') verify(); };
+    document.getElementById('secretKey').onkeypress=e=>{if(e.key==='Enter')verify();};
 }
 
-// ======================= MAIN MENU =======================
+// ========================= MAIN MENU =========================
 function renderMainMenu(){
     document.getElementById('mainContent').innerHTML=`<div id="dynamicPanel"></div>`;
     updateDrawerButtons();
@@ -590,170 +559,129 @@ function renderMainMenu(){
     document.getElementById('closeDrawerBtn').onclick=closeDrawer;
     renderDefaultPanel();
 }
-
 function renderDefaultPanel(){
     const rem=getRemainingLimits();
     document.getElementById('dynamicPanel').innerHTML=`
         <div class="panel">
-            <div class="panel-title">📡 Dịch vụ TikTok Pro</div>
-            <div class="info-cards">
-                <div class="info-card"><div class="ic-icon">👀</div><div class="ic-title">TikTok View</div><div class="ic-price">500đ / 1k</div></div>
-                <div class="info-card"><div class="ic-icon">❤️</div><div class="ic-title">TikTok Tim</div><div class="ic-price">600đ / 50</div></div>
+            <div class="pt">📡 Dịch vụ TikTok Pro</div>
+            <div class="ic-grid">
+                <div class="ic"><div class="ii">👀</div><div class="it">TikTok View</div><div class="ip">500đ / 1k</div></div>
+                <div class="ic"><div class="ii">❤️</div><div class="it">TikTok Tim</div><div class="ip">600đ / 50</div></div>
             </div>
-            <div class="service-description">
-                <div class="desc-text">⚡ <span class="desc-highlight">Tăng Tim & View siêu nhanh</span> ⚡</div>
-                <div class="desc-text">✅ Uy tín hàng đầu - Chạy ngay sau khi đặt</div>
-                <div class="desc-text">🚀 Hỗ trợ 24/7, bảo hành trọn gói</div>
+            <div class="svc-desc">
+                <div class="dt">⚡ <span class="dh">Tăng Tim & View siêu nhanh</span> ⚡</div>
+                <div class="dt">✅ Uy tín hàng đầu · Chạy ngay sau khi đặt</div>
+                <div class="dt">🚀 Hỗ trợ 24/7, bảo hành trọn gói</div>
             </div>
-            ${!isAdmin ? `
+            ${!isAdmin?`
             <div style="margin-top:10px;background:rgba(0,0,0,0.3);border-radius:10px;padding:10px;text-align:center;">
                 <div style="font-size:0.7rem;color:var(--text-dim);">📊 Hạn mức còn lại:</div>
-                <div style="font-size:0.82rem;color:var(--teal);font-weight:700;margin:4px 0;">
-                    👀 ${typeof rem.views==='number'?rem.views.toLocaleString():rem.views} view &nbsp;|&nbsp; ❤️ ${typeof rem.likes==='number'?rem.likes.toLocaleString():rem.likes} tim
-                </div>
+                <div style="font-size:0.82rem;color:var(--teal);font-weight:700;margin:4px 0;">👀 ${typeof rem.views==='number'?rem.views.toLocaleString():rem.views} view &nbsp;|&nbsp; ❤️ ${typeof rem.likes==='number'?rem.likes.toLocaleString():rem.likes} tim</div>
                 <div style="font-size:0.68rem;color:var(--text-dim);font-family:var(--mono);">🔑 ${currentUserKey}</div>
-            </div>
-            ` : `<div style="margin-top:10px;text-align:center;"><span class="status-badge status-completed">👑 Admin · không giới hạn</span></div>`}
-            <div class="admin-info"><span>👤 Admin: Duy Hoang</span><span>⚡ v2.9 Pro</span></div>
+            </div>`:`<div style="margin-top:10px;text-align:center;"><span class="sbadge s-done">👑 Admin · không giới hạn</span></div>`}
+            <div class="admin-bar"><span>👤 Admin: Duy Hoang</span><span>⚡ v3.0 Pro</span></div>
         </div>
     `;
 }
 
-// ======================= BALANCE =======================
+// ========================= BALANCE =========================
 async function handleBalance(){
     showLoading(true,"Đang kiểm tra số dư...");
-    const result=await apiRequest({key:API_KEY_V,action:"balance"});
+    const r=await apiRequest({key:API_KEY_V,action:"balance"});
     showLoading(false);
     const panel=document.getElementById('dynamicPanel');
-    if(result&&result.balance!==undefined){
-        const vnd=usdToVnd(result.balance);
-        const usd=parseFloat(result.balance);
-        panel.innerHTML=`
-            <div class="panel">
-                <div class="panel-title">💰 Số dư tài khoản</div>
-                <div class="balance-display">
-                    <div class="balance-label">SỐ DƯ KHẢ DỤNG</div>
-                    <div class="balance-value">${vnd!==null?vnd.toLocaleString('vi-VN'):'N/A'}đ</div>
-                    <div class="balance-sub">≈ $${isNaN(usd)?'N/A':usd.toFixed(4)} USD · Tỷ giá ${USD_TO_VND.toLocaleString('vi-VN')}đ/$</div>
-                </div>
-                <button class="btn btn-orange" id="goDeposit">💳 Nạp thêm tiền</button>
-            </div>
-        `;
+    if(r&&r.balance!==undefined){
+        const vnd=usdToVnd(r.balance),usd=parseFloat(r.balance);
+        panel.innerHTML=`<div class="panel"><div class="pt">💰 Số dư tài khoản</div><div class="bal-display"><div class="bal-label">SỐ DƯ KHẢ DỤNG</div><div class="bal-value">${vnd!==null?vnd.toLocaleString('vi-VN'):'N/A'}đ</div><div class="bal-sub">≈ $${isNaN(usd)?'N/A':usd.toFixed(4)} USD · Tỷ giá ${USD_TO_VND.toLocaleString('vi-VN')}đ/$</div></div><button class="btn btn-orange" id="goDeposit">💳 Nạp thêm tiền</button></div>`;
         document.getElementById('goDeposit').onclick=showDepositUI;
-    } else {
-        panel.innerHTML=`<div class="panel" style="text-align:center;padding:22px;color:var(--red);font-size:0.85rem;">❌ ${result?.error||"Không thể lấy số dư"}</div>`;
+    }else{
+        panel.innerHTML=`<div class="panel" style="text-align:center;padding:22px;color:var(--red);font-size:0.85rem;">❌ ${r?.error||"Không thể lấy số dư"}</div>`;
     }
 }
 
-// ======================= DEPOSIT =======================
+// ========================= DEPOSIT =========================
 function showDepositUI(){
     const panel=document.getElementById('dynamicPanel');
-    let selectedAmt=null;
+    let selAmt=null;
     function render(){
         panel.innerHTML=`
             <div class="panel">
-                <div class="panel-title">💳 Nạp tiền</div>
+                <div class="pt">💳 Nạp tiền</div>
                 <div style="font-size:0.72rem;color:var(--text-muted);margin-bottom:10px;font-weight:600;">Chọn số tiền nạp:</div>
-                <div class="deposit-amounts">
-                    ${DEPOSIT_AMOUNTS.map(a=>`<div class="amt-btn ${selectedAmt===a?'selected':''}" data-amount="${a}">${a>=1000000?(a/1000000)+'M':a>=1000?(a/1000)+'k':a}đ</div>`).join('')}
-                </div>
-                <div class="form-group"><label>💵 Hoặc nhập số tiền khác (VNĐ)</label><input type="number" id="customAmt" placeholder="Ví dụ: 5000" min="2000" step="1000"></div>
-                <div class="form-group"><label>👤 Tên của bạn</label><input type="text" id="depositorName" placeholder="Nhập tên để admin nhận diện..."></div>
+                <div class="dep-amounts">${DEPOSIT_AMOUNTS.map(a=>`<div class="amt-btn ${selAmt===a?'sel':''}" data-amount="${a}">${a>=1000000?(a/1000000)+'M':a>=1000?(a/1000)+'k':a}đ</div>`).join('')}</div>
+                <div class="fg"><label>💵 Hoặc nhập số tiền khác (VNĐ)</label><input type="number" id="customAmt" placeholder="Ví dụ: 5000" min="2000" step="1000"></div>
+                <div class="fg"><label>👤 Tên của bạn</label><input type="text" id="depositorName" placeholder="Nhập tên để admin nhận diện..."></div>
                 <button class="btn btn-orange" id="showQRBtn">📲 Xem QR & Xác nhận nạp</button>
                 <div id="qrSection" style="display:none;">
-                    <div class="qr-container"><img class="qr-img" src="${BANK_INFO.qr}" alt="QR" onerror="this.src='https://placehold.co/200x200/0c1825/00e5c3?text=QR'"></div>
-                    <div class="bank-info"><div class="bi-name">${BANK_INFO.bank} · STK</div><div class="bi-val">${BANK_INFO.account}</div></div>
-                    <div class="bank-info" style="margin-top:-3px;"><div class="bi-name">Chủ tài khoản</div><div class="bi-val">${BANK_INFO.name}</div></div>
-                    <div class="bank-info" style="margin-top:-3px;"><div class="bi-name">Số tiền</div><div class="bi-val" id="finalAmtDisplay">—</div></div>
-                    <div class="deposit-note" style="margin:10px 0;">Nội dung CK: <span id="transferNote">NAP TIEN</span></div>
-                    <button class="btn btn-primary" id="confirmDepositBtn">✅ Đã chuyển khoản · Thông báo Admin</button>
+                    <div class="qr-wrap"><img class="qr-img" src="${BANK_INFO.qr}" onerror="this.src='https://placehold.co/200x200/0c1825/00e5c3?text=QR'"></div>
+                    <div class="binfo"><div class="bn">${BANK_INFO.bank} · STK</div><div class="bv">${BANK_INFO.account}</div></div>
+                    <div class="binfo" style="margin-top:-3px;"><div class="bn">Chủ tài khoản</div><div class="bv">${BANK_INFO.name}</div></div>
+                    <div class="binfo" style="margin-top:-3px;"><div class="bn">Số tiền</div><div class="bv" id="finalAmtDisplay">—</div></div>
+                    <div class="dep-note" style="margin:10px 0;">Nội dung CK: <span id="transferNote">NAP TIEN</span></div>
+                    <button class="btn btn-primary" id="confirmDepBtn">✅ Đã chuyển khoản · Thông báo Admin</button>
                 </div>
-                <button class="btn btn-secondary" style="margin-top:8px;" id="backDeposit">↩ Quay lại</button>
+                <button class="btn btn-sec" style="margin-top:8px;" id="backDeposit">↩ Quay lại</button>
             </div>
         `;
-        panel.querySelectorAll('.amt-btn').forEach(b=>{ b.onclick=()=>{ selectedAmt=parseInt(b.dataset.amount); document.getElementById('customAmt').value=''; render(); }; });
-        document.getElementById('customAmt').oninput=()=>{ selectedAmt=null; panel.querySelectorAll('.amt-btn').forEach(b=>b.classList.remove('selected')); };
+        panel.querySelectorAll('.amt-btn').forEach(b=>{b.onclick=()=>{selAmt=parseInt(b.dataset.amount);document.getElementById('customAmt').value='';render();};});
+        document.getElementById('customAmt').oninput=()=>{selAmt=null;panel.querySelectorAll('.amt-btn').forEach(b=>b.classList.remove('sel'));};
         document.getElementById('showQRBtn').onclick=()=>{
-            const custom=parseInt(document.getElementById('customAmt').value);
-            const amt=selectedAmt||(custom>0?custom:null);
+            const cv=parseInt(document.getElementById('customAmt').value);
+            const amt=selAmt||(cv>0?cv:null);
             const name=document.getElementById('depositorName').value.trim();
-            if(!amt||amt<2000){ showToast("Tối thiểu 2,000đ",true); return; }
-            if(!name){ showToast("Nhập tên của bạn",true); document.getElementById('depositorName').classList.add('error-shake'); setTimeout(()=>document.getElementById('depositorName')?.classList.remove('error-shake'),400); return; }
-            selectedAmt=amt;
+            if(!amt||amt<2000){showToast("Tối thiểu 2,000đ",true);return;}
+            if(!name){showToast("Nhập tên của bạn",true);document.getElementById('depositorName').classList.add('shake');setTimeout(()=>document.getElementById('depositorName')?.classList.remove('shake'),400);return;}
+            selAmt=amt;
             document.getElementById('qrSection').style.display='block';
             document.getElementById('finalAmtDisplay').textContent=amt.toLocaleString('vi-VN')+'đ';
             document.getElementById('transferNote').textContent=`NAP ${amt.toLocaleString('vi-VN')} ${name}`;
             document.getElementById('showQRBtn').style.display='none';
             document.getElementById('qrSection').scrollIntoView({behavior:'smooth',block:'nearest'});
         };
-        document.getElementById('confirmDepositBtn').onclick=async()=>{
-            const amt=selectedAmt;
-            const name=document.getElementById('depositorName')?.value.trim()||'—';
-            if(!amt) return;
+        document.getElementById('confirmDepBtn').onclick=async()=>{
+            const amt=selAmt;const name=document.getElementById('depositorName')?.value.trim()||'—';
+            if(!amt)return;
             showLoading(true,"Đang gửi thông báo...");
             const balRes=await apiRequest({key:API_KEY_V,action:"balance"});
-            showLoading(false);
             const curVnd=balRes?.balance!==undefined?usdToVnd(balRes.balance):null;
             const timeNow=new Date().toLocaleString('vi-VN');
-            const depositData={
-                type:'deposit', id:Date.now(), name, amount:amt,
-                bank:BANK_INFO.bank, account:BANK_INFO.account,
-                note:`NAP ${amt.toLocaleString('vi-VN')} ${name}`,
-                balance_at_request:curVnd, time:timeNow, status:'pending'
-            };
-            // Gửi text thông báo
+            const depositData={id:Date.now(),name,amount:amt,bank:BANK_INFO.bank,account:BANK_INFO.account,note:`NAP ${amt.toLocaleString('vi-VN')} ${name}`,balance_at_request:curVnd,time:timeNow,status:'pending'};
+            // Text thông báo
             let msg=`💰 <b>YÊU CẦU NẠP TIỀN</b>\n━━━━━━━━━━━━━━\n👤 Tên: <b>${name}</b>\n💵 Số tiền: <b>${amt.toLocaleString('vi-VN')}đ</b>\n🏦 ${BANK_INFO.bank} · ${BANK_INFO.account}`;
-            if(curVnd!==null) msg+=`\n📊 Số dư HT: ${curVnd.toLocaleString('vi-VN')}đ`;
+            if(curVnd!==null)msg+=`\n📊 Số dư HT: ${curVnd.toLocaleString('vi-VN')}đ`;
             msg+=`\n🕐 ${timeNow}`;
             await sendTeleText(msg);
-            // Gửi JSON file
-            await sendTeleJSON(DOC_TYPE.DEPOSIT, depositData, `Nạp tiền ${amt.toLocaleString('vi-VN')}đ · ${name}`);
+            // Cập nhật DB file JSON
+            await dbAddDeposit(depositData);
+            showLoading(false);
             showToast("✅ Đã gửi thông báo Admin!");
-            panel.innerHTML=`
-                <div class="panel">
-                    <div class="panel-title">✅ Đã gửi yêu cầu</div>
-                    <div class="success-card">
-                        <div class="success-icon">📨</div>
-                        <div class="success-title">THÔNG BÁO ĐÃ GỬI</div>
-                        <div class="success-detail">
-                            <div class="success-row"><span class="sk">Tên</span><span class="sv" style="color:var(--yellow)">${name}</span></div>
-                            <div class="success-row"><span class="sk">Số tiền nạp</span><span class="sv">${amt.toLocaleString('vi-VN')}đ</span></div>
-                            <div class="success-row"><span class="sk">Ngân hàng</span><span class="sv">${BANK_INFO.bank}</span></div>
-                            <div class="success-row"><span class="sk">STK</span><span class="sv">${BANK_INFO.account}</span></div>
-                            ${curVnd!==null?`<div class="success-row"><span class="sk">Số dư HT</span><span class="sv">${curVnd.toLocaleString('vi-VN')}đ</span></div>`:''}
-                        </div>
-                        <div class="deposit-note" style="margin-bottom:12px;">Admin sẽ xác nhận trong vài phút.<br><span>ZL: 0385933633 nếu chưa nhận được.</span></div>
-                        <button class="btn btn-secondary" id="backAfterDeposit">🏠 Về trang chủ</button>
-                    </div>
-                </div>`;
-            document.getElementById('backAfterDeposit').onclick=()=>renderDefaultPanel();
+            panel.innerHTML=`<div class="panel"><div class="pt">✅ Đã gửi yêu cầu</div><div class="sc"><div class="sc-icon">📨</div><div class="sc-title">THÔNG BÁO ĐÃ GỬI</div><div class="sc-detail"><div class="sc-row"><span class="sk">Tên</span><span class="sv" style="color:var(--yellow)">${name}</span></div><div class="sc-row"><span class="sk">Số tiền nạp</span><span class="sv">${amt.toLocaleString('vi-VN')}đ</span></div><div class="sc-row"><span class="sk">Ngân hàng</span><span class="sv">${BANK_INFO.bank}</span></div><div class="sc-row"><span class="sk">STK</span><span class="sv">${BANK_INFO.account}</span></div>${curVnd!==null?`<div class="sc-row"><span class="sk">Số dư HT</span><span class="sv">${curVnd.toLocaleString('vi-VN')}đ</span></div>`:''}</div><div class="dep-note" style="margin-bottom:12px;">Admin sẽ xác nhận trong vài phút.<br><span>ZL: 0385933633 nếu chưa nhận được.</span></div><button class="btn btn-sec" id="backAfterDep">🏠 Về trang chủ</button></div></div>`;
+            document.getElementById('backAfterDep').onclick=()=>renderDefaultPanel();
         };
         document.getElementById('backDeposit').onclick=()=>renderDefaultPanel();
     }
     render();
 }
 
-// ======================= TẠO ĐƠN =======================
+// ========================= TẠO ĐƠN =========================
 async function showCreateOrderUI(){
-    let selSvc='view', selIdx=0;
+    let selSvc='view',selIdx=0;
     const panel=document.getElementById('dynamicPanel');
     function renderForm(){
-        const si=SERVICES[selSvc];
-        const idList=SERVICE_IDS[selSvc]||[];
-        if(selIdx>=idList.length) selIdx=0;
+        const si=SERVICES[selSvc],idList=SERVICE_IDS[selSvc]||[];
+        if(selIdx>=idList.length)selIdx=0;
         const entry=idList[selIdx]||null;
         panel.innerHTML=`
             <div class="panel">
-                <div class="panel-title">➕ Tạo đơn mới</div>
-                <div class="service-tabs">
-                    <div class="service-tab ${selSvc==='view'?'active':''}" data-s="view"><span class="tab-icon">👀</span>VIEW</div>
-                    <div class="service-tab ${selSvc==='like'?'active':''}" data-s="like"><span class="tab-icon">❤️</span>TIM</div>
+                <div class="pt">➕ Tạo đơn mới</div>
+                <div class="svc-tabs">
+                    <div class="svc-tab ${selSvc==='view'?'active':''}" data-s="view"><span class="ti">👀</span>VIEW</div>
+                    <div class="svc-tab ${selSvc==='like'?'active':''}" data-s="like"><span class="ti">❤️</span>TIM</div>
                 </div>
-                <div class="form-group">
-                    <label>🎯 Loại dịch vụ</label>
+                <div class="fg"><label>🎯 Loại dịch vụ</label>
                     <div style="display:flex;flex-direction:column;gap:7px;">
                         ${idList.map((e,i)=>`
-                            <div class="id-pick-item" data-idx="${i}" style="background:${i===selIdx?'var(--teal-glow)':'rgba(0,0,0,0.3)'};border:1px solid ${i===selIdx?'var(--teal)':'var(--border)'};border-radius:10px;padding:10px 12px;cursor:pointer;transition:all 0.15s;">
+                            <div class="id-pick" data-idx="${i}" style="background:${i===selIdx?'var(--teal-glow)':'rgba(0,0,0,0.3)'};border:1px solid ${i===selIdx?'var(--teal)':'var(--border)'};border-radius:10px;padding:10px 12px;cursor:pointer;">
                                 <div style="display:flex;justify-content:space-between;align-items:center;">
                                     <span style="font-weight:800;font-size:0.82rem;color:${i===selIdx?'var(--teal)':'var(--text-primary)'};">${e.name}</span>
                                     <span style="font-family:var(--mono);font-size:0.72rem;color:var(--yellow);font-weight:700;">${e.price.toLocaleString('vi-VN')}đ/min</span>
@@ -763,563 +691,483 @@ async function showCreateOrderUI(){
                                     <span style="font-size:0.65rem;color:var(--text-dim);">Min: ${e.min.toLocaleString()}</span>
                                 </div>
                                 ${e.desc?`<div style="font-size:0.68rem;color:var(--text-muted);margin-top:2px;">${e.desc}</div>`:''}
-                            </div>
-                        `).join('')}
+                            </div>`).join('')}
                     </div>
                 </div>
-                <div class="form-group"><label>🔗 Link video TikTok</label><input type="text" id="videoLink" placeholder="https://www.tiktok.com/@user/video/..."></div>
-                <div class="form-group"><label>🔢 Số lượng ${si.unit}${entry?' (tối thiểu '+entry.min.toLocaleString()+')':''}</label><input type="number" id="quantity" placeholder="${entry?entry.min:1000}" min="${entry?entry.min:1}" step="${selSvc==='view'?100:50}"></div>
-                <div class="form-group"><label>👤 Tên của bạn</label><input type="text" id="orderNote" placeholder="Nhập tên..."></div>
-                <div class="price-estimate" id="priceEst">💰 Nhập số lượng để xem ước tính</div>
+                <div class="fg"><label>🔗 Link video TikTok</label><input type="text" id="videoLink" placeholder="https://www.tiktok.com/@user/video/..."></div>
+                <div class="fg"><label>🔢 Số lượng ${si.unit}${entry?' (min '+entry.min.toLocaleString()+')':''}</label><input type="number" id="quantity" placeholder="${entry?entry.min:1000}" min="${entry?entry.min:1}" step="${selSvc==='view'?100:50}"></div>
+                <div class="fg"><label>👤 Tên của bạn</label><input type="text" id="orderNote" placeholder="Nhập tên..."></div>
+                <div class="price-est" id="priceEst">💰 Nhập số lượng để xem ước tính</div>
                 <button class="btn btn-primary" id="submitBtn">🚀 Tạo đơn ngay</button>
-                <button class="btn btn-secondary" id="cancelBtn">↩ Hủy</button>
+                <button class="btn btn-sec" id="cancelBtn">↩ Hủy</button>
             </div>
         `;
-        document.querySelectorAll('.service-tab').forEach(t=>{ t.onclick=()=>{ selSvc=t.dataset.s; selIdx=0; renderForm(); }; });
-        document.querySelectorAll('.id-pick-item').forEach(el=>{ el.onclick=()=>{ selIdx=parseInt(el.dataset.idx); renderForm(); }; });
+        document.querySelectorAll('.svc-tab').forEach(t=>{t.onclick=()=>{selSvc=t.dataset.s;selIdx=0;renderForm();};});
+        document.querySelectorAll('.id-pick').forEach(el=>{el.onclick=()=>{selIdx=parseInt(el.dataset.idx);renderForm();};});
         const qInp=document.getElementById('quantity');
-        qInp.oninput=()=>{ const q=parseInt(qInp.value); const e=(SERVICE_IDS[selSvc]||[])[selIdx]; document.getElementById('priceEst').textContent=(!isNaN(q)&&q>0&&e)?`💰 Dự tính: ${calcPrice(e,q).toLocaleString('vi-VN')}đ cho ${q.toLocaleString()} ${SERVICES[selSvc].unit}`:'💰 Nhập số lượng để xem ước tính'; };
+        qInp.oninput=()=>{const q=parseInt(qInp.value),e=(SERVICE_IDS[selSvc]||[])[selIdx];document.getElementById('priceEst').textContent=(!isNaN(q)&&q>0&&e)?`💰 Dự tính: ${calcPrice(e,q).toLocaleString('vi-VN')}đ cho ${q.toLocaleString()} ${SERVICES[selSvc].unit}`:'💰 Nhập số lượng để xem ước tính';};
         document.getElementById('submitBtn').onclick=async()=>{
             const link=document.getElementById('videoLink').value.trim();
             const qty=parseInt(qInp.value);
             const e=(SERVICE_IDS[selSvc]||[])[selIdx];
             const note=document.getElementById('orderNote').value.trim();
-            if(!e){ showToast("Chọn loại dịch vụ!",true); return; }
-            if(!link){ showToast("Nhập link video",true); return; }
-            if(!isValidTikTokUrl(link)){ showToast("Link TikTok không hợp lệ!",true); return; }
-            if(isNaN(qty)||qty<e.min){ showToast(`Tối thiểu ${e.min.toLocaleString()} ${SERVICES[selSvc].unit}!`,true); return; }
-            if(!isAdmin){ const lc=checkSubKeyLimit(selSvc,qty); if(!lc.allowed){ showToast(lc.message,true); return; } }
+            if(!e){showToast("Chọn loại dịch vụ!",true);return;}
+            if(!link){showToast("Nhập link video",true);return;}
+            if(!isValidTikTokUrl(link)){showToast("Link TikTok không hợp lệ!",true);return;}
+            if(isNaN(qty)||qty<e.min){showToast(`Tối thiểu ${e.min.toLocaleString()} ${SERVICES[selSvc].unit}!`,true);return;}
+            if(!isAdmin){const lc=checkSubKeyLimit(selSvc,qty);if(!lc.allowed){showToast(lc.message,true);return;}}
             await createOrder(link,qty,selSvc,note,e);
         };
         document.getElementById('cancelBtn').onclick=()=>renderDefaultPanel();
     }
     renderForm();
 }
-
 async function createOrder(link,qty,svcType,note='',entry=null){
-    const si=SERVICES[svcType];
-    const entryName=entry?entry.name:si.name;
-    const entryId=entry?entry.id:'';
+    const si=SERVICES[svcType],entryName=entry?entry.name:si.name,entryId=entry?entry.id:'';
     showLoading(true,`Đang tạo đơn ${entryName}...`);
     const result=await apiRequest({key:API_KEY_V,action:"add",service:String(entryId),link,quantity:String(qty)});
     showLoading(false);
     if(result&&result.order){
-        const orderId=result.order;
-        const price=entry?calcPrice(entry,qty):0;
-        const timeNow=new Date().toLocaleString('vi-VN');
-        ordersHistory[orderId]={ order_id:orderId,link,quantity:qty,service:svcType,service_name:entryName,service_id:entryId,charge:result.charge,note,created_at:timeNow,status:"Pending" };
+        const orderId=result.order,price=entry?calcPrice(entry,qty):0,timeNow=new Date().toLocaleString('vi-VN');
+        ordersHistory[orderId]={order_id:orderId,link,quantity:qty,service:svcType,service_name:entryName,service_id:entryId,charge:result.charge,note,created_at:timeNow,status:"Pending"};
         saveHistory();
-        if(!isAdmin) consumeSubKey(svcType,qty);
-
-        // JSON data cho Telegram
-        const orderData={
-            type:'order', order_id:orderId, service_name:entryName, service_id:entryId,
-            service_type:svcType, quantity:qty, link, note, price_estimate:price,
-            time:timeNow, status:'pending', key_used: isAdmin?'ADMIN':currentUserKey
-        };
-
-        // Text thông báo
-        const svcEmoji = svcType==='view'?'👀':'❤️';
-        const msg=`${svcEmoji} <b>ĐƠN ${svcType.toUpperCase()} MỚI</b>\n━━━━━━━━━━━━━━\n🔰 Order ID: <b>#${orderId}</b>\n🆔 Service: ${entryName} (${entryId})${note?'\n👤 Tên: '+note:''}\n📊 SL: ${qty.toLocaleString()} ${si.unit}\n🔗 Link: ${link}\n💰 Ước tính: ${price.toLocaleString('vi-VN')}đ\n🕐 ${timeNow}`;
+        if(!isAdmin)consumeSubKey(svcType,qty);
+        const orderData={id:Date.now(),order_id:orderId,service_name:entryName,service_id:entryId,service_type:svcType,quantity:qty,link,note,price_estimate:price,time:timeNow,status:'pending',key_used:isAdmin?'ADMIN':currentUserKey};
+        const svcEmoji=svcType==='view'?'👀':'❤️';
+        const msg=`${svcEmoji} <b>ĐƠN ${svcType.toUpperCase()} MỚI</b>\n━━━━━━━━━━━━━━\n🔰 Order ID: <b>#${orderId}</b>\n🆔 ${entryName} (${entryId})${note?'\n👤 '+note:''}\n📊 SL: ${qty.toLocaleString()} ${si.unit}\n🔗 ${link}\n💰 Ước tính: ${price.toLocaleString('vi-VN')}đ\n🕐 ${timeNow}`;
         await sendTeleText(msg);
-        // JSON file
-        await sendTeleJSON(DOC_TYPE.ORDER, orderData, `${svcEmoji} ${entryName} · ${qty.toLocaleString()} ${si.unit} · #${orderId}`);
-
-        showToast(`✅ Tạo đơn thành công! Mã: ${orderId}`);
+        await dbAddOrder(orderData);
+        showLoading(false);
+        showToast(`✅ Tạo đơn #${orderId}`);
         document.getElementById('dynamicPanel').innerHTML=`
-            <div class="panel">
-                <div class="panel-title">✅ Tạo đơn thành công</div>
-                <div class="success-card">
-                    <div class="success-icon">🎉</div>
-                    <div class="success-title">ĐƠN HÀNG ĐÃ TẠO</div>
-                    <div class="success-detail">
-                        <div class="success-row"><span class="sk">Order ID</span><span class="sv">#${orderId}</span></div>
-                        <div class="success-row"><span class="sk">Dịch vụ</span><span class="sv">${si.icon} ${entryName}</span></div>
-                        ${note?`<div class="success-row"><span class="sk">Tên</span><span class="sv" style="color:var(--yellow)">${note}</span></div>`:''}
-                        <div class="success-row"><span class="sk">Số lượng</span><span class="sv">${qty.toLocaleString()} ${si.unit}</span></div>
-                        <div class="success-row"><span class="sk">Ước tính</span><span class="sv">${price.toLocaleString('vi-VN')}đ</span></div>
-                    </div>
-                    <button class="btn btn-purple" id="supportAfterOrder" style="margin-bottom:7px;">🆘 Báo lỗi đơn này</button>
-                    <button class="btn btn-secondary" id="backHome">🏠 Về trang chủ</button>
-                </div>
+            <div class="panel"><div class="pt">✅ Tạo đơn thành công</div>
+            <div class="sc"><div class="sc-icon">🎉</div><div class="sc-title">ĐƠN HÀNG ĐÃ TẠO</div>
+            <div class="sc-detail">
+                <div class="sc-row"><span class="sk">Order ID</span><span class="sv">#${orderId}</span></div>
+                <div class="sc-row"><span class="sk">Dịch vụ</span><span class="sv">${si.icon} ${entryName}</span></div>
+                ${note?`<div class="sc-row"><span class="sk">Tên</span><span class="sv" style="color:var(--yellow)">${note}</span></div>`:''}
+                <div class="sc-row"><span class="sk">Số lượng</span><span class="sv">${qty.toLocaleString()} ${si.unit}</span></div>
+                <div class="sc-row"><span class="sk">Ước tính</span><span class="sv">${price.toLocaleString('vi-VN')}đ</span></div>
             </div>
+            <button class="btn btn-purple" id="supAfterOrder" style="margin-bottom:7px;">🆘 Báo lỗi đơn này</button>
+            <button class="btn btn-sec" id="backHome">🏠 Về trang chủ</button>
+            </div></div>
         `;
         document.getElementById('backHome').onclick=()=>renderDefaultPanel();
-        document.getElementById('supportAfterOrder').onclick=()=>{ showSupportOrderUI(); setTimeout(()=>{ const inp=document.getElementById('supportOrderId'); if(inp) inp.value=orderId; },100); };
-    } else {
-        const err=result?.error||"Không tạo được đơn";
-        showToast(`❌ Thất bại: ${err}`,true);
+        document.getElementById('supAfterOrder').onclick=()=>{showSupportOrderUI();setTimeout(()=>{const inp=document.getElementById('supportOrderId');if(inp)inp.value=orderId;},100);};
+    }else{
+        const err=result?.error||"Không tạo được đơn";showToast(`❌ ${err}`,true);
         await sendTeleText(`⚠️ LỖI TẠO ĐƠN ${entryName}: ${err}\nLink: ${link}\nSL: ${qty}`);
     }
 }
 
-// ======================= CHECK ĐƠN =======================
+// ========================= CHECK ĐƠN =========================
 function showCheckOrderUI(){
     const panel=document.getElementById('dynamicPanel');
     const last=Object.keys(ordersHistory).pop()||'';
-    panel.innerHTML=`
-        <div class="panel">
-            <div class="panel-title">🔍 Kiểm tra trạng thái</div>
-            <div class="form-group"><label>🔢 Order ID</label><input type="text" id="checkOrderId" placeholder="Nhập Order ID..." value="${last}"></div>
-            <button class="btn btn-primary" id="checkBtn">🔍 Kiểm tra ngay</button>
-            <div id="checkResult"></div>
-            <button class="btn btn-secondary" style="margin-top:8px;" id="cancelCheck">↩ Quay lại</button>
-        </div>
-    `;
-    document.getElementById('checkBtn').onclick=async()=>{ const oid=document.getElementById('checkOrderId').value.trim(); if(!oid){ showToast("Nhập Order ID",true); return; } await fetchOrderStatus(oid); };
+    panel.innerHTML=`<div class="panel"><div class="pt">🔍 Kiểm tra trạng thái</div><div class="fg"><label>🔢 Order ID</label><input type="text" id="checkOrderId" placeholder="Nhập Order ID..." value="${last}"></div><button class="btn btn-primary" id="checkBtn">🔍 Kiểm tra ngay</button><div id="checkResult"></div><button class="btn btn-sec" style="margin-top:8px;" id="cancelCheck">↩ Quay lại</button></div>`;
+    document.getElementById('checkBtn').onclick=async()=>{const oid=document.getElementById('checkOrderId').value.trim();if(!oid){showToast("Nhập Order ID",true);return;}await fetchOrderStatus(oid);};
     document.getElementById('cancelCheck').onclick=()=>renderDefaultPanel();
-    document.getElementById('checkOrderId').onkeypress=e=>{ if(e.key==='Enter') document.getElementById('checkBtn').click(); };
+    document.getElementById('checkOrderId').onkeypress=e=>{if(e.key==='Enter')document.getElementById('checkBtn').click();};
 }
-
 async function fetchOrderStatus(orderId){
     showLoading(true,`Đang kiểm tra #${orderId}...`);
     const result=await apiRequest({key:API_KEY_V,action:"status",order:orderId});
     showLoading(false);
-    const rd=document.getElementById('checkResult'); if(!rd) return;
+    const rd=document.getElementById('checkResult');if(!rd)return;
     if(result&&result.status!==undefined){
-        if(ordersHistory[orderId]){ ordersHistory[orderId].status=result.status; saveHistory(); }
+        if(ordersHistory[orderId]){ordersHistory[orderId].status=result.status;saveHistory();}
         const local=ordersHistory[orderId];
-        const startCount=result.start_count!==undefined?Number(result.start_count).toLocaleString():'N/A';
-        const remains=result.remains!==undefined?Number(result.remains).toLocaleString():'N/A';
+        const sc=result.start_count!==undefined?Number(result.start_count).toLocaleString():'N/A';
+        const rem=result.remains!==undefined?Number(result.remains).toLocaleString():'N/A';
         const svcName=local?`${SERVICES[local.service]?.icon||''} ${local.service_name}`:'—';
         rd.innerHTML=`
-            <div class="status-result-card">
-                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
-                    <span style="font-family:var(--mono);font-size:0.78rem;color:var(--teal);">#${orderId}</span>
-                    ${getStatusBadge(result.status)}
-                </div>
-                <div class="status-row"><span class="status-key">Trạng thái</span><span class="status-val">${result.status}</span></div>
-                <div class="status-row"><span class="status-key">Dịch vụ</span><span class="status-val">${svcName}</span></div>
-                ${local?.note?`<div class="status-row"><span class="status-key">Tên</span><span class="status-val" style="color:var(--yellow)">${local.note}</span></div>`:''}
-                ${local?`<div class="status-row"><span class="status-key">Số lượng</span><span class="status-val">${Number(local.quantity).toLocaleString()} ${SERVICES[local.service]?.unit||''}</span></div>`:''}
-                <div class="status-row"><span class="status-key">Start count</span><span class="status-val">${startCount}</span></div>
-                <div class="status-row"><span class="status-key">Còn lại</span><span class="status-val">${remains}</span></div>
-                ${local?`<div class="status-row"><span class="status-key">Tạo lúc</span><span class="status-val" style="font-size:0.68rem;">${local.created_at}</span></div>`:''}
+            <div class="sr-card">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;"><span style="font-family:var(--mono);font-size:0.78rem;color:var(--teal);">#${orderId}</span>${getStatusBadge(result.status)}</div>
+                <div class="sr-row"><span class="sr-key">Trạng thái</span><span class="sr-val">${result.status}</span></div>
+                <div class="sr-row"><span class="sr-key">Dịch vụ</span><span class="sr-val">${svcName}</span></div>
+                ${local?.note?`<div class="sr-row"><span class="sr-key">Tên</span><span class="sr-val" style="color:var(--yellow)">${local.note}</span></div>`:''}
+                ${local?`<div class="sr-row"><span class="sr-key">Số lượng</span><span class="sr-val">${Number(local.quantity).toLocaleString()} ${SERVICES[local.service]?.unit||''}</span></div>`:''}
+                <div class="sr-row"><span class="sr-key">Start count</span><span class="sr-val">${sc}</span></div>
+                <div class="sr-row"><span class="sr-key">Còn lại</span><span class="sr-val">${rem}</span></div>
+                ${local?`<div class="sr-row"><span class="sr-key">Tạo lúc</span><span class="sr-val" style="font-size:0.68rem;">${local.created_at}</span></div>`:''}
             </div>
-            <button class="btn btn-purple" id="supportFromCheck" style="margin-top:8px;font-size:0.82rem;padding:10px;">🆘 Báo lỗi đơn này</button>
+            <button class="btn btn-purple" id="supFromCheck" style="margin-top:8px;font-size:0.82rem;padding:10px;">🆘 Báo lỗi đơn này</button>
         `;
-        document.getElementById('supportFromCheck').onclick=()=>{ showSupportOrderUI(); setTimeout(()=>{ const inp=document.getElementById('supportOrderId'); if(inp) inp.value=orderId; },100); };
-    } else {
+        document.getElementById('supFromCheck').onclick=()=>{showSupportOrderUI();setTimeout(()=>{const inp=document.getElementById('supportOrderId');if(inp)inp.value=orderId;},100);};
+    }else{
         rd.innerHTML=`<div style="text-align:center;padding:14px;color:var(--red);font-size:0.82rem;margin-top:10px;">❌ ${result?.error||"Không tìm thấy đơn"}</div>`;
-        showToast(`❌ ${result?.error||"Không tìm thấy đơn"}`,true);
+        showToast(`❌ ${result?.error||"Không tìm thấy"}`,true);
     }
 }
 
-// ======================= LỊCH SỬ =======================
+// ========================= LỊCH SỬ =========================
 function showHistoryUI(){
     const panel=document.getElementById('dynamicPanel');
     const orders=Object.values(ordersHistory).reverse();
-    if(orders.length===0){
-        panel.innerHTML=`
-            <div class="panel" style="text-align:center;padding:28px 14px;">
-                <div style="font-size:1.8rem;margin-bottom:9px;">📭</div>
-                <div style="color:var(--text-dim);font-size:0.82rem;">Chưa có đơn nào trên thiết bị này</div>
-                <button class="btn btn-secondary" style="margin-top:14px;" id="backHistory">↩ Quay lại</button>
-            </div>`;
-        document.getElementById('backHistory').onclick=()=>renderDefaultPanel(); return;
-    }
-    let html=`<div class="panel"><div class="panel-title">📋 Lịch sử (${orders.length})</div>`;
-    for(const d of orders){
-        const sv=SERVICES[d.service]||{};
-        html+=`
-            <div class="history-item" data-oid="${d.order_id}">
-                <div class="history-header"><span class="history-id">#${d.order_id}</span>${getStatusBadge(d.status)}</div>
-                <div class="history-detail">${sv.icon||''} ${d.service_name||d.service} · ${Number(d.quantity).toLocaleString()} ${sv.unit||''}</div>
-                ${d.note?`<div style="font-size:0.7rem;color:var(--yellow);margin-bottom:2px;font-weight:600;">👤 ${d.note}</div>`:''}
-                <div class="history-date" style="margin-bottom:3px;">${d.created_at||''}</div>
-                <div class="history-link">${d.link||''}</div>
-            </div>`;
-    }
-    html+=`
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:4px;">
-            <button class="btn btn-danger" id="clearHistory">🗑️ Xóa lịch sử</button>
-            <button class="btn btn-secondary" id="backHistory">↩ Quay lại</button>
-        </div></div>`;
+    if(orders.length===0){panel.innerHTML=`<div class="panel" style="text-align:center;padding:28px 14px;"><div style="font-size:1.8rem;margin-bottom:9px;">📭</div><div style="color:var(--text-dim);font-size:0.82rem;">Chưa có đơn nào trên thiết bị này</div><button class="btn btn-sec" style="margin-top:14px;" id="backHistory">↩ Quay lại</button></div>`;document.getElementById('backHistory').onclick=()=>renderDefaultPanel();return;}
+    let html=`<div class="panel"><div class="pt">📋 Lịch sử (${orders.length})</div>`;
+    for(const d of orders){const sv=SERVICES[d.service]||{};html+=`<div class="his-item" data-oid="${d.order_id}"><div class="his-hdr"><span class="his-id">#${d.order_id}</span>${getStatusBadge(d.status)}</div><div class="his-detail">${sv.icon||''} ${d.service_name||d.service} · ${Number(d.quantity).toLocaleString()} ${sv.unit||''}</div>${d.note?`<div style="font-size:0.7rem;color:var(--yellow);margin-bottom:2px;font-weight:600;">👤 ${d.note}</div>`:''}<div class="his-date" style="margin-bottom:3px;">${d.created_at||''}</div><div class="his-link">${d.link||''}</div></div>`;}
+    html+=`<div style="display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:4px;"><button class="btn btn-danger" id="clearHis">🗑️ Xóa lịch sử</button><button class="btn btn-sec" id="backHis">↩ Quay lại</button></div></div>`;
     panel.innerHTML=html;
-    panel.querySelectorAll('.history-item').forEach(item=>{
-        item.onclick=()=>{ const oid=item.dataset.oid; showCheckOrderUI(); setTimeout(()=>{ const inp=document.getElementById('checkOrderId'); if(inp){ inp.value=oid; document.getElementById('checkBtn')?.click(); } },100); };
-    });
-    document.getElementById('clearHistory').onclick=()=>{ if(confirm("Xóa toàn bộ lịch sử?")){ ordersHistory={}; saveHistory(); showHistoryUI(); showToast("Đã xóa"); } };
-    document.getElementById('backHistory').onclick=()=>renderDefaultPanel();
+    panel.querySelectorAll('.his-item').forEach(item=>{item.onclick=()=>{const oid=item.dataset.oid;showCheckOrderUI();setTimeout(()=>{const inp=document.getElementById('checkOrderId');if(inp){inp.value=oid;document.getElementById('checkBtn')?.click();}},100);};});
+    document.getElementById('clearHis').onclick=()=>{if(confirm("Xóa toàn bộ lịch sử?")){ordersHistory={};saveHistory();showHistoryUI();showToast("Đã xóa");}};
+    document.getElementById('backHis').onclick=()=>renderDefaultPanel();
 }
 
-// ======================= HỖ TRỢ ĐƠN =======================
+// ========================= HỖ TRỢ ĐƠN =========================
 async function showSupportOrderUI(){
     const panel=document.getElementById('dynamicPanel');
-    let selIssue='tut_view';
-    let fetchedData=null;
-
+    let selIssue='tut_view',fetchedData=null;
     function render(){
         panel.innerHTML=`
             <div class="panel">
-                <div class="panel-title purple-title">🆘 Yêu cầu hỗ trợ đơn</div>
-                <div class="info-note-purple">📋 Điền thông tin đơn cần hỗ trợ. Admin nhận thông báo ngay qua Telegram.</div>
-                <div class="form-group">
-                    <label>🔢 Order ID</label>
+                <div class="pt purple">🆘 Yêu cầu hỗ trợ đơn</div>
+                <div class="info-note-p">📋 Điền thông tin đơn cần hỗ trợ. Admin nhận thông báo qua Telegram ngay lập tức.</div>
+                <div class="fg"><label>🔢 Order ID</label>
                     <div style="display:flex;gap:7px;">
                         <input type="text" id="supportOrderId" placeholder="Nhập Order ID..." style="flex:1;">
                         <button id="fetchInfoBtn" style="padding:11px 14px;border-radius:11px;border:1px solid rgba(167,139,250,0.3);background:rgba(167,139,250,0.1);color:var(--purple);font-family:var(--font);font-size:0.78rem;font-weight:700;cursor:pointer;white-space:nowrap;min-width:80px;">🔍 Lấy info</button>
                     </div>
                 </div>
-                <div id="orderInfoBox" style="display:none;background:rgba(0,0,0,0.3);border:1px solid rgba(167,139,250,0.2);border-radius:10px;padding:10px 12px;margin-bottom:12px;font-size:0.75rem;"></div>
-                <div class="form-group"><label>👤 Tên của bạn</label><input type="text" id="supportName" placeholder="Nhập tên..."></div>
-                <div class="form-group">
-                    <label>⚠️ Vấn đề gặp phải</label>
-                    <div class="issue-tabs">
-                        ${ISSUE_TYPES.map(t=>`<div class="issue-tab ${t.key===selIssue?'active':''}" data-issue="${t.key}"><span class="it-icon">${t.icon}</span>${t.label}</div>`).join('')}
-                    </div>
+                <div id="orderInfoBox" style="display:none;background:rgba(0,0,0,0.3);border:1px solid rgba(167,139,250,0.2);border-radius:10px;padding:10px 12px;margin-bottom:12px;font-size:0.75px;"></div>
+                <div class="fg"><label>👤 Tên của bạn</label><input type="text" id="supportName" placeholder="Nhập tên..."></div>
+                <div class="fg"><label>⚠️ Vấn đề gặp phải</label>
+                    <div class="issue-tabs">${ISSUE_TYPES.map(t=>`<div class="it-tab ${t.key===selIssue?'active':''}" data-issue="${t.key}"><span class="iti">${t.icon}</span>${t.label}</div>`).join('')}</div>
                 </div>
-                <div class="form-group"><label>📝 Mô tả thêm (tuỳ chọn)</label><textarea id="supportNote" placeholder="Mô tả chi tiết vấn đề..."></textarea></div>
+                <div class="fg"><label>📝 Mô tả thêm (tuỳ chọn)</label><textarea id="supportNote" placeholder="Mô tả chi tiết..."></textarea></div>
                 <button class="btn btn-purple" id="submitSupport">🆘 Gửi yêu cầu hỗ trợ</button>
-                <button class="btn btn-secondary" id="cancelSupport">↩ Hủy</button>
+                <button class="btn btn-sec" id="cancelSupport">↩ Hủy</button>
             </div>
         `;
-        panel.querySelectorAll('.issue-tab').forEach(tab=>{
-            tab.onclick=()=>{ selIssue=tab.dataset.issue; panel.querySelectorAll('.issue-tab').forEach(t=>t.classList.remove('active')); tab.classList.add('active'); };
-        });
+        panel.querySelectorAll('.it-tab').forEach(tab=>{tab.onclick=()=>{selIssue=tab.dataset.issue;panel.querySelectorAll('.it-tab').forEach(t=>t.classList.remove('active'));tab.classList.add('active');};});
         document.getElementById('fetchInfoBtn').onclick=async()=>{
             const oid=document.getElementById('supportOrderId').value.trim();
-            if(!oid){ showToast("Nhập Order ID trước!",true); return; }
-            const btn=document.getElementById('fetchInfoBtn'); btn.textContent='⏳'; btn.disabled=true;
+            if(!oid){showToast("Nhập Order ID trước!",true);return;}
+            const btn=document.getElementById('fetchInfoBtn');btn.textContent='⏳';btn.disabled=true;
             const res=await apiRequest({key:API_KEY_V,action:"status",order:oid});
-            btn.textContent='🔍 Lấy info'; btn.disabled=false;
+            btn.textContent='🔍 Lấy info';btn.disabled=false;
             const box=document.getElementById('orderInfoBox');
             if(res&&res.status!==undefined){
-                fetchedData=res;
-                const local=ordersHistory[oid];
-                box.style.display='block';
-                box.innerHTML=`
-                    <div style="color:var(--purple);font-weight:800;margin-bottom:6px;font-family:var(--mono);">✅ Đơn #${oid}</div>
-                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:5px;">
-                        <div><span style="color:var(--text-dim);">Trạng thái: </span><b>${res.status}</b></div>
-                        <div><span style="color:var(--text-dim);">Start: </span><span style="color:var(--teal);font-family:var(--mono);">${res.start_count!==undefined?Number(res.start_count).toLocaleString():'N/A'}</span></div>
-                        <div><span style="color:var(--text-dim);">Còn lại: </span><span style="color:var(--yellow);font-family:var(--mono);">${res.remains!==undefined?Number(res.remains).toLocaleString():'N/A'}</span></div>
-                        ${local?`<div><span style="color:var(--text-dim);">SL đặt: </span><span style="font-family:var(--mono);">${Number(local.quantity).toLocaleString()}</span></div>`:''}
-                    </div>
-                    ${local?`<div style="color:var(--text-dim);margin-top:5px;font-size:0.68rem;font-family:var(--mono);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${local.link||''}</div>`:''}
-                `;
-                showToast("✅ Đã lấy thông tin đơn!");
-            } else {
-                fetchedData=null; box.style.display='block';
-                box.innerHTML=`<div style="color:var(--red);font-size:0.78rem;">❌ ${res?.error||'Không tìm thấy đơn'}</div>`;
-            }
+                fetchedData=res;const local=ordersHistory[oid];
+                box.style.display='block';box.style.fontSize='0.75rem';
+                box.innerHTML=`<div style="color:var(--purple);font-weight:800;margin-bottom:6px;font-family:var(--mono);">✅ Đơn #${oid}</div><div style="display:grid;grid-template-columns:1fr 1fr;gap:5px;"><div><span style="color:var(--text-dim);">Trạng thái: </span><b>${res.status}</b></div><div><span style="color:var(--text-dim);">Start: </span><span style="color:var(--teal);font-family:var(--mono);">${res.start_count!==undefined?Number(res.start_count).toLocaleString():'N/A'}</span></div><div><span style="color:var(--text-dim);">Còn lại: </span><span style="color:var(--yellow);font-family:var(--mono);">${res.remains!==undefined?Number(res.remains).toLocaleString():'N/A'}</span></div>${local?`<div><span style="color:var(--text-dim);">SL đặt: </span><span style="font-family:var(--mono);">${Number(local.quantity).toLocaleString()}</span></div>`:''}</div>${local?`<div style="color:var(--text-dim);margin-top:5px;font-size:0.68rem;font-family:var(--mono);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${local.link||''}</div>`:''}`;
+                showToast("✅ Đã lấy thông tin!");
+            }else{fetchedData=null;box.style.display='block';box.style.fontSize='0.78rem';box.innerHTML=`<div style="color:var(--red);">❌ ${res?.error||'Không tìm thấy đơn'}</div>`;}
         };
         document.getElementById('submitSupport').onclick=async()=>{
             const oid=document.getElementById('supportOrderId').value.trim();
             const name=document.getElementById('supportName').value.trim();
             const note=document.getElementById('supportNote').value.trim();
-            if(!oid){ showToast("Nhập Order ID!",true); return; }
-            if(!name){ showToast("Nhập tên!",true); document.getElementById('supportName').classList.add('error-shake'); setTimeout(()=>document.getElementById('supportName')?.classList.remove('error-shake'),400); return; }
+            if(!oid){showToast("Nhập Order ID!",true);return;}
+            if(!name){showToast("Nhập tên!",true);document.getElementById('supportName').classList.add('shake');setTimeout(()=>document.getElementById('supportName')?.classList.remove('shake'),400);return;}
             showLoading(true,"Đang gửi yêu cầu...");
             let orderInfo=fetchedData;
-            if(!orderInfo){ orderInfo=await apiRequest({key:API_KEY_V,action:"status",order:oid}); }
-            showLoading(false);
+            if(!orderInfo)orderInfo=await apiRequest({key:API_KEY_V,action:"status",order:oid});
             const local=ordersHistory[oid];
             const issueLabel=getIssueLabel(selIssue);
             const timeNow=new Date().toLocaleString('vi-VN');
-            const supportData={
-                type:'support', id:Date.now(), order_id:oid, name,
-                issue:selIssue, issue_label:issueLabel, note,
-                order_status:orderInfo?.status||null,
-                start_count:orderInfo?.start_count??null,
-                remains:orderInfo?.remains??null,
-                service_name:local?.service_name||null,
-                quantity:local?.quantity||null,
-                link:local?.link||null,
-                created_at:local?.created_at||null,
-                time:timeNow, status:'new'
-            };
-            // Text thông báo
+            const supportData={id:Date.now(),order_id:oid,name,issue:selIssue,issue_label:issueLabel,note,order_status:orderInfo?.status||null,start_count:orderInfo?.start_count??null,remains:orderInfo?.remains??null,service_name:local?.service_name||null,quantity:local?.quantity||null,link:local?.link||null,created_at:local?.created_at||null,time:timeNow,status:'new'};
             let msg=`🆘 <b>YÊU CẦU HỖ TRỢ ĐƠN</b>\n━━━━━━━━━━━━━━\n👤 Tên: <b>${name}</b>\n🔢 Order ID: <b>#${oid}</b>\n⚠️ Vấn đề: <b>${issueLabel}</b>`;
-            if(local){ msg+=`\n🎯 Dịch vụ: ${local.service_name}\n📊 SL đặt: ${Number(local.quantity).toLocaleString()}\n🔗 ${local.link||'N/A'}`; }
-            if(orderInfo?.status){ msg+=`\n📌 API Status: ${orderInfo.status}`; }
-            if(orderInfo?.start_count!==undefined) msg+=`\n▶️ Bắt đầu: ${Number(orderInfo.start_count).toLocaleString()}`;
-            if(orderInfo?.remains!==undefined) msg+=`\n⏳ Còn lại: ${Number(orderInfo.remains).toLocaleString()}`;
-            if(note) msg+=`\n📝 Ghi chú: ${note}`;
+            if(local)msg+=`\n🎯 ${local.service_name}\n📊 SL đặt: ${Number(local.quantity).toLocaleString()}\n🔗 ${local.link||'N/A'}`;
+            if(orderInfo?.status)msg+=`\n📌 API Status: ${orderInfo.status}`;
+            if(orderInfo?.start_count!==undefined)msg+=`\n▶️ Bắt đầu: ${Number(orderInfo.start_count).toLocaleString()}`;
+            if(orderInfo?.remains!==undefined)msg+=`\n⏳ Còn lại: ${Number(orderInfo.remains).toLocaleString()}`;
+            if(note)msg+=`\n📝 ${note}`;
             msg+=`\n🕐 ${timeNow}`;
             await sendTeleText(msg);
-            // JSON file
-            await sendTeleJSON(DOC_TYPE.SUPPORT, supportData, `🆘 ${issueLabel} · #${oid} · ${name}`);
+            await dbAddSupport(supportData);
             updateDrawerButtons();
+            showLoading(false);
             showToast("✅ Đã gửi yêu cầu hỗ trợ!");
-            panel.innerHTML=`
-                <div class="panel">
-                    <div class="panel-title purple-title">✅ Đã gửi yêu cầu</div>
-                    <div class="success-card">
-                        <div class="success-icon">🎫</div>
-                        <div class="success-title" style="color:var(--purple);">YÊU CẦU ĐÃ GỬI</div>
-                        <div class="success-detail">
-                            <div class="success-row"><span class="sk">Tên</span><span class="sv" style="color:var(--yellow)">${name}</span></div>
-                            <div class="success-row"><span class="sk">Order ID</span><span class="sv">#${oid}</span></div>
-                            <div class="success-row"><span class="sk">Vấn đề</span><span class="sv" style="color:var(--purple)">${issueLabel}</span></div>
-                            ${orderInfo?.status?`<div class="success-row"><span class="sk">Trạng thái đơn</span><span class="sv">${orderInfo.status}</span></div>`:''}
-                            ${orderInfo?.start_count!==undefined?`<div class="success-row"><span class="sk">Bắt đầu</span><span class="sv">${Number(orderInfo.start_count).toLocaleString()}</span></div>`:''}
-                            ${orderInfo?.remains!==undefined?`<div class="success-row"><span class="sk">Còn lại</span><span class="sv">${Number(orderInfo.remains).toLocaleString()}</span></div>`:''}
-                        </div>
-                        <div class="deposit-note" style="margin-bottom:12px;">Admin nhận thông báo qua Telegram.<br><span>Phản hồi trong giờ hỗ trợ 11h30–00h.</span></div>
-                        <button class="btn btn-secondary" id="backAfterSupport">🏠 Về trang chủ</button>
-                    </div>
-                </div>`;
-            document.getElementById('backAfterSupport').onclick=()=>renderDefaultPanel();
+            panel.innerHTML=`<div class="panel"><div class="pt purple">✅ Đã gửi yêu cầu</div><div class="sc"><div class="sc-icon">🎫</div><div class="sc-title" style="color:var(--purple);">YÊU CẦU ĐÃ GỬI</div><div class="sc-detail"><div class="sc-row"><span class="sk">Tên</span><span class="sv" style="color:var(--yellow)">${name}</span></div><div class="sc-row"><span class="sk">Order ID</span><span class="sv">#${oid}</span></div><div class="sc-row"><span class="sk">Vấn đề</span><span class="sv" style="color:var(--purple)">${issueLabel}</span></div>${orderInfo?.status?`<div class="sc-row"><span class="sk">Trạng thái đơn</span><span class="sv">${orderInfo.status}</span></div>`:''}</div><div class="dep-note" style="margin-bottom:12px;">Admin đã nhận qua Telegram.<br><span>Phản hồi trong giờ 11h30–00h.</span></div><button class="btn btn-sec" id="backAfterSup">🏠 Về trang chủ</button></div></div>`;
+            document.getElementById('backAfterSup').onclick=()=>renderDefaultPanel();
         };
         document.getElementById('cancelSupport').onclick=()=>renderDefaultPanel();
     }
     render();
 }
 
-// ======================= LIÊN HỆ =======================
+// ========================= LIÊN HỆ =========================
 function showContactUI(){
-    document.getElementById('dynamicPanel').innerHTML=`
-        <div class="panel">
-            <div class="panel-title">📞 Liên hệ hỗ trợ</div>
-            <div class="support-btns" style="margin:15px 0;">
-                <a href="https://zalo.me/84385933633" target="_blank" class="support-link">📱 Zalo</a>
-                <a href="https://t.me/duyhoang_1501_tom" target="_blank" class="support-link">✈️ Telegram</a>
-            </div>
-            <div style="text-align:center;font-size:0.72rem;color:var(--text-dim);">⏰ Hỗ trợ: <strong style="color:var(--text-muted);">11h30 – 00h</strong> hàng ngày</div>
-            <button class="btn btn-secondary" id="backContact" style="margin-top:14px;">↩ Quay lại</button>
-        </div>
-    `;
+    document.getElementById('dynamicPanel').innerHTML=`<div class="panel"><div class="pt">📞 Liên hệ hỗ trợ</div><div style="display:flex;justify-content:center;gap:12px;margin:15px 0;"><a href="https://zalo.me/84385933633" target="_blank" style="display:inline-flex;align-items:center;gap:5px;background:rgba(0,0,0,0.3);border:1px solid var(--border);border-radius:var(--radius-pill);padding:8px 16px;font-size:0.8rem;font-weight:600;color:var(--text-muted);text-decoration:none;">📱 Zalo</a><a href="https://t.me/duyhoang_1501_tom" target="_blank" style="display:inline-flex;align-items:center;gap:5px;background:rgba(0,0,0,0.3);border:1px solid var(--border);border-radius:var(--radius-pill);padding:8px 16px;font-size:0.8rem;font-weight:600;color:var(--text-muted);text-decoration:none;">✈️ Telegram</a></div><div style="text-align:center;font-size:0.72rem;color:var(--text-dim);">⏰ Hỗ trợ: <strong>11h30–00h</strong> hàng ngày</div><button class="btn btn-sec" id="backContact" style="margin-top:14px;">↩ Quay lại</button></div>`;
     document.getElementById('backContact').onclick=()=>renderDefaultPanel();
 }
 
-// ======================= ADMIN: QUẢN LÝ KEY =======================
+// ========================= ADMIN: DOANH THU =========================
+function showRevenueUI(){
+    const panel=document.getElementById('dynamicPanel');
+    let selPeriod=1; // ngày
+    function renderRevenue(){
+        const days=selPeriod;
+        const periodLabel={1:'Hôm nay',7:'7 ngày',30:'30 ngày',365:'1 năm'}[days]||`${days} ngày`;
+
+        // --- Doanh thu nạp tiền: tổng các deposit đã confirmed (status==='confirmed') trong kỳ ---
+        const depAll=filterByDays(cachedDeposits,days,'time');
+        const depConfirmed=depAll.filter(d=>d.status==='confirmed');
+        const depPending=depAll.filter(d=>d.status==='pending');
+        const totalDeposit=depConfirmed.reduce((s,d)=>s+Number(d.amount||0),0);
+        const totalDepositPending=depPending.reduce((s,d)=>s+Number(d.amount||0),0);
+        const depCount=depConfirmed.length;
+
+        // --- Doanh thu tạo đơn: tổng tiền ước tính, số view, số tim ---
+        const ordersAll=filterByDays(cachedOrders,days,'time');
+        const viewOrders=ordersAll.filter(o=>o.service_type==='view');
+        const likeOrders=ordersAll.filter(o=>o.service_type==='like');
+        const totalViews=viewOrders.reduce((s,o)=>s+Number(o.quantity||0),0);
+        const totalLikes=likeOrders.reduce((s,o)=>s+Number(o.quantity||0),0);
+        const totalOrderRevenue=ordersAll.reduce((s,o)=>s+Number(o.price_estimate||0),0);
+        const totalOrders=ordersAll.length;
+
+        // --- Grand total ---
+        const grandTotal=totalDeposit+totalOrderRevenue;
+
+        panel.innerHTML=`
+            <div class="panel">
+                <div class="pt green">📊 Doanh thu</div>
+                <div class="rev-period-tabs">
+                    ${[1,7,30,365].map(d=>`<div class="rev-tab ${selPeriod===d?'active':''}" data-days="${d}">${d===1?'Hôm nay':d===7?'7 ngày':d===30?'30 ngày':'1 năm'}</div>`).join('')}
+                </div>
+
+                <div class="rev-big">
+                    <div class="rev-big-label">TỔNG DOANH THU · ${periodLabel.toUpperCase()}</div>
+                    <div class="rev-big-val">${grandTotal.toLocaleString('vi-VN')}đ</div>
+                </div>
+
+                <!-- Nạp tiền -->
+                <div class="rev-section">
+                    <div class="rev-section-title">💳 Doanh thu nạp tiền</div>
+                    <div class="rev-row">
+                        <span class="rev-key">Tổng nạp xác nhận</span>
+                        <span class="rev-val" style="color:var(--green);">${totalDeposit.toLocaleString('vi-VN')}đ</span>
+                    </div>
+                    <div class="rev-row">
+                        <span class="rev-key">Số lần nạp</span>
+                        <span class="rev-val">${depCount} lần</span>
+                    </div>
+                    <div class="rev-row">
+                        <span class="rev-key">Đang chờ xác nhận</span>
+                        <span class="rev-val" style="color:var(--yellow);">${totalDepositPending.toLocaleString('vi-VN')}đ (${depPending.length} YC)</span>
+                    </div>
+                    ${depCount>0?`<div class="rev-row"><span class="rev-key">Trung bình/lần</span><span class="rev-val" style="color:var(--sky);">${Math.round(totalDeposit/depCount).toLocaleString('vi-VN')}đ</span></div>`:''}
+                </div>
+
+                <!-- Tạo đơn -->
+                <div class="rev-section">
+                    <div class="rev-section-title">🚀 Doanh thu tạo đơn</div>
+                    <div class="rev-row">
+                        <span class="rev-key">Tổng tiền ước tính</span>
+                        <span class="rev-val" style="color:var(--teal);">${totalOrderRevenue.toLocaleString('vi-VN')}đ</span>
+                    </div>
+                    <div class="rev-row">
+                        <span class="rev-key">Tổng đơn</span>
+                        <span class="rev-val">${totalOrders} đơn</span>
+                    </div>
+                    <div class="rev-metric-grid">
+                        <div class="rev-metric">
+                            <div class="rm-icon">👀</div>
+                            <div class="rm-label">Tổng View</div>
+                            <div class="rm-val" style="color:var(--sky);">${totalViews>=1000?(totalViews/1000).toFixed(1)+'K':totalViews.toLocaleString()}</div>
+                        </div>
+                        <div class="rev-metric">
+                            <div class="rm-icon">❤️</div>
+                            <div class="rm-label">Tổng Tim</div>
+                            <div class="rm-val" style="color:var(--red);">${totalLikes>=1000?(totalLikes/1000).toFixed(1)+'K':totalLikes.toLocaleString()}</div>
+                        </div>
+                        <div class="rev-metric">
+                            <div class="rm-icon">📦</div>
+                            <div class="rm-label">Đơn View</div>
+                            <div class="rm-val" style="color:var(--sky);">${viewOrders.length}</div>
+                        </div>
+                        <div class="rev-metric">
+                            <div class="rm-icon">💝</div>
+                            <div class="rm-label">Đơn Tim</div>
+                            <div class="rm-val" style="color:var(--red);">${likeOrders.length}</div>
+                        </div>
+                    </div>
+                    ${totalOrders>0?`<div class="rev-row" style="margin-top:8px;"><span class="rev-key">Trung bình/đơn</span><span class="rev-val" style="color:var(--sky);">${Math.round(totalOrderRevenue/totalOrders).toLocaleString('vi-VN')}đ</span></div>`:''}
+                </div>
+
+                ${cachedOrders.length===0&&cachedDeposits.length===0?`<div class="info-note">⚠️ Chưa có dữ liệu. Vào Quản lý đơn hoặc Quản lý tiền để tải từ Telegram trước.</div>`:''}
+
+                <button class="btn btn-sec" id="backRevenue">↩ Quay lại</button>
+            </div>
+        `;
+        panel.querySelectorAll('.rev-tab').forEach(t=>{t.onclick=()=>{selPeriod=parseInt(t.dataset.days);renderRevenue();};});
+        document.getElementById('backRevenue').onclick=()=>renderDefaultPanel();
+    }
+    // Nếu cache trống thì tải trước
+    if(cachedOrders.length===0&&cachedDeposits.length===0){
+        showLoading(true,"Đang tải dữ liệu...");
+        loadAllDBFromTelegram().then(()=>{showLoading(false);renderRevenue();});
+    } else {
+        renderRevenue();
+    }
+}
+
+// ========================= ADMIN: KEY =========================
 function showManageKeysUI(){
     const panel=document.getElementById('dynamicPanel');
-    let html=`<div class="panel"><div class="panel-title">🔑 Quản lý key (${SUB_KEYS.length})</div>`;
+    let html=`<div class="panel"><div class="pt">🔑 Quản lý key (${SUB_KEYS.length})</div>`;
     for(const ki of SUB_KEYS){
         const u=subKeyUsage[ki.key]||{views_used:0,likes_used:0,logins_used:0};
         const vp=Math.min(100,Math.round((u.views_used/ki.max_views)*100));
         const lp=Math.min(100,Math.round((u.likes_used/ki.max_likes)*100));
-        html+=`
-            <div class="key-item">
-                <div class="key-name">${ki.key} <span style="font-size:0.65rem;color:var(--text-dim);font-weight:400;">· ${ki.label}</span></div>
-                <div class="key-stat"><span>👀 View</span><span class="ks-val">${u.views_used.toLocaleString()} / ${ki.max_views.toLocaleString()}</span></div>
-                <div class="key-progress"><div class="key-progress-bar" style="width:${vp}%"></div></div>
-                <div class="key-stat"><span>❤️ Tim</span><span class="ks-val">${u.likes_used.toLocaleString()} / ${ki.max_likes.toLocaleString()}</span></div>
-                <div class="key-progress"><div class="key-progress-bar" style="width:${lp}%;background:linear-gradient(90deg,#be185d,#f43f5e);"></div></div>
-                <div class="key-stat"><span>🔑 Login</span><span class="ks-val">${u.logins_used} / ${ki.max_logins}</span></div>
-            </div>`;
+        html+=`<div class="key-item"><div class="key-name">${ki.key} <span style="font-size:0.65rem;color:var(--text-dim);font-weight:400;">· ${ki.label}</span></div><div class="key-stat"><span>👀 View</span><span class="ksv">${u.views_used.toLocaleString()} / ${ki.max_views.toLocaleString()}</span></div><div class="kprog"><div class="kprog-bar" style="width:${vp}%"></div></div><div class="key-stat"><span>❤️ Tim</span><span class="ksv">${u.likes_used.toLocaleString()} / ${ki.max_likes.toLocaleString()}</span></div><div class="kprog"><div class="kprog-bar" style="width:${lp}%;background:linear-gradient(90deg,#be185d,#f43f5e);"></div></div><div class="key-stat"><span>🔑 Login</span><span class="ksv">${u.logins_used} / ${ki.max_logins}</span></div></div>`;
     }
-    html+=`<button class="btn btn-secondary" id="backKeys">↩ Quay lại</button></div>`;
+    html+=`<button class="btn btn-sec" id="backKeys">↩ Quay lại</button></div>`;
     panel.innerHTML=html;
     document.getElementById('backKeys').onclick=()=>renderDefaultPanel();
 }
 
-// ======================= ADMIN: QUẢN LÝ ĐƠN (từ Telegram JSON) =======================
+// ========================= ADMIN: QUẢN LÝ ĐƠN =========================
 async function showManageOrdersUI(){
     const panel=document.getElementById('dynamicPanel');
-    panel.innerHTML=`
-        <div class="panel">
-            <div class="panel-title">📦 Quản lý đơn hàng</div>
-            <div class="info-note">📡 Đọc từ file JSON trên Telegram — toàn bộ đơn view & tim từ mọi thiết bị.</div>
-            <button class="refresh-btn" id="refreshOrders">🔄 Tải từ Telegram</button>
-            <div id="ordersContainer"><div style="text-align:center;padding:20px;color:var(--text-dim);font-size:0.82rem;">⏳ Đang tải...</div></div>
-            <button class="btn btn-secondary" style="margin-top:8px;" id="backOrders">↩ Quay lại</button>
-        </div>
-    `;
+    panel.innerHTML=`<div class="panel"><div class="pt">📦 Quản lý đơn hàng</div><div class="info-note">📁 1 file JSON duy nhất trên Telegram. Mỗi đơn mới được chèn vào đầu file.</div><button class="ref-btn" id="refreshOrders">🔄 Tải lại từ Telegram</button><div id="ordersContainer"><div style="text-align:center;padding:20px;color:var(--text-dim);font-size:0.82rem;">⏳ Đang tải...</div></div><button class="btn btn-sec" style="margin-top:8px;" id="backOrders">↩ Quay lại</button></div>`;
     document.getElementById('backOrders').onclick=()=>renderDefaultPanel();
-    document.getElementById('refreshOrders').onclick=()=>loadAndRenderAdminOrders();
-    await loadAndRenderAdminOrders();
+    document.getElementById('refreshOrders').onclick=async()=>{showLoading(true,"Đang tải...");await loadAllDBFromTelegram();showLoading(false);renderAdminOrders();};
+    renderAdminOrders();
+}
+function renderAdminOrders(){
+    const c=document.getElementById('ordersContainer');if(!c)return;
+    const orders=cachedOrders;
+    if(orders.length===0){c.innerHTML=`<div style="text-align:center;padding:20px;color:var(--text-dim);font-size:0.82rem;">📭 Không có đơn nào</div>`;return;}
+    const vOrders=orders.filter(o=>o.service_type==='view');
+    const lOrders=orders.filter(o=>o.service_type==='like');
+    let html=`<div style="font-size:0.7rem;color:var(--text-dim);margin-bottom:10px;">📦 ${orders.length} đơn · 👀 ${vOrders.length} · ❤️ ${lOrders.length}</div>`;
+    if(vOrders.length>0){html+=`<div style="font-size:0.68rem;color:var(--sky);font-family:var(--mono);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:6px;">👀 View (${vOrders.length})</div>`;vOrders.forEach(o=>{html+=renderOrderCard(o);});}
+    if(lOrders.length>0){html+=`<div style="font-size:0.68rem;color:var(--red);font-family:var(--mono);text-transform:uppercase;letter-spacing:0.8px;margin:10px 0 6px;">❤️ Tim (${lOrders.length})</div>`;lOrders.forEach(o=>{html+=renderOrderCard(o);});}
+    c.innerHTML=html;
+    c.querySelectorAll('.tele-item[data-oid]').forEach(item=>{item.onclick=()=>{const oid=item.dataset.oid;if(!oid)return;showCheckOrderUI();setTimeout(()=>{const inp=document.getElementById('checkOrderId');if(inp){inp.value=oid;document.getElementById('checkBtn')?.click();}},100);};});
+}
+function renderOrderCard(o){
+    return`<div class="tele-item" data-oid="${o.order_id}"><div class="ti-hdr"><span class="ti-id">#${o.order_id}</span>${getStatusBadge(ordersHistory[o.order_id]?.status||o.status||'Pending')}</div>${o.service_name?`<div class="ti-det">🎯 ${o.service_name}${o.quantity?' · '+Number(o.quantity).toLocaleString():''} ${o.service_type==='view'?'view':'tim'}</div>`:''} ${o.note?`<div class="ti-note">👤 ${o.note}</div>`:''} ${o.price_estimate?`<div class="ti-det">💰 ${Number(o.price_estimate).toLocaleString('vi-VN')}đ</div>`:''}<div class="his-date">${o.time||''}</div>${o.link?`<div class="ti-link">${o.link}</div>`:''}</div>`;
 }
 
-async function loadAndRenderAdminOrders(){
-    const container=document.getElementById('ordersContainer'); if(!container) return;
-    container.innerHTML=`<div style="text-align:center;padding:20px;color:var(--text-dim);font-size:0.82rem;">⏳ Đang tải JSON từ Telegram...</div>`;
-    const {orders}=await fetchAllFromTelegram();
-    cachedOrders=orders;
-    if(orders.length===0){ container.innerHTML=`<div style="text-align:center;padding:20px;color:var(--text-dim);font-size:0.82rem;">📭 Không có đơn nào</div>`; return; }
-    // Tách view và like
-    const viewOrders=orders.filter(o=>o.service_type==='view');
-    const likeOrders=orders.filter(o=>o.service_type==='like');
-    let html=`<div style="font-size:0.7rem;color:var(--text-dim);margin-bottom:10px;">✅ ${orders.length} đơn · 👀 ${viewOrders.length} view · ❤️ ${likeOrders.length} tim</div>`;
-
-    if(viewOrders.length>0){
-        html+=`<div style="font-size:0.68rem;color:var(--sky);font-family:var(--mono);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:6px;">👀 View (${viewOrders.length})</div>`;
-        for(const o of viewOrders) html+=renderOrderItem(o);
-    }
-    if(likeOrders.length>0){
-        html+=`<div style="font-size:0.68rem;color:var(--red);font-family:var(--mono);text-transform:uppercase;letter-spacing:0.8px;margin:10px 0 6px;">❤️ Tim (${likeOrders.length})</div>`;
-        for(const o of likeOrders) html+=renderOrderItem(o);
-    }
-    container.innerHTML=html;
-    container.querySelectorAll('.tele-item[data-oid]').forEach(item=>{
-        item.onclick=()=>{ const oid=item.dataset.oid; if(!oid) return; showCheckOrderUI(); setTimeout(()=>{ const inp=document.getElementById('checkOrderId'); if(inp){ inp.value=oid; document.getElementById('checkBtn')?.click(); } },100); };
-    });
-}
-
-function renderOrderItem(o){
-    const local=ordersHistory[o.order_id];
-    return `
-        <div class="tele-item" data-oid="${o.order_id}">
-            <div class="ti-header">
-                <span class="ti-id">#${o.order_id}</span>
-                ${getStatusBadge(local?.status||o.status||'Pending')}
-            </div>
-            ${o.service_name?`<div class="ti-detail">🎯 ${o.service_name}${o.quantity?' · '+Number(o.quantity).toLocaleString():''} ${o.service_type==='view'?'view':'tim'}</div>`:''}
-            ${o.note?`<div class="ti-note">👤 ${o.note}</div>`:''}
-            ${o.price_estimate?`<div class="ti-detail">💰 ${Number(o.price_estimate).toLocaleString('vi-VN')}đ</div>`:''}
-            <div class="history-date">${o.time||''}</div>
-            ${o.link?`<div class="ti-link">${o.link}</div>`:''}
-        </div>`;
-}
-
-// ======================= ADMIN: QUẢN LÝ TIỀN (từ Telegram JSON) =======================
+// ========================= ADMIN: QUẢN LÝ TIỀN =========================
 async function showManageMoneyUI(){
     const panel=document.getElementById('dynamicPanel');
-    panel.innerHTML=`
-        <div class="panel">
-            <div class="panel-title">💵 Quản lý tiền nạp</div>
-            <div class="info-note">📡 Đọc từ file JSON trên Telegram.</div>
-            <button class="refresh-btn" id="refreshMoney">🔄 Tải từ Telegram</button>
-            <div id="moneyContainer"><div style="text-align:center;padding:20px;color:var(--text-dim);font-size:0.82rem;">⏳ Đang tải...</div></div>
-            <button class="btn btn-secondary" style="margin-top:8px;" id="backMoney">↩ Quay lại</button>
-        </div>
-    `;
+    panel.innerHTML=`<div class="panel"><div class="pt">💵 Quản lý tiền nạp</div><div class="info-note">📁 1 file JSON duy nhất trên Telegram. Xác nhận → cập nhật status & ghi đè file.</div><button class="ref-btn" id="refreshMoney">🔄 Tải lại từ Telegram</button><div id="moneyContainer"><div style="text-align:center;padding:20px;color:var(--text-dim);font-size:0.82rem;">⏳ Đang tải...</div></div><button class="btn btn-sec" style="margin-top:8px;" id="backMoney">↩ Quay lại</button></div>`;
     document.getElementById('backMoney').onclick=()=>renderDefaultPanel();
-    document.getElementById('refreshMoney').onclick=()=>loadAndRenderAdminMoney();
-    await loadAndRenderAdminMoney();
+    document.getElementById('refreshMoney').onclick=async()=>{showLoading(true,"Đang tải...");await loadAllDBFromTelegram();showLoading(false);renderAdminMoney();};
+    renderAdminMoney();
 }
-
-async function loadAndRenderAdminMoney(){
-    const container=document.getElementById('moneyContainer'); if(!container) return;
-    container.innerHTML=`<div style="text-align:center;padding:20px;color:var(--text-dim);font-size:0.82rem;">⏳ Đang tải...</div>`;
-    const {deposits}=await fetchAllFromTelegram();
-    cachedDeposits=deposits;
-    if(deposits.length===0){ container.innerHTML=`<div style="text-align:center;padding:20px;color:var(--text-dim);font-size:0.82rem;">📭 Không có yêu cầu nạp tiền nào</div>`; return; }
-    const pending=deposits.filter(d=>d.status==='pending');
-    const done=deposits.filter(d=>d.status!=='pending');
-    let html=`<div style="font-size:0.7rem;color:var(--text-dim);margin-bottom:10px;">📋 ${deposits.length} yêu cầu · ⏳ ${pending.length} chờ · ✅ ${done.length} xong</div>`;
+function renderAdminMoney(){
+    const c=document.getElementById('moneyContainer');if(!c)return;
+    const deps=cachedDeposits;
+    if(deps.length===0){c.innerHTML=`<div style="text-align:center;padding:20px;color:var(--text-dim);font-size:0.82rem;">📭 Không có yêu cầu nào</div>`;return;}
+    const pending=deps.filter(d=>d.status==='pending');
+    const confirmed=deps.filter(d=>d.status==='confirmed');
+    let html=`<div style="font-size:0.7rem;color:var(--text-dim);margin-bottom:10px;">📋 ${deps.length} · ⏳ ${pending.length} chờ · ✅ ${confirmed.length} xác nhận</div>`;
     if(pending.length>0){
         html+=`<div style="font-size:0.68rem;color:var(--yellow);font-family:var(--mono);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:6px;">⏳ Chờ xử lý (${pending.length})</div>`;
-        for(const d of pending){
-            html+=`
-                <div class="deposit-item">
-                    <div class="di-name">👤 ${d.name}</div>
-                    <div class="di-amount">+${Number(d.amount).toLocaleString('vi-VN')}đ</div>
-                    <div class="di-note">📝 ${d.note||''}</div>
-                    <div class="di-time">🕐 ${d.time||''}</div>
-                    <div style="font-size:0.68rem;color:var(--text-dim);margin-top:3px;">💡 Xác nhận thủ công sau khi kiểm tra ngân hàng</div>
-                </div>`;
-        }
+        pending.forEach(d=>{
+            html+=`<div style="background:rgba(0,0,0,0.3);border:1px solid rgba(250,204,21,0.2);border-radius:10px;padding:12px;margin-bottom:8px;">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
+                    <span style="font-size:0.85rem;font-weight:800;color:var(--text-primary);">👤 ${d.name}</span>
+                    <span class="dep-tag dep-pending-tag">⏳ Chờ</span>
+                </div>
+                <div style="font-size:1rem;font-weight:900;color:var(--green);font-family:var(--mono);">+${Number(d.amount).toLocaleString('vi-VN')}đ</div>
+                <div style="font-size:0.72rem;color:var(--text-muted);margin-top:3px;">📝 ${d.note||''}</div>
+                <div style="font-size:0.68rem;color:var(--text-dim);margin-top:3px;">🕐 ${d.time||''}</div>
+                <button class="btn btn-primary" style="margin-top:10px;font-size:0.82rem;padding:10px;" data-dep-id="${d.id}">✅ Xác nhận đã nhận tiền</button>
+            </div>`;
+        });
     }
-    if(done.length>0){
-        html+=`<div style="font-size:0.68rem;color:var(--green);font-family:var(--mono);text-transform:uppercase;letter-spacing:0.8px;margin:10px 0 6px;">✅ Đã xử lý (${done.length})</div>`;
-        for(const d of done){
-            html+=`
-                <div class="deposit-item" style="opacity:0.6;">
-                    <div class="di-name">👤 ${d.name}</div>
-                    <div class="di-amount">+${Number(d.amount).toLocaleString('vi-VN')}đ</div>
-                    <div class="di-time">🕐 ${d.time||''}</div>
-                </div>`;
-        }
+    if(confirmed.length>0){
+        html+=`<div style="font-size:0.68rem;color:var(--green);font-family:var(--mono);text-transform:uppercase;letter-spacing:0.8px;margin:10px 0 6px;">✅ Đã xác nhận (${confirmed.length})</div>`;
+        confirmed.forEach(d=>{
+            html+=`<div style="background:rgba(0,0,0,0.3);border:1px solid rgba(74,222,128,0.15);border-radius:10px;padding:10px 12px;margin-bottom:7px;opacity:0.75;display:flex;justify-content:space-between;align-items:center;">
+                <div><div style="font-size:0.82rem;font-weight:700;color:var(--text-primary);">👤 ${d.name}</div><div style="font-size:0.78rem;color:var(--green);font-family:var(--mono);font-weight:800;">+${Number(d.amount).toLocaleString('vi-VN')}đ</div><div style="font-size:0.64rem;color:var(--text-dim);">${d.time||''}</div></div>
+                <span class="dep-tag dep-done-tag">✅ Xong</span>
+            </div>`;
+        });
     }
-    container.innerHTML=html;
+    c.innerHTML=html;
+    c.querySelectorAll('[data-dep-id]').forEach(btn=>{
+        btn.onclick=async()=>{
+            const id=btn.dataset.depId;
+            btn.textContent='⏳ Đang cập nhật...';btn.disabled=true;
+            showLoading(true,"Đang cập nhật DB...");
+            await dbUpdateDepositStatus(id,'confirmed');
+            showLoading(false);
+            showToast("✅ Đã xác nhận!");
+            renderAdminMoney();
+        };
+    });
 }
 
-// ======================= ADMIN: QUẢN LÝ HỖ TRỢ (từ Telegram JSON) =======================
+// ========================= ADMIN: QUẢN LÝ HỖ TRỢ =========================
 async function showManageSupportUI(){
     const panel=document.getElementById('dynamicPanel');
-    panel.innerHTML=`
-        <div class="panel">
-            <div class="panel-title purple-title">🎫 Quản lý hỗ trợ</div>
-            <div class="info-note-purple">📡 Đọc từ file JSON trên Telegram — toàn bộ yêu cầu hỗ trợ từ mọi thiết bị.</div>
-            <button class="refresh-btn" id="refreshSupports" style="background:rgba(167,139,250,0.1);border-color:rgba(167,139,250,0.25);color:var(--purple);">🔄 Tải từ Telegram</button>
-            <div id="supportsContainer"><div style="text-align:center;padding:20px;color:var(--text-dim);font-size:0.82rem;">⏳ Đang tải...</div></div>
-            <button class="btn btn-secondary" style="margin-top:8px;" id="backSupports">↩ Quay lại</button>
-        </div>
-    `;
+    panel.innerHTML=`<div class="panel"><div class="pt purple">🎫 Quản lý hỗ trợ</div><div class="info-note-p">📁 1 file JSON duy nhất trên Telegram. Cập nhật trạng thái sẽ ghi đè file.</div><button class="ref-btn" style="background:rgba(167,139,250,0.1);border-color:rgba(167,139,250,0.25);color:var(--purple);" id="refreshSupports">🔄 Tải lại từ Telegram</button><div id="supContainer"><div style="text-align:center;padding:20px;color:var(--text-dim);font-size:0.82rem;">⏳ Đang tải...</div></div><button class="btn btn-sec" style="margin-top:8px;" id="backSupports">↩ Quay lại</button></div>`;
     document.getElementById('backSupports').onclick=()=>renderDefaultPanel();
-    document.getElementById('refreshSupports').onclick=()=>loadAndRenderAdminSupports();
-    await loadAndRenderAdminSupports();
+    document.getElementById('refreshSupports').onclick=async()=>{showLoading(true,"Đang tải...");await loadAllDBFromTelegram();showLoading(false);renderAdminSupports();};
+    renderAdminSupports();
 }
-
-async function loadAndRenderAdminSupports(){
-    const container=document.getElementById('supportsContainer'); if(!container) return;
-    container.innerHTML=`<div style="text-align:center;padding:20px;color:var(--text-dim);font-size:0.82rem;">⏳ Đang tải JSON từ Telegram...</div>`;
-    const {supports}=await fetchAllFromTelegram();
-    cachedSupports=supports;
+function renderAdminSupports(){
+    const c=document.getElementById('supContainer');if(!c)return;
+    const sups=cachedSupports;
     updateDrawerButtons();
-    if(supports.length===0){ container.innerHTML=`<div style="text-align:center;padding:20px;color:var(--text-dim);font-size:0.82rem;"><div style="font-size:2rem;margin-bottom:8px;">🎉</div>Không có yêu cầu hỗ trợ nào</div>`; return; }
-    const newC=supports.filter(s=>s.status==='new').length;
-    const procC=supports.filter(s=>s.status==='processing').length;
-    const doneC=supports.filter(s=>s.status==='done').length;
-    let html=`
-        <div class="stat-grid-3" style="margin-bottom:14px;">
-            <div class="stat-mini" style="background:rgba(248,113,113,0.08);border:1px solid rgba(248,113,113,0.2);">
-                <div class="sm-label" style="color:var(--red);">Mới</div>
-                <div class="sm-val" style="color:var(--red);">${newC}</div>
+    if(sups.length===0){c.innerHTML=`<div style="text-align:center;padding:20px;color:var(--text-dim);font-size:0.82rem;"><div style="font-size:2rem;margin-bottom:8px;">🎉</div>Không có yêu cầu hỗ trợ nào</div>`;return;}
+    const newC=sups.filter(s=>s.status==='new').length;
+    const procC=sups.filter(s=>s.status==='processing').length;
+    const doneC=sups.filter(s=>s.status==='done').length;
+    let html=`<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px;margin-bottom:14px;">
+        <div style="background:rgba(248,113,113,0.08);border:1px solid rgba(248,113,113,0.2);border-radius:9px;padding:9px;text-align:center;"><div style="font-size:0.58rem;color:var(--red);font-family:var(--mono);text-transform:uppercase;">Mới</div><div style="font-size:1.3rem;font-weight:900;color:var(--red);font-family:var(--mono);">${newC}</div></div>
+        <div style="background:rgba(56,189,248,0.08);border:1px solid rgba(56,189,248,0.2);border-radius:9px;padding:9px;text-align:center;"><div style="font-size:0.58rem;color:var(--sky);font-family:var(--mono);text-transform:uppercase;">Xử lý</div><div style="font-size:1.3rem;font-weight:900;color:var(--sky);font-family:var(--mono);">${procC}</div></div>
+        <div style="background:rgba(74,222,128,0.08);border:1px solid rgba(74,222,128,0.2);border-radius:9px;padding:9px;text-align:center;"><div style="font-size:0.58rem;color:var(--green);font-family:var(--mono);text-transform:uppercase;">Xong</div><div style="font-size:1.3rem;font-weight:900;color:var(--green);font-family:var(--mono);">${doneC}</div></div>
+    </div>`;
+    sups.forEach(s=>{
+        html+=`<div class="sup-item" data-sid="${s.id}" data-oid="${s.order_id}">
+            <div class="sup-hdr"><span class="sup-id">#${s.order_id}</span>${getSupportBadge(s.status)}</div>
+            <div><span class="sup-issue">${s.issue_label||getIssueLabel(s.issue)}</span><span style="font-size:0.7rem;color:var(--yellow);font-weight:700;margin-left:6px;">👤 ${s.name}</span></div>
+            ${s.service_name?`<div class="sup-det">🎯 ${s.service_name}${s.quantity?' · '+Number(s.quantity).toLocaleString():''}</div>`:''}
+            ${s.order_status?`<div class="sup-det">📌 Trạng thái: <strong>${s.order_status}</strong></div>`:''}
+            <div class="sup-stats">
+                <div class="sup-stat"><div class="ssl">Bắt đầu</div><div class="ssv">${s.start_count!==null&&s.start_count!==undefined?Number(s.start_count).toLocaleString():'—'}</div></div>
+                <div class="sup-stat"><div class="ssl">Còn lại</div><div class="ssv">${s.remains!==null&&s.remains!==undefined?Number(s.remains).toLocaleString():'—'}</div></div>
+                <div class="sup-stat"><div class="ssl">Đặt</div><div class="ssv">${s.quantity?Number(s.quantity).toLocaleString():'—'}</div></div>
             </div>
-            <div class="stat-mini" style="background:rgba(56,189,248,0.08);border:1px solid rgba(56,189,248,0.2);">
-                <div class="sm-label" style="color:var(--sky);">Đang xử lý</div>
-                <div class="sm-val" style="color:var(--sky);">${procC}</div>
+            ${s.link?`<div style="font-size:0.62rem;color:var(--text-dim);font-family:var(--mono);margin-top:5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${s.link}</div>`:''}
+            ${s.note?`<div style="font-size:0.7rem;color:var(--text-muted);margin-top:3px;line-height:1.4;">📝 ${s.note}</div>`:''}
+            <div style="font-size:0.63rem;color:var(--text-dim);margin-top:4px;">🕐 ${s.time}</div>
+            <div class="act-row">
+                <button class="act-btn" data-sid="${s.id}" data-action="processing" style="border-color:rgba(56,189,248,0.3);background:rgba(56,189,248,0.08);color:var(--sky);">⚙️ Xử lý</button>
+                <button class="act-btn" data-sid="${s.id}" data-action="done" style="border-color:rgba(74,222,128,0.3);background:rgba(74,222,128,0.08);color:var(--green);">✅ Xong</button>
+                <button class="act-btn" data-sid="${s.id}" data-action="new" style="border-color:rgba(250,204,21,0.3);background:rgba(250,204,21,0.06);color:var(--yellow);">🔄 Mới</button>
             </div>
-            <div class="stat-mini" style="background:rgba(74,222,128,0.08);border:1px solid rgba(74,222,128,0.2);">
-                <div class="sm-label" style="color:var(--green);">Xong</div>
-                <div class="sm-val" style="color:var(--green);">${doneC}</div>
-            </div>
-        </div>
-        <div style="font-size:0.68rem;color:var(--text-dim);margin-bottom:8px;">💡 Trạng thái lưu local. Click vào đơn để check API.</div>
-    `;
-    for(const s of supports){
-        // Lấy trạng thái local nếu có
-        const localStatus = localStorage.getItem(`support_status_${s.id}`)||s.status||'new';
-        html+=`
-            <div class="support-req-item" data-sid="${s.id}" data-oid="${s.order_id}">
-                <div class="sri-header">
-                    <span class="sri-id">#${s.order_id}</span>
-                    ${getSupportStatusBadge(localStatus)}
-                </div>
-                <div><span class="sri-issue">${s.issue_label||getIssueLabel(s.issue)}</span>
-                    <span style="font-size:0.7rem;color:var(--yellow);font-weight:700;margin-left:6px;">👤 ${s.name}</span>
-                </div>
-                ${s.service_name?`<div class="sri-detail">🎯 ${s.service_name}${s.quantity?' · '+Number(s.quantity).toLocaleString():''}</div>`:''}
-                ${s.order_status?`<div class="sri-detail">📌 Trạng thái đơn: <strong>${s.order_status}</strong></div>`:''}
-                <div class="sri-stats">
-                    <div class="sri-stat"><div class="sl">Bắt đầu</div><div class="sv">${s.start_count!==null&&s.start_count!==undefined?Number(s.start_count).toLocaleString():'—'}</div></div>
-                    <div class="sri-stat"><div class="sl">Còn lại</div><div class="sv">${s.remains!==null&&s.remains!==undefined?Number(s.remains).toLocaleString():'—'}</div></div>
-                    <div class="sri-stat"><div class="sl">Đặt</div><div class="sv">${s.quantity?Number(s.quantity).toLocaleString():'—'}</div></div>
-                </div>
-                ${s.link?`<div style="font-size:0.62rem;color:var(--text-dim);font-family:var(--mono);margin-top:5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${s.link}</div>`:''}
-                ${s.note?`<div class="sri-note">📝 ${s.note}</div>`:''}
-                <div class="sri-time">🕐 ${s.time}</div>
-                <div class="action-row">
-                    <button class="act-btn" data-sid="${s.id}" data-action="processing" style="border:1px solid rgba(56,189,248,0.3);background:rgba(56,189,248,0.08);color:var(--sky);">⚙️ Xử lý</button>
-                    <button class="act-btn" data-sid="${s.id}" data-action="done" style="border:1px solid rgba(74,222,128,0.3);background:rgba(74,222,128,0.08);color:var(--green);">✅ Xong</button>
-                    <button class="act-btn" data-sid="${s.id}" data-action="new" style="border:1px solid rgba(250,204,21,0.3);background:rgba(250,204,21,0.06);color:var(--yellow);">🔄 Mới</button>
-                </div>
-            </div>`;
-    }
-    container.innerHTML=html;
-    // Action buttons
-    container.querySelectorAll('.act-btn').forEach(btn=>{
-        btn.onclick=(e)=>{
+        </div>`;
+    });
+    c.innerHTML=html;
+    c.querySelectorAll('.act-btn').forEach(btn=>{
+        btn.onclick=async(e)=>{
             e.stopPropagation();
-            const sid=btn.dataset.sid;
-            const action=btn.dataset.action;
-            localStorage.setItem(`support_status_${sid}`, action);
+            const sid=btn.dataset.sid,action=btn.dataset.action;
+            btn.textContent='⏳';btn.disabled=true;
+            showLoading(true,"Đang cập nhật...");
+            await dbUpdateSupportStatus(sid,action);
+            showLoading(false);
             showToast(action==='done'?'✅ Đã xong':action==='processing'?'⚙️ Đang xử lý':'🔄 Đặt lại mới');
-            loadAndRenderAdminSupports();
+            renderAdminSupports();
         };
     });
-    // Click vào item để check đơn
-    container.querySelectorAll('.support-req-item').forEach(item=>{
+    c.querySelectorAll('.sup-item').forEach(item=>{
         item.onclick=(e)=>{
-            if(e.target.closest('.act-btn')) return;
-            const oid=item.dataset.oid;
-            if(!oid) return;
+            if(e.target.closest('.act-btn'))return;
+            const oid=item.dataset.oid;if(!oid)return;
             showCheckOrderUI();
-            setTimeout(()=>{ const inp=document.getElementById('checkOrderId'); if(inp){ inp.value=oid; document.getElementById('checkBtn')?.click(); } },100);
+            setTimeout(()=>{const inp=document.getElementById('checkOrderId');if(inp){inp.value=oid;document.getElementById('checkBtn')?.click();}},100);
         };
     });
 }
 
-// ======================= BALANCE WATCH =======================
+// ========================= BALANCE WATCH =========================
 function startBalanceWatch(){
-    if(balanceWatchInterval) clearInterval(balanceWatchInterval);
+    if(balanceWatchInterval)clearInterval(balanceWatchInterval);
     balanceWatchInterval=setInterval(async()=>{
         const r=await apiRequest({key:API_KEY_V,action:"balance"});
-        if(!r||r.balance===undefined) return;
+        if(!r||r.balance===undefined)return;
         const cur=usdToVnd(r.balance);
         if(prevBalanceVND!==null&&cur!==null&&cur>prevBalanceVND){
             const diff=cur-prevBalanceVND;
@@ -1329,7 +1177,7 @@ function startBalanceWatch(){
     },30000);
 }
 
-// ======================= INIT =======================
+// ========================= INIT =========================
 loadHistory();
 loadSubKeyUsage();
 showStartScreen();
